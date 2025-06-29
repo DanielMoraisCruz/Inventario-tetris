@@ -25,7 +25,14 @@ let selectedItemId = null;
 // LOGIN variables
 let isMaster = false;
 let userName = "";
-const MASTER_PASSWORD = "senhaSecreta"; // Troque por uma senha forte!
+const MASTER_PASSWORD_HASH = "1b0b625e1561b25ff1ccaae8a1afa0d8ba4c15eaa2e95c477de76d64d3e43d3b"; // sha256 da senha
+
+async function sha256(str) {
+    const buf = new TextEncoder().encode(str);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buf);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 // -------- Persistência Local --------
 function saveInventory() {
@@ -82,14 +89,15 @@ const loginPass = document.getElementById('login-pass');
 const loginErr = document.getElementById('login-err');
 const userWelcome = document.getElementById('user-welcome');
 
-loginBtn.onclick = () => {
+loginBtn.onclick = async () => {
     const user = loginUser.value.trim();
     const pass = loginPass.value;
     if (!user) {
         loginErr.textContent = "Digite seu nome!";
         return;
     }
-    if (pass === MASTER_PASSWORD) {
+    const hashed = await sha256(pass);
+    if (hashed === MASTER_PASSWORD_HASH) {
         isMaster = true;
         userName = user;
         loginScreen.style.display = 'none';
@@ -161,46 +169,53 @@ function updateItemList() {
 }
 
 // Adiciona novo item pelo formulário (com imagem)
-form.addEventListener('submit', function(e) {
+form.addEventListener('submit', handleItemSubmit);
+
+function getItemFormData() {
+    const nome = document.getElementById('nome').value.trim();
+    const width = parseInt(document.getElementById('largura').value);
+    const height = parseInt(document.getElementById('altura').value);
+    const imgInput = document.getElementById('imagem');
+    if (!nome || width < 1 || height < 1 || width > COLS || height > ROWS) return null;
+    return { nome, width, height, imgInput };
+}
+
+function addNewItem(data) {
+    itemsData.push({
+        id: generateId(),
+        nome: data.nome,
+        width: data.width,
+        height: data.height,
+        img: data.img
+    });
+    updateItemList();
+    saveInventory();
+}
+
+function readImageFile(input) {
+    return new Promise(resolve => {
+        if (!input.files || !input.files[0]) {
+            resolve(null);
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = ev => resolve(ev.target.result);
+        reader.readAsDataURL(input.files[0]);
+    });
+}
+
+async function handleItemSubmit(e) {
     e.preventDefault();
     if (!isMaster) {
         alert("Só o mestre pode criar itens.");
         return;
     }
-    const nome = document.getElementById('nome').value.trim();
-    const width = parseInt(document.getElementById('largura').value);
-    const height = parseInt(document.getElementById('altura').value);
-    const imgInput = document.getElementById('imagem');
-    if (!nome || width < 1 || height < 1 || width > COLS || height > ROWS) return;
-
-    if (imgInput.files && imgInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-            itemsData.push({
-                id: generateId(),
-                nome,
-                width,
-                height,
-                img: ev.target.result
-            });
-            updateItemList();
-            saveInventory();
-            form.reset();
-        };
-        reader.readAsDataURL(imgInput.files[0]);
-    } else {
-        itemsData.push({
-            id: generateId(),
-            nome,
-            width,
-            height,
-            img: null
-        });
-        updateItemList();
-        saveInventory();
-        form.reset();
-    }
-});
+    const data = getItemFormData();
+    if (!data) return;
+    data.img = await readImageFile(data.imgInput);
+    addNewItem(data);
+    form.reset();
+}
 
 window.addEventListener('keydown', function(e) {
     if ((e.key === 'Delete' || e.key === 'Backspace') && selectedItemId) {
@@ -327,7 +342,7 @@ function snapGhostToGridMouseMove(e) {
     snapGhostToGrid(e.pageX, e.pageY);
 }
 
-function snapGhostToGrid(pageX, pageY) {
+function computeGridPosition(pageX, pageY) {
     const invRect = inventory.getBoundingClientRect();
     const relX = pageX - invRect.left;
     const relY = pageY - invRect.top;
@@ -337,6 +352,11 @@ function snapGhostToGrid(pageX, pageY) {
     if (gridY < 0) gridY = 0;
     if (gridX > COLS - currentPreviewSize.width) gridX = COLS - currentPreviewSize.width;
     if (gridY > ROWS - currentPreviewSize.height) gridY = ROWS - currentPreviewSize.height;
+    return { gridX, gridY };
+}
+
+function snapGhostToGrid(pageX, pageY) {
+    const { gridX, gridY } = computeGridPosition(pageX, pageY);
     lastGhostPos = { x: gridX, y: gridY };
     showGhostOnGrid(gridX, gridY);
 }
@@ -432,15 +452,7 @@ function mouseupDrop(e) {
 inventory.addEventListener('dragover', (e) => {
     e.preventDefault();
     if (!draggedItem) return;
-    const invRect = inventory.getBoundingClientRect();
-    const relX = e.clientX - invRect.left;
-    const relY = e.clientY - invRect.top;
-    let gridX = Math.floor(relX / (CELL_SIZE + CELL_GAP));
-    let gridY = Math.floor(relY / (CELL_SIZE + CELL_GAP));
-    if (gridX < 0) gridX = 0;
-    if (gridY < 0) gridY = 0;
-    if (gridX > COLS - currentPreviewSize.width) gridX = COLS - currentPreviewSize.width;
-    if (gridY > ROWS - currentPreviewSize.height) gridY = ROWS - currentPreviewSize.height;
+    const { gridX, gridY } = computeGridPosition(e.clientX, e.clientY);
     lastGhostPos = { x: gridX, y: gridY };
     showGhostOnGrid(gridX, gridY);
 });
