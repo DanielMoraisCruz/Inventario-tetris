@@ -128,6 +128,29 @@ body {
     z-index: 20;
 }
 
+#login-screen {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: #fff8;
+}
+
+#login-err {
+    color: red;
+    margin-top: 10px;
+}
+
+#user-welcome {
+    margin-bottom: 12px;
+}
+
 #login-screen input {
     font-size: 1.1em;
     margin-bottom: 7px;
