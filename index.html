@@ -6,14 +6,30 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="login-screen" style="display:flex;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999;align-items:center;justify-content:center;flex-direction:column;background:#fff8;">
+    <div id="login-screen">
         <h2>Login</h2>
+        <label for="login-user">Nome</label>
         <input id="login-user" type="text" placeholder="Nome">
+        <label for="login-pass">Senha</label>
         <input id="login-pass" type="password" placeholder="Senha">
         <button id="login-btn">Entrar</button>
-        <div id="login-err" style="color:red;margin-top:10px;"></div>
+        <div id="login-extra">
+            <a id="forgot-link" href="#">Esqueci minha senha</a> |
+            <a id="signup-link" href="#">Criar Conta</a>
+        </div>
+        <div id="login-err"></div>
     </div>
-    <div id="user-welcome" style="margin-bottom:12px"></div>
+    <div id="signup-screen" style="display:none">
+        <h2>Criar Conta</h2>
+        <label for="signup-user">Nome</label>
+        <input id="signup-user" type="text" placeholder="Nome">
+        <label for="signup-pass">Senha</label>
+        <input id="signup-pass" type="password" placeholder="Senha">
+        <button id="signup-btn">Registrar</button>
+        <button id="signup-cancel">Cancelar</button>
+        <div id="signup-err"></div>
+    </div>
+    <div id="user-welcome"></div>
     
     <div id="drag-ghost"></div>
     <h1>Inventário Tetris</h1>
@@ -24,13 +40,18 @@
         <div id="item-list"></div>
         <form id="item-form">
             <h3>Criar Novo Item</h3>
+            <label for="nome">Nome do item</label>
             <input type="text" id="nome" placeholder="Nome do item" required>
+            <label for="largura">Largura</label>
             <input type="number" id="largura" placeholder="Largura" min="1" max="10" required>
+            <label for="altura">Altura</label>
             <input type="number" id="altura" placeholder="Altura" min="1" max="6" required>
+            <label for="imagem">Imagem</label>
             <input type="file" id="imagem" accept="image/*">
             <button type="submit">Adicionar</button>
         </form>
     </div>
-    <script src="script.js"></script>
+        <script src="default-items.js"></script>
+        <script src="script.js"></script>
 </body>
 </html>

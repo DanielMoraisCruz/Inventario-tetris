@@ -128,14 +128,65 @@ body {
     z-index: 20;
 }
 
-#login-screen input {
+#login-screen {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: #fff8;
+}
+
+#signup-screen {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: #fff8;
+}
+
+#login-extra {
+    margin-top: 6px;
+    font-size: 0.9em;
+}
+
+#login-extra a {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+    margin: 0 4px;
+}
+
+#login-err {
+    color: red;
+    margin-top: 10px;
+}
+
+#user-welcome {
+    margin-bottom: 12px;
+}
+
+#login-screen input,
+#signup-screen input {
     font-size: 1.1em;
     margin-bottom: 7px;
     padding: 5px;
     border-radius: 5px;
     border: 1px solid #bbb;
 }
-#login-screen button {
+#login-screen button,
+#signup-screen button {
     font-size: 1.1em;
     background: #82c91e;
     color: #fff;
