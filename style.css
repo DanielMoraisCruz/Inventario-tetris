@@ -147,6 +147,11 @@ body {
     margin-top: 10px;
 }
 
+#reg-msg {
+    color: green;
+    margin-top: 10px;
+}
+
 #user-welcome {
     margin-bottom: 12px;
 }

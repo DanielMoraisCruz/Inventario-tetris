@@ -88,29 +88,69 @@ const loginUser = document.getElementById('login-user');
 const loginPass = document.getElementById('login-pass');
 const loginErr = document.getElementById('login-err');
 const userWelcome = document.getElementById('user-welcome');
+const regBtn = document.getElementById('reg-btn');
+const regUser = document.getElementById('reg-user');
+const regPass = document.getElementById('reg-pass');
+const regMsg = document.getElementById('reg-msg');
 
 loginBtn.onclick = async () => {
     const user = loginUser.value.trim();
     const pass = loginPass.value;
-    if (!user) {
-        loginErr.textContent = "Digite seu nome!";
+    loginErr.textContent = '';
+    if (!user || !pass) {
+        loginErr.textContent = "Preencha todos os campos";
         return;
     }
-    const hashed = await sha256(pass);
-    if (hashed === MASTER_PASSWORD_HASH) {
-        isMaster = true;
-        userName = user;
-        loginScreen.style.display = 'none';
-        form.style.display = 'block';
-        userWelcome.textContent = "Olá, " + user + " (Mestre)";
-    } else if (pass === "") {
-        isMaster = false;
-        userName = user;
-        loginScreen.style.display = 'none';
-        form.style.display = 'none';
-        userWelcome.textContent = "Olá, " + user;
-    } else {
-        loginErr.textContent = "Senha incorreta!";
+    try {
+        const resp = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, password: pass })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            const hashed = await sha256(pass);
+            userName = user;
+            if (hashed === MASTER_PASSWORD_HASH) {
+                isMaster = true;
+                form.style.display = 'block';
+                userWelcome.textContent = "Olá, " + user + " (Mestre)";
+            } else {
+                isMaster = false;
+                form.style.display = 'none';
+                userWelcome.textContent = "Olá, " + user;
+            }
+            loginScreen.style.display = 'none';
+        } else {
+            loginErr.textContent = data.message || 'Erro';
+        }
+    } catch (e) {
+        loginErr.textContent = 'Falha na requisição';
+    }
+};
+
+regBtn.onclick = async () => {
+    const user = regUser.value.trim();
+    const pass = regPass.value;
+    regMsg.textContent = '';
+    if (!user || !pass) {
+        regMsg.textContent = 'Preencha todos os campos';
+        return;
+    }
+    try {
+        const resp = await fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, password: pass })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            regMsg.textContent = 'Registrado com sucesso';
+        } else {
+            regMsg.textContent = data.message || 'Erro';
+        }
+    } catch (e) {
+        regMsg.textContent = 'Falha na requisição';
     }
 };
 
