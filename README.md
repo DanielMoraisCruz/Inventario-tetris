@@ -73,20 +73,7 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
    ```bash
    cd inventario-tetris
    ```
-3. Instale as dependências:
-
-   ```bash
-   npm install
-   ```
-
-4. Defina a variável de ambiente `MASTER_PASSWORD_HASH` com o hash SHA-256 da senha mestre e inicie o servidor:
-
-   ```bash
-   export MASTER_PASSWORD_HASH="<seu-hash>"
-   node server.js
-   ```
-
-5. Acesse `http://localhost:3000` no navegador.
+3. Abra o arquivo `index.html` em seu navegador ou sirva a pasta com qualquer servidor estático.
 
 ---
 

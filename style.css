@@ -216,3 +216,9 @@ body {
     border: none;
     cursor: pointer;
 }
+#login-screen a {
+    margin-top: 6px;
+    color: #0077cc;
+    text-decoration: underline;
+    cursor: pointer;
+}
