@@ -30,10 +30,8 @@ export function setInventoryState(data) {
 export function initInventory() {
     createGrid();
     const loaded = loadInventory();
-    if (loaded.itemsData.length) {
-        itemsData = loaded.itemsData;
-        placedItems = loaded.placedItems;
-    }
+    itemsData = loaded.itemsData;
+    placedItems = loaded.placedItems;
     updateItemList();
     redrawPlacedItems();
 }
