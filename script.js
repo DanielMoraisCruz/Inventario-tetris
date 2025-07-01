@@ -72,12 +72,7 @@ function loadInventory() {
 }
 
 function redrawPlacedItems() {
-    Array.from(inventory.children).forEach(cell => {
-        cell.classList.remove('placed', 'selected');
-        delete cell.dataset.itemid;
-        cell.title = '';
-        removeGridImage(cell);
-    });
+    Array.from(inventory.children).forEach(resetCell);
     placedItems.forEach(item => {
         placeItem(item.x, item.y, item.width, item.height, item, true);
     });
@@ -322,16 +317,7 @@ inventory.addEventListener('mousedown', function(e) {
     currentPreviewSize = { width: placed.width, height: placed.height };
     previousPlacement = { ...placed };
 
-    for (let dy = 0; dy < placed.height; dy++) {
-        for (let dx = 0; dx < placed.width; dx++) {
-            const index = (placed.y + dy) * COLS + (placed.x + dx);
-            const c = inventory.children[index];
-            c.classList.remove('placed', 'selected');
-            delete c.dataset.itemid;
-            c.title = '';
-            removeGridImage(c);
-        }
-    }
+    clearCells(placed.x, placed.y, placed.width, placed.height);
     placedItems = placedItems.filter(item => item.id !== itemId);
 
     saveInventory();
@@ -349,16 +335,7 @@ function clearGridSelection() {
 function removeItemFromGrid(itemId, isDeleteKey = false) {
     const placed = placedItems.find(item => item.id === itemId);
     if (!placed) return;
-    for (let dy = 0; dy < placed.height; dy++) {
-        for (let dx = 0; dx < placed.width; dx++) {
-            const index = (placed.y + dy) * COLS + (placed.x + dx);
-            const c = inventory.children[index];
-            c.classList.remove('placed', 'selected');
-            delete c.dataset.itemid;
-            c.title = '';
-            removeGridImage(c);
-        }
-    }
+    clearCells(placed.x, placed.y, placed.width, placed.height);
     placedItems = placedItems.filter(item => item.id !== itemId);
 
     if (!isDeleteKey) {
@@ -412,23 +389,7 @@ function showGhostOnGrid(gridX, gridY) {
         dragGhost.appendChild(cell);
     }
     if (draggedItem && draggedItem.img) {
-        const img = document.createElement('img');
-        img.src = draggedItem.img;
-        img.className = 'grid-item-img';
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.left = "0";
-        img.style.top = "0";
-        img.style.position = "absolute";
-        img.style.objectFit = "contain";
-        img.style.pointerEvents = "none";
-        img.style.zIndex = "10";
-        img.style.transition = "transform 0.2s";
-        if (previewRotation) {
-            img.style.transform = "rotate(90deg)";
-        } else {
-            img.style.transform = "none";
-        }
+        const img = createItemImageElement(draggedItem, currentPreviewSize.width, currentPreviewSize.height, true);
         dragGhost.appendChild(img);
     }
     const invRect = inventory.getBoundingClientRect();
@@ -519,6 +480,51 @@ function removePreview() {
     document.querySelectorAll('.cell.preview').forEach(c => c.classList.remove('preview'));
 }
 
+function resetCell(cell) {
+    cell.classList.remove('placed', 'selected');
+    delete cell.dataset.itemid;
+    cell.title = '';
+    removeGridImage(cell);
+}
+
+function clearCells(x, y, w, h) {
+    for (let dy = 0; dy < h; dy++) {
+        for (let dx = 0; dx < w; dx++) {
+            const index = (y + dy) * COLS + (x + dx);
+            const cell = inventory.children[index];
+            if (cell) resetCell(cell);
+        }
+    }
+}
+
+function createItemImageElement(item, width, height, isGhost = false) {
+    const img = document.createElement('img');
+    img.src = item.img;
+    img.alt = item.nome;
+    img.className = 'grid-item-img';
+    img.style.position = 'absolute';
+    img.style.left = '0';
+    img.style.top = '0';
+    img.style.objectFit = 'contain';
+    img.style.pointerEvents = 'none';
+    img.style.zIndex = '10';
+    img.style.transition = 'transform 0.2s';
+    if (isGhost) {
+        img.style.width = '100%';
+        img.style.height = '100%';
+        if (previewRotation) {
+            img.style.transform = 'rotate(90deg)';
+        }
+    } else {
+        img.style.width = ((CELL_SIZE + CELL_GAP) * width - CELL_GAP) + 'px';
+        img.style.height = ((CELL_SIZE + CELL_GAP) * height - CELL_GAP) + 'px';
+        if (item.rotacionado) {
+            img.style.transform = 'rotate(90deg)';
+        }
+    }
+    return img;
+}
+
 function canPlace(x, y, w, h) {
     if (x + w > COLS || y + h > ROWS) return false;
     for (let dy = 0; dy < h; dy++) {
@@ -547,24 +553,8 @@ function placeItem(x, y, w, h, item, fromRedraw = false) {
     if (item.img) {
         const cell0 = inventory.children[y * COLS + x];
         cell0.classList.add('has-img');
-        let img = document.createElement('img');
-        img.src = item.img;
-        img.alt = item.nome;
-        img.className = 'grid-item-img';
-        img.style.width = ((CELL_SIZE + CELL_GAP) * w - CELL_GAP) + "px";
-        img.style.height = ((CELL_SIZE + CELL_GAP) * h - CELL_GAP) + "px";
-        img.style.left = "0";
-        img.style.top = "0";
-        img.style.position = "absolute";
-        img.style.objectFit = "contain";
-        img.style.pointerEvents = "none";
-        img.style.zIndex = "10";
-        img.style.transition = "transform 0.2s";
-        if (item.rotacionado) {
-            img.style.transform = "rotate(90deg)";
-        } else {
-            img.style.transform = "none";
-        }
+        const rotated = fromRedraw ? item.rotacionado : previewRotation;
+        const img = createItemImageElement({ ...item, rotacionado: rotated }, w, h);
         removeGridImage(cell0);
         cell0.appendChild(img);
     }
