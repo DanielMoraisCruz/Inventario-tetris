@@ -83,7 +83,6 @@ fetch('users.json')
   .then(r => r.json())
   .then(data => localStorage.setItem('tetris-users', JSON.stringify(data)));
 ```
-
 ---
 
 ## 🌐 Acesse Online
