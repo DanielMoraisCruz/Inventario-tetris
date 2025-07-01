@@ -15,11 +15,17 @@ function saveUsers(users) {
     localStorage.setItem('tetris-users', JSON.stringify(users));
 }
 
-export async function registerUser(userName, password, isMaster = false) {
+export async function registerUser(userName, password, isMaster = false, pergunta = '', resposta = '') {
     const users = getUsers();
     if (users[userName]) return false;
     const hash = await sha256(password);
-    users[userName] = { hash, isMaster };
+    const userData = { hash, isMaster };
+    if (pergunta && resposta) {
+        const respostaHash = await sha256(resposta);
+        userData.pergunta = pergunta;
+        userData.respostaHash = respostaHash;
+    }
+    users[userName] = userData;
     saveUsers(users);
     return true;
 }
@@ -79,7 +85,17 @@ export function setupLogin() {
         const users = getUsers();
         if (!users[user]) {
             const isFirst = Object.keys(users).length === 0;
-            await registerUser(user, pass, isFirst);
+            const pergunta = prompt('Pergunta de seguran\u00e7a:');
+            if (!pergunta) {
+                loginErr.textContent = 'Pergunta obrigat\u00f3ria para registro';
+                return;
+            }
+            const resposta = prompt('Resposta para a pergunta:');
+            if (!resposta) {
+                loginErr.textContent = 'Resposta obrigat\u00f3ria para registro';
+                return;
+            }
+            await registerUser(user, pass, isFirst, pergunta, resposta);
         }
         const ok = await validateLogin(user, pass);
         if (!ok) {
