@@ -1,10 +1,6 @@
 import { saveInventory, loadInventory } from './storage.js';
 import { session } from './login.js';
-
-export const ROWS = 6;
-export const COLS = 10;
-export const CELL_SIZE = 40;
-export const CELL_GAP = 3;
+import { ROWS, COLS } from './constants.js';
 
 export const inventory = document.getElementById('inventory');
 export const itemList = document.getElementById('item-list');

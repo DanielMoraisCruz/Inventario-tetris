@@ -1,6 +1,5 @@
+import { ROWS, COLS } from './constants.js';
 const DATA_VERSION = 1;
-const ROWS = 6;
-const COLS = 10;
 
 function generateId() {
     return '_' + Math.random().toString(36).substr(2, 9);
