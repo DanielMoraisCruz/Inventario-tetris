@@ -83,6 +83,13 @@ fetch('users.json')
   .then(r => r.json())
   .then(data => localStorage.setItem('tetris-users', JSON.stringify(data)));
 ```
+
+### Registro de usuários
+
+Quando não houver nenhum cadastro, o primeiro usuário criado será o
+**Mestre**. O registro solicita nome, senha e uma pergunta de segurança com a
+resposta correspondente. Se já existir um mestre, os próximos registros serão
+considerados jogadores.
 ---
 
 ## 🌐 Acesse Online
