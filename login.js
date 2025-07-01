@@ -70,6 +70,7 @@ export function setupLogin() {
     const forgotBtn = document.getElementById('forgot-pass');
     const userWelcome = document.getElementById('user-welcome');
     const logoutBtn = document.getElementById('logout-btn');
+    const resetBtn = document.getElementById('reset-btn');
     const form = document.getElementById('item-form');
     const inventory = document.getElementById('inventory');
     const itemsPanel = document.getElementById('items');
@@ -118,6 +119,7 @@ export function setupLogin() {
         itemsPanel.style.display = '';
         userWelcome.style.display = '';
         logoutBtn.style.display = 'inline-block';
+        resetBtn.style.display = 'inline-block';
 
         if (!current.pergunta) {
             const pergunta = prompt('Cadastre uma pergunta secreta para recuperar sua senha:');
@@ -153,6 +155,15 @@ export function setupLogin() {
         alert('Senha redefinida com sucesso!');
     });
 
+    resetBtn.addEventListener('click', () => {
+        if (!confirm('Resetar dados e sair?')) return;
+        localStorage.removeItem('tetris-inventory');
+        session.userName = '';
+        session.isMaster = false;
+        localStorage.removeItem('session');
+        location.reload();
+    });
+
     window.addEventListener('DOMContentLoaded', function() {
         const saved = localStorage.getItem('session');
         if (saved) {
@@ -172,6 +183,7 @@ export function setupLogin() {
                 itemsPanel.style.display = '';
                 userWelcome.style.display = '';
                 logoutBtn.style.display = 'inline-block';
+                resetBtn.style.display = 'inline-block';
                 return;
             } catch (e) {
                 console.warn('Sessão inválida');
@@ -183,6 +195,7 @@ export function setupLogin() {
         itemsPanel.style.display = 'none';
         userWelcome.style.display = 'none';
         logoutBtn.style.display = 'none';
+        resetBtn.style.display = 'none';
     });
 
     logoutBtn.addEventListener('click', () => {
@@ -198,5 +211,6 @@ export function setupLogin() {
         userWelcome.textContent = '';
         userWelcome.style.display = 'none';
         logoutBtn.style.display = 'none';
+        resetBtn.style.display = 'none';
     });
 }
