@@ -4,8 +4,13 @@ export const CELL_SIZE = 40; // tamanho base em px
 export const CELL_GAP = 3;  // espaçamento em px
 
 export function getCellSize() {
-    const value = getComputedStyle(document.documentElement).getPropertyValue('--cell-size');
-    return parseFloat(value);
+    const value = getComputedStyle(document.documentElement).getPropertyValue('--cell-size').trim();
+    const num = parseFloat(value);
+    if (value.endsWith('rem')) {
+        const rootSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        return num * rootSize;
+    }
+    return num;
 }
 
 export function applyLayoutSettings() {
