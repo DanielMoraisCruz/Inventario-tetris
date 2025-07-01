@@ -151,6 +151,18 @@ body {
     margin-bottom: 12px;
 }
 
+#logout-btn {
+    margin-left: 12px;
+    background: #fa5252;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    display: none;
+}
+
 #login-screen input {
     font-size: 1.1em;
     margin-bottom: 7px;
