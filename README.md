@@ -75,6 +75,14 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
    ```
 3. Abra o arquivo `index.html` em seu navegador ou sirva a pasta com qualquer servidor estático.
 
+## 📑 users.json
+O repositório inclui um arquivo `users.json` com um exemplo de usuários, senhas (hash) e perguntas secretas. Para carregar esses dados no navegador:
+
+```javascript
+fetch('users.json')
+  .then(r => r.json())
+  .then(data => localStorage.setItem('tetris-users', JSON.stringify(data)));
+```
 ---
 
 ## 🌐 Acesse Online
@@ -162,12 +170,15 @@ git clone https://github.com/your-username/inventario-tetris.git
 cd inventario-tetris
 ```
 
-npm install
+Open `index.html` in your browser or serve the folder with any static server.
 
-export MASTER_PASSWORD_HASH="<your-hash>"
-node server.js
+The repository also provides a sample `users.json` file containing hashed passwords and secret questions. To load it:
 
-Open `http://localhost:3000` in your browser.
+```javascript
+fetch('users.json')
+  .then(r => r.json())
+  .then(data => localStorage.setItem('tetris-users', JSON.stringify(data)));
+```
 
 ---
 
