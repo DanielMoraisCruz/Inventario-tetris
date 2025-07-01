@@ -535,25 +535,13 @@ function createItemImageElement(item, width, height, isGhost = false) {
     img.src = item.img;
     img.alt = item.nome;
     img.className = 'grid-item-img';
-    img.style.position = 'absolute';
-    img.style.left = '0';
-    img.style.top = '0';
-    img.style.objectFit = 'contain';
-    img.style.pointerEvents = 'none';
-    img.style.zIndex = '10';
-    img.style.transition = 'transform 0.2s';
-    if (isGhost) {
-        img.style.width = '100%';
-        img.style.height = '100%';
-        if (previewRotation) {
-            img.style.transform = 'rotate(90deg)';
-        }
-    } else {
-        img.style.width = ((CELL_SIZE + CELL_GAP) * width - CELL_GAP) + 'px';
-        img.style.height = ((CELL_SIZE + CELL_GAP) * height - CELL_GAP) + 'px';
+    if (!isGhost) {
+        img.classList.add(`w${width}`, `h${height}`);
         if (item.rotacionado) {
-            img.style.transform = 'rotate(90deg)';
+            img.classList.add('rotacionado');
         }
+    } else if (previewRotation) {
+        img.classList.add('rotacionado');
     }
     return img;
 }
