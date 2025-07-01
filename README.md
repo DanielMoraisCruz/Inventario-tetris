@@ -73,20 +73,16 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
    ```bash
    cd inventario-tetris
    ```
-3. Instale as dependências:
+3. Abra o arquivo `index.html` em seu navegador ou sirva a pasta com qualquer servidor estático.
 
-   ```bash
-   npm install
-   ```
+## 📑 users.json
+O repositório inclui um arquivo `users.json` com um exemplo de usuários, senhas (hash) e perguntas secretas. Para carregar esses dados no navegador:
 
-4. Defina a variável de ambiente `MASTER_PASSWORD_HASH` com o hash SHA-256 da senha mestre e inicie o servidor:
-
-   ```bash
-   export MASTER_PASSWORD_HASH="<seu-hash>"
-   node server.js
-   ```
-
-5. Acesse `http://localhost:3000` no navegador.
+```javascript
+fetch('users.json')
+  .then(r => r.json())
+  .then(data => localStorage.setItem('tetris-users', JSON.stringify(data)));
+```
 
 ---
 
@@ -175,12 +171,15 @@ git clone https://github.com/your-username/inventario-tetris.git
 cd inventario-tetris
 ```
 
-npm install
+Open `index.html` in your browser or serve the folder with any static server.
 
-export MASTER_PASSWORD_HASH="<your-hash>"
-node server.js
+The repository also provides a sample `users.json` file containing hashed passwords and secret questions. To load it:
 
-Open `http://localhost:3000` in your browser.
+```javascript
+fetch('users.json')
+  .then(r => r.json())
+  .then(data => localStorage.setItem('tetris-users', JSON.stringify(data)));
+```
 
 ---
 

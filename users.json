@@ -1,0 +1,14 @@
+{
+  "admin": {
+    "hash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "isMaster": true,
+    "pergunta": "Chave mestra?",
+    "respostaHash": "28f5ed85c39088d94b9716dad76a0008e024970c3a7e693e0266f15ebf047a72"
+  },
+  "jogador": {
+    "hash": "e41abfd6daf8ad3289f41e5ed0cfe8f5c705dbb40531efdf63e110118b7594f2",
+    "isMaster": false,
+    "pergunta": "Qual sua cor favorita?",
+    "respostaHash": "2e34dcfe912ebbc9b4ed05b0bace272db605cb542084a72875d38e0db92af808"
+  }
+}
