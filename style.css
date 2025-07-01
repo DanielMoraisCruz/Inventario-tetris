@@ -2,8 +2,8 @@
 :root {
     --cols: 10;
     --rows: 6;
-    --cell-size: 40px;
-    --cell-gap: 3px;
+    --cell-size: 2.5rem;
+    --cell-gap: 0.1875rem;
 }
 
 body {
@@ -14,19 +14,19 @@ body {
 
 #inventory {
     display: grid;
-    grid-template-columns: repeat(var(--cols), var(--cell-size));
+    grid-template-columns: repeat(var(--cols), 1fr);
     grid-template-rows: repeat(var(--rows), var(--cell-size));
     gap: var(--cell-gap);
     background: #333;
     padding: 10px;
     margin-bottom: 20px;
-    width: fit-content;
+    width: calc(var(--cols) * var(--cell-size) + (var(--cols) - 1) * var(--cell-gap));
     max-width: 100%;
 }
 
 .cell {
-    width: var(--cell-size);
-    height: var(--cell-size);
+    width: 100%;
+    height: 100%;
     background: #eee;
     border: 1px solid #ccc;
     box-sizing: border-box;
@@ -107,8 +107,8 @@ body {
 }
 
 .item-img {
-    width: 28px;
-    height: 28px;
+    width: 1.75rem;
+    height: 1.75rem;
     object-fit: cover;
     margin-right: 6px;
     vertical-align: middle;
@@ -158,7 +158,7 @@ body {
 
 @media (max-width: 600px) {
     :root {
-        --cell-size: 30px;
+        --cell-size: 1.875rem;
     }
     #item-form {
         max-width: 100%;
