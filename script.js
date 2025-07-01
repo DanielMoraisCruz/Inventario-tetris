@@ -25,13 +25,27 @@ let selectedItemId = null;
 // LOGIN variables
 let isMaster = false;
 let userName = "";
-const MASTER_PASSWORD_HASH = "1b0b625e1561b25ff1ccaae8a1afa0d8ba4c15eaa2e95c477de76d64d3e43d3b"; // sha256 da senha
+let masterPasswordHash = null; // carregado do backend
 
 async function sha256(str) {
     const buf = new TextEncoder().encode(str);
     const hashBuffer = await crypto.subtle.digest('SHA-256', buf);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function getMasterHash() {
+    if (masterPasswordHash !== null) return masterPasswordHash;
+    try {
+        const res = await fetch('/master-hash');
+        if (!res.ok) throw new Error('failed');
+        const data = await res.json();
+        masterPasswordHash = data.hash || '';
+    } catch (e) {
+        console.error('Erro ao obter hash da senha mestre');
+        masterPasswordHash = '';
+    }
+    return masterPasswordHash;
 }
 
 // -------- Persistência Local --------
@@ -97,15 +111,18 @@ loginBtn.onclick = async () => {
         return;
     }
     const hashed = await sha256(pass);
-    if (hashed === MASTER_PASSWORD_HASH) {
+    const masterHash = await getMasterHash();
+    if (hashed === masterHash) {
         isMaster = true;
         userName = user;
+        localStorage.setItem('session', JSON.stringify({ userName, isMaster }));
         loginScreen.style.display = 'none';
         form.style.display = 'block';
         userWelcome.textContent = "Olá, " + user + " (Mestre)";
     } else if (pass === "") {
         isMaster = false;
         userName = user;
+        localStorage.setItem('session', JSON.stringify({ userName, isMaster }));
         loginScreen.style.display = 'none';
         form.style.display = 'none';
         userWelcome.textContent = "Olá, " + user;
@@ -116,6 +133,25 @@ loginBtn.onclick = async () => {
 
 // Sempre oculta o form até login
 window.addEventListener('DOMContentLoaded', function() {
+    const session = localStorage.getItem('session');
+    if (session) {
+        try {
+            const data = JSON.parse(session);
+            userName = data.userName;
+            isMaster = data.isMaster;
+            loginScreen.style.display = 'none';
+            if (isMaster) {
+                form.style.display = 'block';
+                userWelcome.textContent = "Olá, " + userName + " (Mestre)";
+            } else {
+                form.style.display = 'none';
+                userWelcome.textContent = "Olá, " + userName;
+            }
+            return;
+        } catch (e) {
+            console.warn('Sessão inválida');
+        }
+    }
     form.style.display = 'none';
     loginScreen.style.display = 'flex';
 });
