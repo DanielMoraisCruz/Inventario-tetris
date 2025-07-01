@@ -1,6 +1,6 @@
 import { inventory, itemList, clearGridSelection, removeItemFromGrid, clearCells, canPlace, placeItem, createItemImageElement, returnItemToPanel, removeItemFromPanel, getInventoryState, setInventoryState, updateItemList } from './inventory.js';
 import { saveInventory } from './storage.js';
-import { ROWS, COLS, CELL_SIZE, CELL_GAP } from './constants.js';
+import { ROWS, COLS, CELL_GAP, getCellSize } from './constants.js';
 
 const dragGhost = document.getElementById('drag-ghost');
 
@@ -127,7 +127,7 @@ function computeGridPosition(pageX, pageY) {
     const invRect = inventory.getBoundingClientRect();
     const relX = pageX - invRect.left;
     const relY = pageY - invRect.top;
-    const total = CELL_SIZE + CELL_GAP;
+    const total = getCellSize() + CELL_GAP;
     let gridX = Math.floor(relX / total);
     let gridY = Math.floor(relY / total);
     if (gridX < 0) gridX = 0;
@@ -146,7 +146,7 @@ function snapGhostToGrid(pageX, pageY) {
 function showGhostOnGrid(gridX, gridY) {
     const valid = canPlace(gridX, gridY, currentPreviewSize.width, currentPreviewSize.height);
     dragGhost.innerHTML = '';
-    const total = CELL_SIZE + CELL_GAP;
+    const total = getCellSize() + CELL_GAP;
     dragGhost.style.width = (currentPreviewSize.width * total - CELL_GAP) + 'px';
     dragGhost.style.height = (currentPreviewSize.height * total - CELL_GAP) + 'px';
     dragGhost.style.display = 'block';
