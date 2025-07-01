@@ -73,9 +73,20 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
    ```bash
    cd inventario-tetris
    ```
-3. Abra o `index.html` no navegador:
+3. Instale as dependências:
 
-   * Você pode clicar duas vezes ou usar uma extensão como Live Server no VS Code.
+   ```bash
+   npm install
+   ```
+
+4. Defina a variável de ambiente `MASTER_PASSWORD_HASH` com o hash SHA-256 da senha mestre e inicie o servidor:
+
+   ```bash
+   export MASTER_PASSWORD_HASH="<seu-hash>"
+   node server.js
+   ```
+
+5. Acesse `http://localhost:3000` no navegador.
 
 ---
 
@@ -164,8 +175,12 @@ git clone https://github.com/your-username/inventario-tetris.git
 cd inventario-tetris
 ```
 
-Then open `index.html` in your browser.
-You can use **Live Server** (VS Code) or open manually.
+npm install
+
+export MASTER_PASSWORD_HASH="<your-hash>"
+node server.js
+
+Open `http://localhost:3000` in your browser.
 
 ---
 
