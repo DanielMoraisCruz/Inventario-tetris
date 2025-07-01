@@ -118,6 +118,25 @@ body {
     border-radius: 7px;
     transition: transform 0.2s;
 }
+.rotacionado {
+    transform: rotate(90deg);
+}
+.w1 { width: 40px; }
+.w2 { width: 83px; }
+.w3 { width: 126px; }
+.w4 { width: 169px; }
+.w5 { width: 212px; }
+.w6 { width: 255px; }
+.w7 { width: 298px; }
+.w8 { width: 341px; }
+.w9 { width: 384px; }
+.w10 { width: 427px; }
+.h1 { height: 40px; }
+.h2 { height: 83px; }
+.h3 { height: 126px; }
+.h4 { height: 169px; }
+.h5 { height: 212px; }
+.h6 { height: 255px; }
 .cell.has-img {
     position: relative;
     overflow: visible;
