@@ -1,5 +1,6 @@
 import { inventory, itemList, clearGridSelection, removeItemFromGrid, clearCells, canPlace, placeItem, createItemImageElement, returnItemToPanel, removeItemFromPanel, getInventoryState, setInventoryState, updateItemList } from './inventory.js';
 import { saveInventory } from './storage.js';
+import { ROWS, COLS, CELL_SIZE, CELL_GAP } from './constants.js';
 
 const dragGhost = document.getElementById('drag-ghost');
 
@@ -79,7 +80,7 @@ function onInventoryClick(e) {
     if (placed) {
         for (let dy = 0; dy < placed.height; dy++) {
             for (let dx = 0; dx < placed.width; dx++) {
-                const index = (placed.y + dy) * 10 + (placed.x + dx); // COLS = 10
+                const index = (placed.y + dy) * COLS + (placed.x + dx);
                 const c = inventory.children[index];
                 c.classList.add('selected');
             }
@@ -126,12 +127,13 @@ function computeGridPosition(pageX, pageY) {
     const invRect = inventory.getBoundingClientRect();
     const relX = pageX - invRect.left;
     const relY = pageY - invRect.top;
-    let gridX = Math.floor(relX / 43); // CELL_SIZE + CELL_GAP
-    let gridY = Math.floor(relY / 43);
+    const total = CELL_SIZE + CELL_GAP;
+    let gridX = Math.floor(relX / total);
+    let gridY = Math.floor(relY / total);
     if (gridX < 0) gridX = 0;
     if (gridY < 0) gridY = 0;
-    if (gridX > 10 - currentPreviewSize.width) gridX = 10 - currentPreviewSize.width; // COLS
-    if (gridY > 6 - currentPreviewSize.height) gridY = 6 - currentPreviewSize.height; // ROWS
+    if (gridX > COLS - currentPreviewSize.width) gridX = COLS - currentPreviewSize.width;
+    if (gridY > ROWS - currentPreviewSize.height) gridY = ROWS - currentPreviewSize.height;
     return { gridX, gridY };
 }
 
@@ -144,8 +146,9 @@ function snapGhostToGrid(pageX, pageY) {
 function showGhostOnGrid(gridX, gridY) {
     const valid = canPlace(gridX, gridY, currentPreviewSize.width, currentPreviewSize.height);
     dragGhost.innerHTML = '';
-    dragGhost.style.width = (currentPreviewSize.width * 43 - 3) + 'px';
-    dragGhost.style.height = (currentPreviewSize.height * 43 - 3) + 'px';
+    const total = CELL_SIZE + CELL_GAP;
+    dragGhost.style.width = (currentPreviewSize.width * total - CELL_GAP) + 'px';
+    dragGhost.style.height = (currentPreviewSize.height * total - CELL_GAP) + 'px';
     dragGhost.style.display = 'block';
 
     dragGhost.className = valid ? '' : 'ghost-invalid';
@@ -160,14 +163,14 @@ function showGhostOnGrid(gridX, gridY) {
         dragGhost.appendChild(img);
     }
     const invRect = inventory.getBoundingClientRect();
-    dragGhost.style.left = (invRect.left + gridX * 43) + 'px';
-    dragGhost.style.top = (invRect.top + gridY * 43) + 'px';
+    dragGhost.style.left = (invRect.left + gridX * total) + 'px';
+    dragGhost.style.top = (invRect.top + gridY * total) + 'px';
 
     removePreview();
     if (valid) {
         for (let dy = 0; dy < currentPreviewSize.height; dy++) {
             for (let dx = 0; dx < currentPreviewSize.width; dx++) {
-                const index = (gridY + dy) * 10 + (gridX + dx);
+                const index = (gridY + dy) * COLS + (gridX + dx);
                 const c = inventory.children[index];
                 if (c) c.classList.add('preview');
             }
