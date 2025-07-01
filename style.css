@@ -200,6 +200,18 @@ body {
     display: none;
 }
 
+#reset-btn {
+    margin-left: 12px;
+    background: #ffa94d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    display: none;
+}
+
 #login-screen input {
     font-size: 1.1em;
     margin-bottom: 7px;
