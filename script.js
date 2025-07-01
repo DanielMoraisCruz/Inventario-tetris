@@ -7,6 +7,7 @@ const inventory = document.getElementById('inventory');
 const itemList = document.getElementById('item-list');
 const form = document.getElementById('item-form');
 const dragGhost = document.getElementById('drag-ghost');
+const itemsPanel = document.getElementById('items');
 
 let itemsData = [
     { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null },
@@ -97,6 +98,7 @@ const loginUser = document.getElementById('login-user');
 const loginPass = document.getElementById('login-pass');
 const loginErr = document.getElementById('login-err');
 const userWelcome = document.getElementById('user-welcome');
+const logoutBtn = document.getElementById('logout-btn');
 
 loginBtn.onclick = async () => {
     const user = loginUser.value.trim();
@@ -114,6 +116,10 @@ loginBtn.onclick = async () => {
         loginScreen.style.display = 'none';
         form.style.display = 'block';
         userWelcome.textContent = "Olá, " + user + " (Mestre)";
+        inventory.style.display = '';
+        itemsPanel.style.display = '';
+        userWelcome.style.display = '';
+        logoutBtn.style.display = 'inline-block';
     } else if (pass === "") {
         isMaster = false;
         userName = user;
@@ -121,6 +127,10 @@ loginBtn.onclick = async () => {
         loginScreen.style.display = 'none';
         form.style.display = 'none';
         userWelcome.textContent = "Olá, " + user;
+        inventory.style.display = '';
+        itemsPanel.style.display = '';
+        userWelcome.style.display = '';
+        logoutBtn.style.display = 'inline-block';
     } else {
         loginErr.textContent = "Senha incorreta!";
     }
@@ -142,6 +152,10 @@ window.addEventListener('DOMContentLoaded', function() {
                 form.style.display = 'none';
                 userWelcome.textContent = "Olá, " + userName;
             }
+            inventory.style.display = '';
+            itemsPanel.style.display = '';
+            userWelcome.style.display = '';
+            logoutBtn.style.display = 'inline-block';
             return;
         } catch (e) {
             console.warn('Sessão inválida');
@@ -149,6 +163,25 @@ window.addEventListener('DOMContentLoaded', function() {
     }
     form.style.display = 'none';
     loginScreen.style.display = 'flex';
+    inventory.style.display = 'none';
+    itemsPanel.style.display = 'none';
+    userWelcome.style.display = 'none';
+    logoutBtn.style.display = 'none';
+});
+
+logoutBtn.addEventListener('click', () => {
+    userName = '';
+    isMaster = false;
+    localStorage.removeItem('session');
+    loginUser.value = '';
+    loginPass.value = '';
+    form.style.display = 'none';
+    loginScreen.style.display = 'flex';
+    inventory.style.display = 'none';
+    itemsPanel.style.display = 'none';
+    userWelcome.textContent = '';
+    userWelcome.style.display = 'none';
+    logoutBtn.style.display = 'none';
 });
 
 // ----------- INVENTÁRIO ---------------
