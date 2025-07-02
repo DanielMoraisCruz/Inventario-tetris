@@ -193,8 +193,13 @@
     font-weight: bold;
 }
 
+#side-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
 #logout-btn {
-    margin-left: 12px;
     background: #fa5252;
     color: white;
     border: none;
@@ -206,7 +211,6 @@
 }
 
 #reset-btn {
-    margin-left: 12px;
     background: #ffa94d;
     color: white;
     border: none;
