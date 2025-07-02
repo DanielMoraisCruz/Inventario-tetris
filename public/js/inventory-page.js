@@ -69,6 +69,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (menuBtn) {
         menuBtn.addEventListener('click', () => {
             itemsPanel.classList.toggle('open');
+            menuBtn.classList.toggle('open');
         });
     }
 });
