@@ -95,7 +95,7 @@ considerados jogadores.
 ## 🌐 Acesse Online
 
 O projeto está hospedado em:
-**[https://seu-usuario.github.io/inventario-tetris](https://seu-usuario.github.io/inventario-tetris)**
+[https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html](https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html)
 
 > *(substituir pelo link real quando publicado)*
 
