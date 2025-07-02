@@ -10,5 +10,8 @@ window.addEventListener('DOMContentLoaded', () => {
     initInventory();
     registerPanelDragHandlers();
     initDragDrop();
-    form.addEventListener('submit', handleItemSubmit);
+    form.addEventListener('submit', async (e) => {
+        await handleItemSubmit(e);
+        registerPanelDragHandlers();
+    });
 });
