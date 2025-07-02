@@ -5,16 +5,21 @@ function generateId() {
     return '_' + Math.random().toString(36).substr(2, 9);
 }
 
-function defaultItems() {
-    return [
-        { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null },
-        { id: generateId(), nome: 'Lan\u00e7a', width: 1, height: 3, img: null },
-        { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null }
-    ];
+async function fetchDefaultItems() {
+    const res = await fetch('items.json');
+    const data = await res.json();
+    return data.map(it => ({
+        id: generateId(),
+        nome: it.nome,
+        width: it.width,
+        height: it.height,
+        img: null,
+        color: typeof it.color === 'string' ? it.color : '#2b8a3e'
+    }));
 }
 
 function sanitizeItems(items) {
-    if (!Array.isArray(items)) return defaultItems();
+    if (!Array.isArray(items)) return [];
     const valid = [];
     for (const it of items) {
         const width = parseInt(it.width);
@@ -27,10 +32,11 @@ function sanitizeItems(items) {
             nome: it.nome,
             width,
             height,
-            img: it.img || null
+            img: it.img || null,
+            color: typeof it.color === 'string' ? it.color : '#2b8a3e'
         });
     }
-    return valid.length ? valid : defaultItems();
+    return valid;
 }
 
 function sanitizePlaced(items) {
@@ -54,6 +60,7 @@ function sanitizePlaced(items) {
             height,
             rotacionado: !!it.rotacionado,
             img: it.img || null,
+            color: typeof it.color === 'string' ? it.color : '#2b8a3e',
             originalWidth: it.originalWidth ?? width,
             originalHeight: it.originalHeight ?? height
         });
@@ -66,15 +73,17 @@ export function saveInventory(itemsData, placedItems) {
     localStorage.setItem('tetris-inventory', JSON.stringify(data));
 }
 
-export function loadInventory() {
+export async function loadInventory() {
     const raw = localStorage.getItem('tetris-inventory');
     if (!raw) {
-        return { itemsData: defaultItems(), placedItems: [] };
+        const itemsData = await fetchDefaultItems();
+        return { itemsData, placedItems: [] };
     }
     try {
         const obj = JSON.parse(raw);
         if (obj.version !== DATA_VERSION) throw new Error('version mismatch');
-        const itemsData = sanitizeItems(obj.itemsData);
+        let itemsData = sanitizeItems(obj.itemsData);
+        if (!itemsData.length) itemsData = await fetchDefaultItems();
         const placedItems = sanitizePlaced(obj.placedItems);
         return { itemsData, placedItems };
     } catch (e) {
@@ -83,6 +92,7 @@ export function loadInventory() {
         if (typeof alert === 'function') {
             alert('Dados do invent\u00e1rio estavam corrompidos e foram reiniciados.');
         }
-        return { itemsData: defaultItems(), placedItems: [] };
+        const itemsData = await fetchDefaultItems();
+        return { itemsData, placedItems: [] };
     }
 }
