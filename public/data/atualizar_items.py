@@ -3,7 +3,8 @@ import json
 import os
 
 # Caminhos dos arquivos
-caminho_csv = '../../data/CSV-itens.csv'
+# Usa o diretório do próprio script para localizar o CSV corretamente
+caminho_csv = os.path.join(os.path.dirname(__file__), 'CSV-itens.csv')
 caminho_json = 'items.json'  # já está na mesma pasta do scrip
 
 
