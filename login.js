@@ -63,7 +63,7 @@ export async function redefinirSenha(userName, novaSenha) {
 // ----- Interface de Login -----
 export function setupLogin() {
     const loginScreen = document.getElementById('login-screen');
-    const loginBtn = document.getElementById('login-btn');
+    const loginForm = document.getElementById('login-form');
     const loginUser = document.getElementById('login-user');
     const loginPass = document.getElementById('login-pass');
     const loginErr = document.getElementById('login-err');
@@ -75,7 +75,8 @@ export function setupLogin() {
     const inventory = document.getElementById('inventory');
     const itemsPanel = document.getElementById('items');
 
-    loginBtn.onclick = async () => {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         const user = loginUser.value.trim();
         const pass = loginPass.value;
         loginErr.textContent = '';
@@ -131,7 +132,7 @@ export function setupLogin() {
                 }
             }
         }
-    };
+    });
 
     forgotBtn.addEventListener('click', async () => {
         const user = prompt('Nome de usuário:');
