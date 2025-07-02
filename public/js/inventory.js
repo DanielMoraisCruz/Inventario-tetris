@@ -6,6 +6,7 @@ export const inventory = document.getElementById('inventory');
 export const itemList = document.getElementById('item-list');
 export const form = document.getElementById('item-form');
 export const itemsPanel = document.getElementById('items');
+export const searchInput = document.getElementById('item-search');
 
 let itemsData = [];
 
@@ -42,27 +43,39 @@ function createGrid() {
 }
 
 export function updateItemList() {
+    const query = searchInput ? searchInput.value.toLowerCase() : '';
     itemList.innerHTML = '';
-    itemsData.forEach((item, idx) => {
-        const el = document.createElement('div');
-        el.classList.add('item');
-        el.draggable = true;
-        el.dataset.idx = idx;
-        el.dataset.width = item.width;
-        el.dataset.height = item.height;
-        el.style.borderColor = item.color;
-        if (item.img) {
-            const img = document.createElement('img');
-            img.src = item.img;
-            img.alt = item.nome;
-            img.className = 'item-img';
-            el.appendChild(img);
-        }
-        const span = document.createElement('span');
-        span.textContent = `${item.nome} (${item.width}x${item.height})`;
-        el.appendChild(span);
-        itemList.appendChild(el);
-    });
+    itemsData
+        .filter(it => it.nome.toLowerCase().includes(query))
+        .forEach((item, idx) => {
+            const el = document.createElement('div');
+            el.classList.add('item');
+            el.draggable = true;
+            el.dataset.idx = idx;
+            el.dataset.width = item.width;
+            el.dataset.height = item.height;
+            el.dataset.id = item.id;
+            el.style.setProperty('--w', item.width);
+            el.style.setProperty('--h', item.height);
+            el.style.setProperty('--color', item.color);
+
+            const preview = document.createElement('div');
+            preview.className = 'item-preview';
+            if (item.img) {
+                const img = document.createElement('img');
+                img.src = item.img;
+                img.alt = item.nome;
+                preview.appendChild(img);
+            }
+            el.appendChild(preview);
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'item-name';
+            nameSpan.textContent = item.nome;
+            el.appendChild(nameSpan);
+
+            itemList.appendChild(el);
+        });
     saveInventory(itemsData, placedItems);
 }
 

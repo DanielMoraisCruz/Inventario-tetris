@@ -1,5 +1,5 @@
 import { session } from './login.js';
-import { initInventory, form } from './inventory.js';
+import { initInventory, form, searchInput, updateItemList } from './inventory.js';
 import { handleItemSubmit } from './inventory.js';
 import { initDragDrop, registerPanelDragHandlers } from './dragdrop.js';
 import { applyLayoutSettings } from './constants.js';
@@ -10,6 +10,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const resetBtn = document.getElementById('reset-btn');
     const itemsPanel = document.getElementById('items');
     const inventoryEl = document.getElementById('inventory');
+    const menuBtn = document.getElementById('menu-btn');
 
     const saved = localStorage.getItem('session');
     if (!saved) {
@@ -35,6 +36,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     applyLayoutSettings();
     await initInventory();
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            updateItemList();
+            registerPanelDragHandlers();
+        });
+    }
     registerPanelDragHandlers();
     initDragDrop();
 
@@ -58,4 +65,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         localStorage.removeItem('session');
         window.location.href = 'login.html';
     });
+
+    if (menuBtn) {
+        menuBtn.addEventListener('click', () => {
+            itemsPanel.classList.toggle('open');
+        });
+    }
 });
