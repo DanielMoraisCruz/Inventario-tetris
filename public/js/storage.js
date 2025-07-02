@@ -6,7 +6,7 @@ function generateId() {
 }
 
 async function fetchDefaultItems() {
-    const res = await fetch('items.json');
+    const res = await fetch('data/items.json');
     const data = await res.json();
     return data.map(it => ({
         id: generateId(),
