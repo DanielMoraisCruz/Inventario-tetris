@@ -53,9 +53,17 @@ body {
     margin-top: 20px;
 }
 
+#item-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 .item {
-    display: inline-block;
-    padding: 6px 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
     margin: 0 10px 10px 0;
     background: #ffe066;
     border: 1px solid #fab005;
@@ -191,6 +199,7 @@ body {
 
 #user-welcome {
     margin-bottom: 12px;
+    font-weight: bold;
 }
 
 #logout-btn {
@@ -223,6 +232,11 @@ body {
     padding: 5px;
     border-radius: 5px;
     border: 1px solid #bbb;
+}
+#login-screen label {
+    margin-top: 6px;
+    font-weight: bold;
+    align-self: flex-start;
 }
 #login-screen button {
     font-size: 1.1em;

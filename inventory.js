@@ -7,11 +7,8 @@ export const itemList = document.getElementById('item-list');
 export const form = document.getElementById('item-form');
 export const itemsPanel = document.getElementById('items');
 
-let itemsData = [
-    { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null, color: '#2b8a3e' },
-    { id: generateId(), nome: 'Lança', width: 1, height: 3, img: null, color: '#2b8a3e' },
-    { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null, color: '#2b8a3e' },
-];
+let itemsData = [];
+
 let placedItems = [];
 
 export function getInventoryState() {
@@ -23,9 +20,9 @@ export function setInventoryState(data) {
     placedItems = data.placedItems;
 }
 
-export function initInventory() {
+export async function initInventory() {
     createGrid();
-    const loaded = loadInventory();
+    const loaded = await loadInventory();
     itemsData = loaded.itemsData;
     placedItems = loaded.placedItems;
     updateItemList();

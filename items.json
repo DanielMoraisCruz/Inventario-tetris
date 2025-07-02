@@ -1,0 +1,5 @@
+[
+  {"nome": "Espada", "width": 2, "height": 1, "color": "#2b8a3e"},
+  {"nome": "Lança", "width": 1, "height": 3, "color": "#2b8a3e"},
+  {"nome": "Escudo", "width": 2, "height": 2, "color": "#2b8a3e"}
+]

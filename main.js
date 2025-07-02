@@ -4,10 +4,10 @@ import { handleItemSubmit } from './inventory.js';
 import { initDragDrop, registerPanelDragHandlers } from './dragdrop.js';
 import { applyLayoutSettings } from './constants.js';
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
     applyLayoutSettings();
     setupLogin();
-    initInventory();
+    await initInventory();
     registerPanelDragHandlers();
     initDragDrop();
     form.addEventListener('submit', async (e) => {
