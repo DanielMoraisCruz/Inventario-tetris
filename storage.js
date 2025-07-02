@@ -16,6 +16,7 @@ async function fetchDefaultItems() {
         img: null,
         color: typeof it.color === 'string' ? it.color : '#2b8a3e'
     }));
+}
 
 function defaultItems() {
     return [
