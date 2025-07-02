@@ -73,7 +73,7 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
    ```bash
    cd inventario-tetris
    ```
-3. Abra o arquivo `index.html` em seu navegador ou sirva a pasta com qualquer servidor estático.
+3. Abra o arquivo `login.html` em seu navegador ou sirva a pasta com qualquer servidor estático.
 
 ## 📑 users.json
 O repositório inclui um arquivo `users.json` com um exemplo de usuários, senhas (hash) e perguntas secretas. Para carregar esses dados no navegador:
@@ -177,7 +177,7 @@ git clone https://github.com/your-username/inventario-tetris.git
 cd inventario-tetris
 ```
 
-Open `index.html` in your browser or serve the folder with any static server.
+Open `login.html` in your browser or serve the folder with any static server.
 
 The repository also provides a sample `users.json` file containing hashed passwords and secret questions. To load it:
 
