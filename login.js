@@ -165,31 +165,30 @@ export function setupLogin() {
         location.reload();
     });
 
-    window.addEventListener('DOMContentLoaded', function() {
-        const saved = localStorage.getItem('session');
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                session.userName = data.userName;
-                session.isMaster = data.isMaster;
-                loginScreen.style.display = 'none';
-                if (session.isMaster) {
-                    form.style.display = 'block';
-                    userWelcome.textContent = 'Olá, ' + session.userName + ' (Mestre)';
-                } else {
-                    form.style.display = 'none';
-                    userWelcome.textContent = 'Olá, ' + session.userName;
-                }
-                inventory.style.display = '';
-                itemsPanel.style.display = '';
-                userWelcome.style.display = '';
-                logoutBtn.style.display = 'inline-block';
-                resetBtn.style.display = 'inline-block';
-                return;
-            } catch (e) {
-                console.warn('Sessão inválida');
+    // Inicializa a interface de acordo com a sessão salva
+    const saved = localStorage.getItem('session');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            session.userName = data.userName;
+            session.isMaster = data.isMaster;
+            loginScreen.style.display = 'none';
+            if (session.isMaster) {
+                form.style.display = 'block';
+                userWelcome.textContent = 'Olá, ' + session.userName + ' (Mestre)';
+            } else {
+                form.style.display = 'none';
+                userWelcome.textContent = 'Olá, ' + session.userName;
             }
+            inventory.style.display = '';
+            itemsPanel.style.display = '';
+            userWelcome.style.display = '';
+            logoutBtn.style.display = 'inline-block';
+            resetBtn.style.display = 'inline-block';
+        } catch (e) {
+            console.warn('Sessão inválida');
         }
+    } else {
         form.style.display = 'none';
         loginScreen.style.display = 'flex';
         inventory.style.display = 'none';
@@ -197,7 +196,7 @@ export function setupLogin() {
         userWelcome.style.display = 'none';
         logoutBtn.style.display = 'none';
         resetBtn.style.display = 'none';
-    });
+    }
 
     logoutBtn.addEventListener('click', () => {
         session.userName = '';
