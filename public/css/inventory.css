@@ -233,6 +233,11 @@
     cursor: pointer;
     font-size: 1.2rem;
     z-index: 100;
+    transition: transform 0.3s ease;
+}
+
+#menu-btn.open {
+    transform: translateX(260px);
 }
 
 #item-search {
