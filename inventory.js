@@ -7,8 +7,8 @@ export const itemList = document.getElementById('item-list');
 export const form = document.getElementById('item-form');
 export const itemsPanel = document.getElementById('items');
 
-// Será preenchido na inicialização a partir do arquivo JSON de itens
 let itemsData = [];
+
 let placedItems = [];
 
 export function getInventoryState() {

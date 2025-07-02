@@ -16,6 +16,13 @@ async function fetchDefaultItems() {
         img: null,
         color: typeof it.color === 'string' ? it.color : '#2b8a3e'
     }));
+
+function defaultItems() {
+    return [
+        { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null, color: '#2b8a3e' },
+        { id: generateId(), nome: 'Lan\u00e7a', width: 1, height: 3, img: null, color: '#2b8a3e' },
+        { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null, color: '#2b8a3e' }
+    ];
 }
 
 function sanitizeItems(items) {
