@@ -8,9 +8,9 @@ export const form = document.getElementById('item-form');
 export const itemsPanel = document.getElementById('items');
 
 let itemsData = [
-    { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null },
-    { id: generateId(), nome: 'Lança', width: 1, height: 3, img: null },
-    { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null },
+    { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null, color: '#2b8a3e' },
+    { id: generateId(), nome: 'Lança', width: 1, height: 3, img: null, color: '#2b8a3e' },
+    { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null, color: '#2b8a3e' },
 ];
 let placedItems = [];
 
@@ -53,6 +53,7 @@ export function updateItemList() {
         el.dataset.idx = idx;
         el.dataset.width = item.width;
         el.dataset.height = item.height;
+        el.style.borderColor = item.color;
         if (item.img) {
             const img = document.createElement('img');
             img.src = item.img;
@@ -73,8 +74,9 @@ export function getItemFormData() {
     const width = parseInt(document.getElementById('largura').value);
     const height = parseInt(document.getElementById('altura').value);
     const imgInput = document.getElementById('imagem');
+    const color = document.getElementById('cor').value || '#2b8a3e';
     if (!nome || width < 1 || height < 1 || width > COLS || height > ROWS) return null;
-    return { nome, width, height, imgInput };
+    return { nome, width, height, imgInput, color };
 }
 
 export function addNewItem(data) {
@@ -83,7 +85,8 @@ export function addNewItem(data) {
         nome: data.nome,
         width: data.width,
         height: data.height,
-        img: data.img
+        img: data.img,
+        color: data.color
     });
     updateItemList();
     saveInventory(itemsData, placedItems);
@@ -101,7 +104,8 @@ export function returnItemToPanel(item) {
         nome: item.nome,
         width: item.originalWidth ?? item.width,
         height: item.originalHeight ?? item.height,
-        img: item.img || null
+        img: item.img || null,
+        color: item.color
     });
     updateItemList();
     saveInventory(itemsData, placedItems);
@@ -185,7 +189,14 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
             cell.classList.add('placed');
             cell.dataset.itemid = item.id;
             cell.title = item.nome || '';
-            if (dx === 0 && dy === 0) {
+            if (!item.img) {
+                cell.style.background = item.color;
+                cell.style.border = `2px solid ${item.color}`;
+                if (dx > 0) cell.style.borderLeft = '0';
+                if (dy > 0) cell.style.borderTop = '0';
+                if (dx < w - 1) cell.style.borderRight = '0';
+                if (dy < h - 1) cell.style.borderBottom = '0';
+            } else if (dx === 0 && dy === 0) {
                 removeGridImage(cell);
             }
         }
@@ -207,6 +218,7 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
             height: h,
             rotacionado: item.rotacionado,
             img: item.img || null,
+            color: item.color,
             originalWidth: item.originalWidth ?? (item.rotacionado ? item.height : item.width),
             originalHeight: item.originalHeight ?? (item.rotacionado ? item.width : item.height)
         });
@@ -219,6 +231,7 @@ export function createItemImageElement(item, width, height, isGhost = false) {
     img.src = item.img;
     img.alt = item.nome;
     img.className = 'grid-item-img';
+    img.style.border = `2px solid ${item.color}`;
     if (!isGhost) {
         img.classList.add(`w${width}`, `h${height}`);
         if (item.rotacionado) {
@@ -240,6 +253,12 @@ export function resetCell(cell) {
     cell.classList.remove('placed', 'selected');
     delete cell.dataset.itemid;
     cell.title = '';
+    cell.style.border = '';
+    cell.style.borderLeft = '';
+    cell.style.borderTop = '';
+    cell.style.borderRight = '';
+    cell.style.borderBottom = '';
+    cell.style.background = '';
     removeGridImage(cell);
 }
 

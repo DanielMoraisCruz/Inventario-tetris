@@ -7,9 +7,9 @@ function generateId() {
 
 function defaultItems() {
     return [
-        { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null },
-        { id: generateId(), nome: 'Lan\u00e7a', width: 1, height: 3, img: null },
-        { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null }
+        { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null, color: '#2b8a3e' },
+        { id: generateId(), nome: 'Lan\u00e7a', width: 1, height: 3, img: null, color: '#2b8a3e' },
+        { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null, color: '#2b8a3e' }
     ];
 }
 
@@ -27,7 +27,8 @@ function sanitizeItems(items) {
             nome: it.nome,
             width,
             height,
-            img: it.img || null
+            img: it.img || null,
+            color: typeof it.color === 'string' ? it.color : '#2b8a3e'
         });
     }
     return valid.length ? valid : defaultItems();
@@ -54,6 +55,7 @@ function sanitizePlaced(items) {
             height,
             rotacionado: !!it.rotacionado,
             img: it.img || null,
+            color: typeof it.color === 'string' ? it.color : '#2b8a3e',
             originalWidth: it.originalWidth ?? width,
             originalHeight: it.originalHeight ?? height
         });
