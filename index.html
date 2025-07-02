@@ -7,14 +7,18 @@
 </head>
 <body>
     <div id="login-screen">
-        <h2>Login</h2>
-        <label for="login-user">Nome</label>
-        <input id="login-user" type="text" placeholder="Nome">
-        <label for="login-pass">Senha</label>
-        <input id="login-pass" type="password" placeholder="Senha">
-        <button id="login-btn">Entrar</button>
-        <a href="#" id="forgot-pass">Esqueci minha senha</a>
-        <div id="login-err"></div>
+        <div id="login-box">
+            <form id="login-form">
+                <h2>Login</h2>
+                <label for="login-user">Nome</label>
+                <input id="login-user" type="text" placeholder="Nome">
+                <label for="login-pass">Senha</label>
+                <input id="login-pass" type="password" placeholder="Senha">
+                <button id="login-btn" type="submit">Entrar</button>
+                <a href="#" id="forgot-pass">Esqueci minha senha</a>
+                <div id="login-err"></div>
+            </form>
+        </div>
     </div>
     <div id="user-welcome"></div>
     <button id="logout-btn">Sair</button>
