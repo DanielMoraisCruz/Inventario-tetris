@@ -36,6 +36,7 @@
     left: 0;
     width: 260px;
     height: 100vh;
+    padding: 40px;
     background: #fff;
     box-shadow: 2px 0 8px rgba(0,0,0,0.2);
     overflow-y: auto;
@@ -236,8 +237,7 @@
 }
 
 #menu-btn.open {
-    transform: translateX(260px);
-    transform: translateX(290px);
+    transform: translateX(331px);
 }
 
 #item-search {
