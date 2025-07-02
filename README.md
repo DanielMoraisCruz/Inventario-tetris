@@ -74,6 +74,12 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
    cd inventario-tetris
    ```
 3. Abra o arquivo `public/login.html` em seu navegador ou sirva a pasta `public` com qualquer servidor estático.
+4. Para iniciar o servidor Express, execute:
+
+   ```bash
+   npm install
+   npm start
+   ```
 
 ## 📑 users.json
 O repositório inclui um arquivo `users.json` com um exemplo de usuários, senhas (hash) e perguntas secretas. Para carregar esses dados no navegador:
@@ -178,6 +184,12 @@ cd inventario-tetris
 ```
 
 Open `public/login.html` in your browser or serve the `public` folder with any static server.
+To start the Express server instead, run:
+
+```bash
+npm install
+npm start
+```
 
 The repository also provides a sample `users.json` file containing hashed passwords and secret questions. To load it:
 

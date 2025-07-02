@@ -2,9 +2,10 @@
   "name": "inventario-tetris",
   "version": "1.0.0",
   "description": "Um sistema visual e interativo de gerenciamento de inventário inspirado em Tetris, voltado para mesas de RPG.",
-  "main": "script.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
