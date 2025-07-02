@@ -26,7 +26,7 @@
 }
 
 .preview {
-    background: #ffe066 !important;
+    background: #bbbbbb !important;
     opacity: 0.7;
 }
 
@@ -221,7 +221,7 @@
 #menu-btn {
     position: fixed;
     top: 10px;
-    right: 10px;
+    left: 10px;
     background: #ffe066;
     border: 1px solid #fab005;
     border-radius: 6px;
