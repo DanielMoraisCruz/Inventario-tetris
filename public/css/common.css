@@ -6,6 +6,10 @@
     --cell-gap: 0.1875rem;
 }
 
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: 'Times New Roman', sans-serif;
     margin: 1;
