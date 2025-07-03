@@ -1,30 +1,198 @@
 [
-  {"nome": "Espada", "width": 2, "height": 1, "color": "#0b00fd"},
-  {"nome": "Lança", "width": 1, "height": 3, "color": "#2b8a3e"},
-  {"nome": "Escudo", "width": 2, "height": 2, "color": "#2b8a3e"},
-  {"nome": "Machado", "width": 2, "height": 1, "color": "#fd0000"},
-  {"nome": "Arco", "width": 1, "height": 2, "color": "#fd8a00"},
-  {"nome": "Besta", "width": 2, "height": 1, "color": "#fd8a00"},
-  {"nome": "Adaga", "width": 1, "height": 1, "color": "#fd00fd"},
-  {"nome": "Cajado", "width": 1, "height": 3, "color": "#00fdfd"},
-  {"nome": "Varinha", "width": 1, "height": 2, "color": "#00fdfd"},
-  {"nome": "Livro", "width": 2, "height": 2, "color": "#8a00fd"},
-  {"nome": "Poção", "width": 1, "height": 1, "color": "#fd00fd"},
-  {"nome": "Chave", "width": 1, "height": 1, "color": "#8a8a8a"},
-  {"nome": "Mapa", "width": 2, "height": 1, "color": "#8a8a8a"},
-  {"nome": "Lanterna", "width": 1, "height": 2, "color": "#fd8a8a"},
-  {"nome": "Bomba", "width": 1, "height": 1, "color": "#fd0000"},
-  {"nome": "Rede", "width": 2, "height": 1, "color": "#00fd00"},
-  {"nome": "Corda", "width": 1, "height": 3, "color": "#8a8a00"},
-  {"nome": "Escada", "width": 2, "height": 2, "color": "#8a8a00"},
-  {"nome": "Ferramenta", "width": 1, "height": 1, "color": "#00fd8a"},
-  {"nome": "Semente", "width": 1, "height": 1, "color": "#8a00fd"},
-  {"nome": "Fruta", "width": 1, "height": 1, "color": "#fd8a00"},
-  {"nome": "Bebida", "width": 1, "height": 1, "color": "#00fdfd"},
-  {"nome": "Comida", "width": 2, "height": 2, "color": "#fd8a8a"},
-  {"nome": "Vestimenta", "width": 2, "height": 2, "color": "#8a00fd"},
-  {"nome": "Anel", "width": 1, "height": 1, "color": "#fd00fd"},
-  {"nome": "Colar", "width": 1, "height": 1, "color": "#00fdfd"},
-  {"nome": "Bracelete", "width": 1, "height": 1, "color": "#8a8a8a"},
-  {"nome": "Broche", "width": 1, "height": 1, "color": "#fd8a00"}
+  {
+    "nome": "Espada",
+    "width": 2,
+    "height": 1,
+    "color": "#0b00fd",
+    "img": ""
+  },
+  {
+    "nome": "Lança",
+    "width": 1,
+    "height": 3,
+    "color": "#2b8a3e",
+    "img": ""
+  },
+  {
+    "nome": "Escudo",
+    "width": 2,
+    "height": 2,
+    "color": "#2b8a3e",
+    "img": ""
+  },
+  {
+    "nome": "Machado",
+    "width": 2,
+    "height": 1,
+    "color": "#fd0000",
+    "img": ""
+  },
+  {
+    "nome": "Arco",
+    "width": 1,
+    "height": 2,
+    "color": "#fd8a00",
+    "img": ""
+  },
+  {
+    "nome": "Besta",
+    "width": 2,
+    "height": 1,
+    "color": "#fd8a00",
+    "img": ""
+  },
+  {
+    "nome": "Adaga",
+    "width": 1,
+    "height": 1,
+    "color": "#fd00fd",
+    "img": ""
+  },
+  {
+    "nome": "Cajado",
+    "width": 1,
+    "height": 3,
+    "color": "#00fdfd",
+    "img": ""
+  },
+  {
+    "nome": "Varinha",
+    "width": 1,
+    "height": 2,
+    "color": "#00fdfd",
+    "img": ""
+  },
+  {
+    "nome": "Livro",
+    "width": 2,
+    "height": 2,
+    "color": "#8a00fd",
+    "img": ""
+  },
+  {
+    "nome": "Poção",
+    "width": 1,
+    "height": 1,
+    "color": "#fd00fd",
+    "img": ""
+  },
+  {
+    "nome": "Chave",
+    "width": 1,
+    "height": 1,
+    "color": "#8a8a8a",
+    "img": ""
+  },
+  {
+    "nome": "Mapa",
+    "width": 2,
+    "height": 1,
+    "color": "#8a8a8a",
+    "img": ""
+  },
+  {
+    "nome": "Lanterna",
+    "width": 1,
+    "height": 2,
+    "color": "#fd8a8a",
+    "img": ""
+  },
+  {
+    "nome": "Bomba",
+    "width": 1,
+    "height": 1,
+    "color": "#fd0000",
+    "img": ""
+  },
+  {
+    "nome": "Rede",
+    "width": 2,
+    "height": 1,
+    "color": "#00fd00",
+    "img": ""
+  },
+  {
+    "nome": "Corda",
+    "width": 1,
+    "height": 3,
+    "color": "#8a8a00",
+    "img": ""
+  },
+  {
+    "nome": "Escada",
+    "width": 2,
+    "height": 2,
+    "color": "#8a8a00",
+    "img": ""
+  },
+  {
+    "nome": "Ferramenta",
+    "width": 1,
+    "height": 1,
+    "color": "#00fd8a",
+    "img": ""
+  },
+  {
+    "nome": "Semente",
+    "width": 1,
+    "height": 1,
+    "color": "#8a00fd",
+    "img": ""
+  },
+  {
+    "nome": "Fruta",
+    "width": 1,
+    "height": 1,
+    "color": "#fd8a00",
+    "img": ""
+  },
+  {
+    "nome": "Bebida",
+    "width": 1,
+    "height": 1,
+    "color": "#00fdfd",
+    "img": ""
+  },
+  {
+    "nome": "Comida",
+    "width": 2,
+    "height": 2,
+    "color": "#fd8a8a",
+    "img": ""
+  },
+  {
+    "nome": "Vestimenta",
+    "width": 2,
+    "height": 2,
+    "color": "#8a00fd",
+    "img": ""
+  },
+  {
+    "nome": "Anel",
+    "width": 1,
+    "height": 1,
+    "color": "#fd00fd",
+    "img": ""
+  },
+  {
+    "nome": "Colar",
+    "width": 1,
+    "height": 1,
+    "color": "#00fdfd",
+    "img": ""
+  },
+  {
+    "nome": "Bracelete",
+    "width": 1,
+    "height": 1,
+    "color": "#8a8a8a",
+    "img": ""
+  },
+  {
+    "nome": "Broche",
+    "width": 1,
+    "height": 1,
+    "color": "#fd8a00",
+    "img": ""
+  }
 ]

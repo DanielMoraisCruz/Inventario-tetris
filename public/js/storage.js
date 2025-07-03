@@ -13,7 +13,7 @@ async function fetchDefaultItems() {
         nome: it.nome,
         width: it.width,
         height: it.height,
-        img: null,
+        img: typeof it.img === 'string' && it.img.length ? it.img : null,
         color: typeof it.color === 'string' ? it.color : '#2b8a3e'
     }));
 }

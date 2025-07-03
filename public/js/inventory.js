@@ -77,6 +77,7 @@ export function updateItemList() {
             itemList.appendChild(el);
         });
     saveInventory(itemsData, placedItems);
+    document.dispatchEvent(new Event('itemListUpdated'));
 }
 
 export function getItemFormData() {
@@ -206,8 +207,11 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
                 if (dy > 0) cell.style.borderTop = '0';
                 if (dx < w - 1) cell.style.borderRight = '0';
                 if (dy < h - 1) cell.style.borderBottom = '0';
-            } else if (dx === 0 && dy === 0) {
-                removeGridImage(cell);
+            } else {
+                cell.style.backgroundColor = 'transparent';
+                if (dx === 0 && dy === 0) {
+                    removeGridImage(cell);
+                }
             }
         }
     }
@@ -242,6 +246,7 @@ export function createItemImageElement(item, width, height, isGhost = false) {
     img.alt = item.nome;
     img.className = 'grid-item-img';
     img.style.border = `2px solid ${item.color}`;
+    img.style.backgroundColor = 'transparent';
     if (!isGhost) {
         img.classList.add(`w${width}`, `h${height}`);
         if (item.rotacionado) {

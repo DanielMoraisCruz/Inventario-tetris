@@ -5,7 +5,7 @@ import os
 # Caminhos dos arquivos
 # Usa o diretório do próprio script para localizar o CSV corretamente
 caminho_csv = os.path.join(os.path.dirname(__file__), 'CSV-itens.csv')
-caminho_json = 'items.json'  # já está na mesma pasta do scrip
+caminho_json = os.path.join(os.path.dirname(__file__), 'items.json')  # arquivo JSON gerado
 
 
 def carregar_csv_para_lista(caminho):
@@ -16,7 +16,8 @@ def carregar_csv_para_lista(caminho):
                 "nome": linha["nome"],
                 "width": int(linha["width"]),
                 "height": int(linha["height"]),
-                "color": linha["color"]
+                "color": linha["color"],
+                "img": linha.get("img", "")
             }
             for linha in leitor
         ]
