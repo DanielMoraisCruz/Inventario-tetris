@@ -23,6 +23,7 @@ export function registerPanelDragHandlers() {
         const idx = parseInt(el.dataset.idx, 10);
         const item = itemsData[idx];
         el.addEventListener('dragstart', e => {
+            hideDeleteButton();
             draggedItem = { ...item, source: 'panel' };
             previewRotation = false;
             currentPreviewSize = { width: item.width, height: item.height };
@@ -34,6 +35,35 @@ export function registerPanelDragHandlers() {
             el.style.opacity = 1;
             removePreview();
             hideGhost();
+        });
+        el.addEventListener('contextmenu', ev => {
+            ev.preventDefault();
+            if (!session.isMaster) return;
+            const itemId = el.dataset.id;
+            if (!itemId) return;
+
+            hideDeleteButton();
+
+            const rect = el.getBoundingClientRect();
+            const left = rect.left + window.scrollX + rect.width - 22;
+            const top = rect.top + window.scrollY + 2;
+
+            deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.textContent = 'X';
+            deleteBtn.style.position = 'absolute';
+            deleteBtn.style.left = `${left}px`;
+            deleteBtn.style.top = `${top}px`;
+
+            deleteBtn.addEventListener('click', e2 => {
+                e2.stopPropagation();
+                if (confirm('Tem certeza que deseja remover este item do invent\u00e1rio?')) {
+                    removeItemFromPanel(itemId);
+                }
+                hideDeleteButton();
+            });
+
+            document.body.appendChild(deleteBtn);
         });
     });
 }
