@@ -68,18 +68,27 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
    ```bash
    git clone https://github.com/seu-usuario/inventario-tetris.git
    ```
-2. Acesse a pasta:
+2. Acesse a pasta do projeto e instale as dependências do servidor:
 
    ```bash
    cd inventario-tetris
+   npm install
    ```
-3. Abra o arquivo `public/login.html` em seu navegador ou sirva a pasta `public` com qualquer servidor estático.
-4. Para iniciar o servidor Express, execute:
+3. Inicie o servidor:
 
    ```bash
-   npm install
    npm start
    ```
+
+   Isso levantará o servidor Express em `http://localhost:3000`.
+   Abra `http://localhost:3000/login.html` (ou `index.html`) no navegador para acessar o front‑end.
+
+   O backend criará automaticamente o arquivo `users.json` se ele não existir e disponibilizará as rotas de API (`/register`, `/login`, `/reset-password` etc.) para a aplicação. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo:
+
+   ```javascript
+   fetch('http://localhost:3000/login')
+   ```
+
 
 ## 📑 users.json
 O repositório inclui um arquivo `users.json` com um exemplo de usuários, senhas (hash) e perguntas secretas. Para carregar esses dados no navegador:
@@ -182,16 +191,21 @@ The goal is to enhance the RPG experience with a fun, interactive inventory syst
 git clone https://github.com/your-username/inventario-tetris.git
 cd inventario-tetris
 ```
-
-Open `public/login.html` in your browser or serve the `public` folder with any static server.
-To start the Express server instead, run:
+Install the server dependencies and start it:
 
 ```bash
 npm install
 npm start
 ```
 
-The repository also provides a sample `users.json` file containing hashed passwords and secret questions. To load it:
+This starts the Express backend on `http://localhost:3000`. Open `http://localhost:3000/login.html` (or `index.html`) in your browser to view the front-end.
+The backend automatically creates `users.json` if missing and exposes the API routes (`/register`, `/login`, `/reset-password`, etc.) used by the app. All communication happens through JSON, so remember to prefix your requests, e.g.:
+
+```javascript
+fetch('http://localhost:3000/login')
+```
+
+The repository also provides a sample `users.json` file containing hashed passwords and secret questions. To load it manually:
 
 ```javascript
 fetch('data/users.json')
