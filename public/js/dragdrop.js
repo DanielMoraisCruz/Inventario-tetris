@@ -13,6 +13,7 @@ let previousPlacement = null;
 let lastGhostPos = { x: null, y: null, valid: true };
 let selectedItemId = null;
 let deleteBtn = null;
+let panelDeleteBtn = null;
 
 // Reaplica handlers sempre que a lista de itens é atualizada
 document.addEventListener('itemListUpdated', registerPanelDragHandlers);
@@ -23,6 +24,7 @@ export function registerPanelDragHandlers() {
         const idx = parseInt(el.dataset.idx, 10);
         const item = itemsData[idx];
         el.addEventListener('dragstart', e => {
+            hidePanelDeleteButton();
             draggedItem = { ...item, source: 'panel' };
             previewRotation = false;
             currentPreviewSize = { width: item.width, height: item.height };
@@ -34,6 +36,25 @@ export function registerPanelDragHandlers() {
             el.style.opacity = 1;
             removePreview();
             hideGhost();
+            hidePanelDeleteButton();
+        });
+
+        el.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            if (!session.isMaster) return;
+            hidePanelDeleteButton();
+            hideDeleteButton();
+            panelDeleteBtn = document.createElement('button');
+            panelDeleteBtn.className = 'delete-item-btn';
+            panelDeleteBtn.textContent = 'X';
+            panelDeleteBtn.addEventListener('click', ev => {
+                ev.stopPropagation();
+                if (confirm('Tem certeza que deseja excluir este item do catálogo?')) {
+                    removeItemFromPanel(item.id);
+                }
+                hidePanelDeleteButton();
+            });
+            el.appendChild(panelDeleteBtn);
         });
     });
 }
@@ -70,6 +91,7 @@ function onKeyDown(e) {
 }
 
 function onInventoryClick(e) {
+    hidePanelDeleteButton();
     const cell = e.target.closest('.cell');
     clearGridSelection();
     if (!cell || !cell.classList.contains('placed')) {
@@ -97,6 +119,7 @@ function onInventoryClick(e) {
 
 function onInventoryMouseDown(e) {
     hideDeleteButton();
+    hidePanelDeleteButton();
     if (e.button !== 0) return;
     const cell = e.target.closest('.cell');
     if (!cell || !cell.classList.contains('placed')) return;
@@ -264,9 +287,19 @@ function hideDeleteButton() {
     }
 }
 
+function hidePanelDeleteButton() {
+    if (panelDeleteBtn) {
+        panelDeleteBtn.remove();
+        panelDeleteBtn = null;
+    }
+}
+
 function onDocumentClick(e) {
     if (deleteBtn && !deleteBtn.contains(e.target)) {
         hideDeleteButton();
+    }
+    if (panelDeleteBtn && !panelDeleteBtn.contains(e.target)) {
+        hidePanelDeleteButton();
     }
 }
 
@@ -276,6 +309,7 @@ function onInventoryContextMenu(e) {
     const cell = e.target.closest('.cell');
     if (!cell || !cell.classList.contains('placed')) {
         hideDeleteButton();
+        hidePanelDeleteButton();
         return;
     }
     const itemId = cell.dataset.itemid;
@@ -285,6 +319,7 @@ function onInventoryContextMenu(e) {
     if (!placed) return;
 
     hideDeleteButton();
+    hidePanelDeleteButton();
 
     const invRect = inventory.getBoundingClientRect();
     const total = getCellSize() + CELL_GAP;
@@ -304,6 +339,7 @@ function onInventoryContextMenu(e) {
             removeItemFromGrid(itemId, true);
         }
         hideDeleteButton();
+        hidePanelDeleteButton();
     });
 
     document.body.appendChild(deleteBtn);
