@@ -1,11 +1,39 @@
 const express = require('express');
 const path = require('path');
+const { ensureUsersFile } = require('./server/storage');
+const { registerUser, verifyUser } = require('./server/auth');
+
 const app = express();
 
-// Serve static files from the public directory
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Endpoint to retrieve master password hash
+ensureUsersFile();
+
+app.post('/api/register', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Dados inv\u00e1lidos' });
+  }
+  const ok = registerUser(username, password);
+  if (!ok) {
+    return res.status(409).json({ error: 'Usu\u00e1rio j\u00e1 existe' });
+  }
+  res.json({ success: true });
+});
+
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Dados inv\u00e1lidos' });
+  }
+  const ok = verifyUser(username, password);
+  if (!ok) {
+    return res.status(401).json({ error: 'Credenciais inv\u00e1lidas' });
+  }
+  res.json({ success: true });
+});
+
 app.get('/master-hash', (req, res) => {
   const hash = process.env.MASTER_PASSWORD_HASH || '';
   res.json({ hash });
