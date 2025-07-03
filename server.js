@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { ensureUsersFile, loadUsers } = require('./server/storage');
-const { registerUser, authenticateUser } = require('./server/auth');
+const { registerUser, authenticateUser, resetPassword } = require('./server/auth');
 
 const app = express();
 
@@ -42,6 +42,24 @@ app.post('/login', (req, res) => {
     user: username,
     isMaster: result.userData.isMaster
   });
+});
+
+app.post('/reset-password', (req, res) => {
+  const { username, resposta, novaSenha } = req.body;
+  if (!username || !resposta || !novaSenha) {
+    return res.status(400).json({ error: 'Nome de usu\u00e1rio, resposta e nova senha s\u00e3o obrigat\u00f3rios.' });
+  }
+  const result = resetPassword(username, resposta, novaSenha);
+  if (!result.ok) {
+    if (result.code === 'notfound') {
+      return res.status(404).json({ error: 'Usu\u00e1rio n\u00e3o encontrado ou sem pergunta secreta.' });
+    }
+    if (result.code === 'wronganswer') {
+      return res.status(401).json({ error: 'Resposta secreta incorreta.' });
+    }
+    return res.status(500).json({ error: 'Erro ao salvar nova senha.' });
+  }
+  res.json({ message: 'Senha redefinida com sucesso!' });
 });
 
 // List all users (only for development/testing)

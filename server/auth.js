@@ -52,4 +52,22 @@ function verifyResposta(username, resposta) {
   return user.respostaHash === sha256(resposta);
 }
 
-module.exports = { registerUser, authenticateUser, verifyUser, verifyResposta, sha256 };
+function resetPassword(username, resposta, novaSenha) {
+  const users = loadUsers();
+  const user = users[username];
+  if (!user || !user.respostaHash) {
+    return { ok: false, code: 'notfound' };
+  }
+  if (sha256(resposta) !== user.respostaHash) {
+    return { ok: false, code: 'wronganswer' };
+  }
+  user.passwordHash = sha256(novaSenha);
+  try {
+    saveUsers(users);
+  } catch (e) {
+    return { ok: false, code: 'saveError' };
+  }
+  return { ok: true };
+}
+
+module.exports = { registerUser, authenticateUser, verifyUser, verifyResposta, resetPassword, sha256 };
