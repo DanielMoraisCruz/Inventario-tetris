@@ -239,7 +239,6 @@
     display: none;
 }
 
-
 #menu-btn {
     position: fixed;
     top: 10px;
@@ -255,7 +254,7 @@
 }
 
 #menu-btn.open {
-    transform: translateX(331px);
+    transform: translateX(250px);
 }
 
 #item-search {
