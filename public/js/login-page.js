@@ -1,10 +1,12 @@
 import { session, registerUser, validateLogin, setPerguntaSecreta, validarPerguntaSecreta, redefinirSenha } from './login.js';
+import { setupThemeToggle } from './theme.js';
 
 function getUsers() {
     return JSON.parse(localStorage.getItem('tetris-users') || '{}');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+    setupThemeToggle();
     const loginForm = document.getElementById('login-form');
     const loginUser = document.getElementById('login-user');
     const loginPass = document.getElementById('login-pass');

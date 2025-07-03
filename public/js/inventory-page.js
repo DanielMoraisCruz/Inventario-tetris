@@ -3,8 +3,10 @@ import { initInventory, form, searchInput, updateItemList } from './inventory.js
 import { handleItemSubmit } from './inventory.js';
 import { initDragDrop, registerPanelDragHandlers } from './dragdrop.js';
 import { applyLayoutSettings } from './constants.js';
+import { setupThemeToggle } from './theme.js';
 
 window.addEventListener('DOMContentLoaded', async () => {
+    setupThemeToggle();
     const userWelcome = document.getElementById('user-welcome');
     const logoutBtn = document.getElementById('logout-btn');
     const resetBtn = document.getElementById('reset-btn');

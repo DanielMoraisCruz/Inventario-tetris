@@ -64,3 +64,30 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+/* Dark mode styles */
+body.dark-mode #login-screen {
+    background: #2B2B2B;
+}
+
+body.dark-mode #login-box {
+    background: #3C3F41;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+
+body.dark-mode #login-screen label,
+body.dark-mode #login-screen a {
+    color: #A9B7C6;
+}
+
+body.dark-mode #login-screen input,
+body.dark-mode #login-screen button {
+    background-color: #3C3F41;
+    color: #A9B7C6;
+    border: 1px solid #555;
+}
+
+body.dark-mode #login-screen button {
+    background: #4E94CE;
+    color: #fff;
+}
