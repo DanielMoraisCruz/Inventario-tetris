@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { ensureUsersFile } = require('./server/storage');
+const { ensureUsersFile, loadUsers } = require('./server/storage');
 const { registerUser, authenticateUser } = require('./server/auth');
 
 const app = express();
@@ -42,6 +42,12 @@ app.post('/login', (req, res) => {
     user: username,
     isMaster: result.userData.isMaster
   });
+});
+
+// List all users (only for development/testing)
+app.get('/users', (req, res) => {
+  const users = loadUsers();
+  res.json(users);
 });
 
 app.get('/master-hash', (req, res) => {
