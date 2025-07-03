@@ -294,3 +294,37 @@
     cursor: pointer;
     z-index: 10;
 }
+
+/* Dark mode styles */
+body.dark-mode #inventory {
+    background: #444;
+}
+
+body.dark-mode .cell {
+    background: #3C3F41;
+    border-color: #555;
+}
+
+body.dark-mode #items {
+    background: #3C3F41;
+    border-color: #555;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.6);
+}
+
+body.dark-mode .item-preview {
+    background: #3C3F41;
+    border-color: #555;
+}
+
+body.dark-mode #menu-btn {
+    background: #4E94CE;
+    border-color: #6897BB;
+    color: #fff;
+}
+
+body.dark-mode #item-form button,
+body.dark-mode #logout-btn,
+body.dark-mode #reset-btn {
+    background: #4E94CE;
+    color: #fff;
+}
