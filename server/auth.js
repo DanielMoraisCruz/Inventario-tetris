@@ -5,14 +5,12 @@ function sha256(text) {
   return crypto.createHash('sha256').update(text).digest('hex');
 }
 
-function hasMaster(users) {
-  return Object.values(users).some(u => u.isMaster);
-}
-
 function registerUser(username, password, pergunta = '', resposta = '') {
   const users = loadUsers();
-  if (users[username]) return false;
-  const isMaster = !hasMaster(users);
+  if (users[username]) {
+    return { created: false, code: 'exists' };
+  }
+  const isMaster = Object.keys(users).length === 0;
   const userData = {
     passwordHash: sha256(password),
     isMaster
@@ -22,8 +20,12 @@ function registerUser(username, password, pergunta = '', resposta = '') {
     userData.respostaHash = sha256(resposta);
   }
   users[username] = userData;
-  saveUsers(users);
-  return true;
+  try {
+    saveUsers(users);
+  } catch (e) {
+    return { created: false, code: 'saveError' };
+  }
+  return { created: true, isMaster };
 }
 
 function verifyUser(username, password) {

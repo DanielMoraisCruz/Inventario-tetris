@@ -10,19 +10,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 ensureUsersFile();
 
-app.post('/api/register', (req, res) => {
+app.post('/register', (req, res) => {
   const { username, password, pergunta, resposta } = req.body;
   if (!username || !password) {
-    return res.status(400).json({ error: 'Dados inv\u00e1lidos' });
+    return res.status(400).json({ error: 'Nome de usu\u00e1rio e senha s\u00e3o obrigat\u00f3rios.' });
   }
-  const ok = registerUser(username, password, pergunta, resposta);
-  if (!ok) {
-    return res.status(409).json({ error: 'Usu\u00e1rio j\u00e1 existe' });
+  const result = registerUser(username, password, pergunta, resposta);
+  if (!result.created) {
+    if (result.code === 'exists') {
+      return res.status(409).json({ error: 'Nome de usu\u00e1rio j\u00e1 est\u00e1 em uso.' });
+    }
+    return res.status(500).json({ error: 'Erro ao salvar dados do usu\u00e1rio.' });
   }
-  res.json({ success: true });
+  res.status(201).json({ message: 'Usu\u00e1rio registrado com sucesso!' });
 });
 
-app.post('/api/login', (req, res) => {
+app.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ error: 'Dados inv\u00e1lidos' });
