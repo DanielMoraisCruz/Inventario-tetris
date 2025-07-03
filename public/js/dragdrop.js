@@ -1,6 +1,7 @@
 import { inventory, itemList, clearGridSelection, removeItemFromGrid, clearCells, canPlace, placeItem, createItemImageElement, returnItemToPanel, removeItemFromPanel, getInventoryState, setInventoryState, updateItemList } from './inventory.js';
 import { saveInventory } from './storage.js';
 import { ROWS, COLS, CELL_GAP, getCellSize } from './constants.js';
+import { session } from './login.js';
 
 const dragGhost = document.getElementById('drag-ghost');
 
@@ -11,6 +12,7 @@ let currentPreviewSize = { width: 1, height: 1 };
 let previousPlacement = null;
 let lastGhostPos = { x: null, y: null, valid: true };
 let selectedItemId = null;
+let deleteBtn = null;
 
 // Reaplica handlers sempre que a lista de itens é atualizada
 document.addEventListener('itemListUpdated', registerPanelDragHandlers);
@@ -40,9 +42,11 @@ export function initDragDrop() {
     window.addEventListener('keydown', onKeyDown);
     inventory.addEventListener('click', onInventoryClick);
     inventory.addEventListener('mousedown', onInventoryMouseDown);
+    inventory.addEventListener('contextmenu', onInventoryContextMenu);
     inventory.addEventListener('dragover', onDragOver);
     inventory.addEventListener('dragleave', onDragLeave);
     inventory.addEventListener('drop', onDrop);
+    document.addEventListener('click', onDocumentClick);
 }
 
 function onKeyDown(e) {
@@ -92,6 +96,8 @@ function onInventoryClick(e) {
 }
 
 function onInventoryMouseDown(e) {
+    hideDeleteButton();
+    if (e.button !== 0) return;
     const cell = e.target.closest('.cell');
     if (!cell || !cell.classList.contains('placed')) return;
     const itemId = cell.dataset.itemid;
@@ -249,4 +255,56 @@ function hideGhost() {
     dragGhost.style.display = 'none';
     dragGhost.innerHTML = '';
     lastGhostPos = { x: null, y: null, valid: true };
+}
+
+function hideDeleteButton() {
+    if (deleteBtn) {
+        deleteBtn.remove();
+        deleteBtn = null;
+    }
+}
+
+function onDocumentClick(e) {
+    if (deleteBtn && !deleteBtn.contains(e.target)) {
+        hideDeleteButton();
+    }
+}
+
+function onInventoryContextMenu(e) {
+    e.preventDefault();
+    if (!session.isMaster) return;
+    const cell = e.target.closest('.cell');
+    if (!cell || !cell.classList.contains('placed')) {
+        hideDeleteButton();
+        return;
+    }
+    const itemId = cell.dataset.itemid;
+    if (!itemId) return;
+    const state = getInventoryState();
+    const placed = state.placedItems.find(it => it.id === itemId);
+    if (!placed) return;
+
+    hideDeleteButton();
+
+    const invRect = inventory.getBoundingClientRect();
+    const total = getCellSize() + CELL_GAP;
+    const left = invRect.left + window.scrollX + placed.x * total + placed.width * total - CELL_GAP - 22;
+    const top = invRect.top + window.scrollY + placed.y * total + 2;
+
+    deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.textContent = 'X';
+    deleteBtn.style.position = 'absolute';
+    deleteBtn.style.left = `${left}px`;
+    deleteBtn.style.top = `${top}px`;
+
+    deleteBtn.addEventListener('click', ev => {
+        ev.stopPropagation();
+        if (confirm('Tem certeza que deseja remover este item do invent\u00e1rio?')) {
+            removeItemFromGrid(itemId, true);
+        }
+        hideDeleteButton();
+    });
+
+    document.body.appendChild(deleteBtn);
 }
