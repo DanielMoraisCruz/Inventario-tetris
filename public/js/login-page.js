@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -90,7 +90,7 @@ window.addEventListener('DOMContentLoaded', () => {
       payload.resposta = resposta;
     }
     try {
-      const response = await fetch('http://localhost:3000/register', {
+      const response = await fetch('/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -118,7 +118,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const username = prompt('Nome de usuário:');
     if (!username) return;
     try {
-      const res = await fetch('http://localhost:3000/users');
+      const res = await fetch('/users');
       const users = await res.json();
       if (!users[username] || !users[username].pergunta) {
         alert('Usuário não encontrado ou sem pergunta secreta cadastrada.');
@@ -129,7 +129,7 @@ window.addEventListener('DOMContentLoaded', () => {
       if (!answer) return;
       const newPass = prompt('Digite a nova senha:');
       if (!newPass) return;
-      const res2 = await fetch('http://localhost:3000/reset-password', {
+      const res2 = await fetch('/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, resposta: answer, novaSenha: newPass })
