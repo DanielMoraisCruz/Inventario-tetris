@@ -9,15 +9,35 @@
 <body>
     <button id="toggle-theme">🌙</button>
     <div id="login-screen">
-        <div id="login-box">
+        <div id="initial-screen">
+            <button id="btn-show-login">Entrar</button>
+            <button id="btn-show-register">Cadastrar</button>
+        </div>
+        <div id="login-box" style="display:none;">
             <form id="login-form">
-                <label for="login-user">Nome</label>
+                <label for="login-user">Nome de usuário</label>
                 <input id="login-user" type="text" placeholder="Nome">
                 <label for="login-pass">Senha</label>
                 <input id="login-pass" type="password" placeholder="Senha">
                 <button id="login-btn" type="submit">Entrar</button>
                 <a href="#" id="forgot-pass">Esqueci minha senha</a>
+                <a href="#" id="goto-register">Cadastrar</a>
                 <div id="login-err"></div>
+            </form>
+        </div>
+        <div id="register-box" style="display:none;">
+            <form id="register-form">
+                <label for="register-user">Nome de usuário</label>
+                <input id="register-user" type="text" placeholder="Nome">
+                <label for="register-pass">Senha</label>
+                <input id="register-pass" type="password" placeholder="Senha">
+                <label for="register-question">Pergunta secreta (opcional)</label>
+                <input id="register-question" type="text" placeholder="Pergunta secreta">
+                <label for="register-answer">Resposta secreta (opcional)</label>
+                <input id="register-answer" type="text" placeholder="Resposta secreta">
+                <button id="register-btn" type="submit">Cadastrar</button>
+                <a href="#" id="goto-login">Já tenho conta</a>
+                <div id="register-err"></div>
             </form>
         </div>
     </div>
