@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { ensureUsersFile } = require('./server/storage');
-const { registerUser, verifyUser } = require('./server/auth');
+const { registerUser, authenticateUser } = require('./server/auth');
 
 const app = express();
 
@@ -28,13 +28,20 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.status(400).json({ error: 'Dados inv\u00e1lidos' });
+    return res.status(400).json({ error: 'Nome de usu\u00e1rio e senha s\u00e3o obrigat\u00f3rios.' });
   }
-  const ok = verifyUser(username, password);
-  if (!ok) {
-    return res.status(401).json({ error: 'Credenciais inv\u00e1lidas' });
+  const result = authenticateUser(username, password);
+  if (!result.ok) {
+    if (result.code === 'notfound') {
+      return res.status(401).json({ error: 'Usu\u00e1rio n\u00e3o encontrado.' });
+    }
+    return res.status(401).json({ error: 'Senha incorreta.' });
   }
-  res.json({ success: true });
+  res.json({
+    message: 'Login realizado com sucesso!',
+    user: username,
+    isMaster: result.userData.isMaster
+  });
 });
 
 app.get('/master-hash', (req, res) => {

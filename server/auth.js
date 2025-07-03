@@ -28,11 +28,21 @@ function registerUser(username, password, pergunta = '', resposta = '') {
   return { created: true, isMaster };
 }
 
-function verifyUser(username, password) {
+function authenticateUser(username, password) {
   const users = loadUsers();
   const user = users[username];
-  if (!user) return false;
-  return user.passwordHash === sha256(password);
+  if (!user) {
+    return { ok: false, code: 'notfound' };
+  }
+  const candidateHash = sha256(password);
+  if (candidateHash !== user.passwordHash) {
+    return { ok: false, code: 'wrongpass' };
+  }
+  return { ok: true, userData: user };
+}
+
+function verifyUser(username, password) {
+  return authenticateUser(username, password).ok;
 }
 
 function verifyResposta(username, resposta) {
@@ -42,4 +52,4 @@ function verifyResposta(username, resposta) {
   return user.respostaHash === sha256(resposta);
 }
 
-module.exports = { registerUser, verifyUser, verifyResposta, sha256 };
+module.exports = { registerUser, authenticateUser, verifyUser, verifyResposta, sha256 };
