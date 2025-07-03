@@ -157,6 +157,8 @@
     top: 0; left: 0;
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
+    display: block;
     object-fit: contain;
     object-position: center;
     pointer-events: none;
@@ -167,22 +169,22 @@
 .rotacionado {
     transform: rotate(90deg);
 }
-.w1 { width: calc(1 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.w2 { width: calc(2 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.w3 { width: calc(3 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.w4 { width: calc(4 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.w5 { width: calc(5 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.w6 { width: calc(6 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.w7 { width: calc(7 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.w8 { width: calc(8 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.w9 { width: calc(9 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.w10 { width: calc(10 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.h1 { height: calc(1 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.h2 { height: calc(2 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.h3 { height: calc(3 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.h4 { height: calc(4 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.h5 { height: calc(5 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
-.h6 { height: calc(6 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap)); }
+.w1 { width: calc(1 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.w2 { width: calc(2 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.w3 { width: calc(3 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.w4 { width: calc(4 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.w5 { width: calc(5 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.w6 { width: calc(6 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.w7 { width: calc(7 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.w8 { width: calc(8 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.w9 { width: calc(9 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.w10 { width: calc(10 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.h1 { height: calc(1 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.h2 { height: calc(2 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.h3 { height: calc(3 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.h4 { height: calc(4 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.h5 { height: calc(5 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
+.h6 { height: calc(6 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
 .cell.has-img {
     position: relative;
     overflow: visible;
