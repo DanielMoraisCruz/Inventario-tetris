@@ -150,8 +150,8 @@ function showGhostOnGrid(gridX, gridY) {
     const valid = canPlace(gridX, gridY, currentPreviewSize.width, currentPreviewSize.height);
     dragGhost.innerHTML = '';
     const total = getCellSize() + CELL_GAP;
-    dragGhost.style.width = (currentPreviewSize.width * total - CELL_GAP) + 'px';
-    dragGhost.style.height = (currentPreviewSize.height * total - CELL_GAP) + 'px';
+    dragGhost.style.width = (currentPreviewSize.width * total - CELL_GAP - 2) + 'px';
+    dragGhost.style.height = (currentPreviewSize.height * total - CELL_GAP - 2) + 'px';
     dragGhost.style.display = 'block';
 
     dragGhost.className = valid ? '' : 'ghost-invalid';
