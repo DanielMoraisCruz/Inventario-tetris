@@ -33,6 +33,11 @@ body.dark-mode {
     color: #A9B7C6;
 }
 
+body.light-mode {
+    background-color: #f7f7fc;
+    color: #222;
+}
+
 body.dark-mode h1,
 body.dark-mode h2,
 body.dark-mode h3 {
@@ -44,6 +49,13 @@ body.dark-mode button {
     background-color: #3C3F41;
     color: #A9B7C6;
     border: 1px solid #555;
+}
+
+body.light-mode input,
+body.light-mode button {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
 }
 
 #toggle-theme {
