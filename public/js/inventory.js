@@ -77,6 +77,7 @@ export function updateItemList() {
             itemList.appendChild(el);
         });
     saveInventory(itemsData, placedItems);
+    document.dispatchEvent(new Event('itemListUpdated'));
 }
 
 export function getItemFormData() {

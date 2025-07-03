@@ -12,6 +12,9 @@ let previousPlacement = null;
 let lastGhostPos = { x: null, y: null, valid: true };
 let selectedItemId = null;
 
+// Reaplica handlers sempre que a lista de itens é atualizada
+document.addEventListener('itemListUpdated', registerPanelDragHandlers);
+
 export function registerPanelDragHandlers() {
     const { itemsData } = getInventoryState();
     itemList.querySelectorAll('.item').forEach(el => {
