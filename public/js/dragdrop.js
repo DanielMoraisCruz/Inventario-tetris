@@ -267,7 +267,6 @@ function onDrop(e) {
     const state = getInventoryState();
     saveInventory(state.itemsData, state.placedItems);
     updateItemList();
-    registerPanelDragHandlers();
 }
 
 function removePreview() {

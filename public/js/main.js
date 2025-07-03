@@ -8,10 +8,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     applyLayoutSettings();
     setupLogin();
     await initInventory();
-    registerPanelDragHandlers();
     initDragDrop();
     form.addEventListener('submit', async (e) => {
         await handleItemSubmit(e);
-        registerPanelDragHandlers();
     });
 });

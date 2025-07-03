@@ -41,15 +41,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (searchInput) {
         searchInput.addEventListener('input', () => {
             updateItemList();
-            registerPanelDragHandlers();
         });
     }
-    registerPanelDragHandlers();
     initDragDrop();
 
     form.addEventListener('submit', async (e) => {
         await handleItemSubmit(e);
-        registerPanelDragHandlers();
     });
 
     logoutBtn.addEventListener('click', () => {
