@@ -11,11 +11,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 ensureUsersFile();
 
 app.post('/api/register', (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, pergunta, resposta } = req.body;
   if (!username || !password) {
     return res.status(400).json({ error: 'Dados inv\u00e1lidos' });
   }
-  const ok = registerUser(username, password);
+  const ok = registerUser(username, password, pergunta, resposta);
   if (!ok) {
     return res.status(409).json({ error: 'Usu\u00e1rio j\u00e1 existe' });
   }
