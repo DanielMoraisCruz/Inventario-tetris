@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Inventário Tetris</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/inventory.css">
 </head>
 <body>
     <div id="user-welcome"></div>
-    <button id="menu-btn">&#9776;</button>
-    <button id="toggle-theme">🌙</button>
+    <button id="menu-btn" class="btn">&#9776;</button>
+    <button id="toggle-theme" class="btn">🌙</button>
     
     <div id="drag-ghost"></div>
     <h1>Inventário Tetris</h1>
     <div id="inventory"></div>
 
-    <div id="items">
+    <div id="items" class="panel">
         <div id="side-actions">
-            <button id="logout-btn">Sair</button>
-            <button id="reset-btn">Resetar Dados</button>
+            <button id="logout-btn" class="btn">Sair</button>
+            <button id="reset-btn" class="btn">Resetar Dados</button>
         </div>
         <h2>Itens</h2>
         <input id="item-search" type="text" placeholder="Buscar" maxlength="3">
@@ -35,7 +37,7 @@
             <input type="file" id="imagem" accept="image/*">
             <label for="cor">Cor do item</label>
             <input type="color" id="cor" value="#2b8a3e">
-            <button type="submit">Adicionar</button>
+            <button type="submit" class="btn">Adicionar</button>
         </form>
     </div>
     <script type="module" src="js/inventory-page.js"></script>
