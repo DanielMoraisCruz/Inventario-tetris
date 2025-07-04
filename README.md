@@ -63,6 +63,8 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
 
 ## 🖥️ Como Executar Localmente
 
+Pré-requisitos: **Node.js 18+** e **Python 3** caso queira utilizar o script de atualização de itens.
+
 1. Clone o repositório:
 
    ```bash
@@ -83,21 +85,26 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
    Isso levantará o servidor Express em `http://localhost:3000`.
    Abra `http://localhost:3000/login.html` (ou `index.html`) no navegador para acessar o front‑end.
 
-   O backend criará automaticamente o arquivo `users.json` se ele não existir e disponibilizará as rotas de API (`/register`, `/login`, `/reset-password` etc.) para a aplicação. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo:
+   O backend criará automaticamente o arquivo `server/users.json` se ele não existir e disponibilizará as rotas de API (`/register`, `/login`, `/reset-password` etc.) para a aplicação. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo:
 
    ```javascript
    fetch('http://localhost:3000/login')
    ```
 
+   A rota `/master-hash` permite consultar o valor da variável de ambiente `MASTER_PASSWORD_HASH`, caso ela esteja definida. Defina essa variável antes de iniciar o servidor se precisar fornecer o hash de uma senha mestre externa.
+
 
 ## 📑 users.json
-O repositório inclui um arquivo `users.json` com um exemplo de usuários, senhas (hash) e perguntas secretas. Para carregar esses dados no navegador:
+O arquivo `server/users.json` é gerado automaticamente na primeira execução do servidor e armazena os usuários cadastrados. Se quiser reiniciar os cadastros, exclua esse arquivo antes de iniciar o servidor.
 
-```javascript
-fetch('data/users.json')
-  .then(r => r.json())
-  .then(data => localStorage.setItem('tetris-users', JSON.stringify(data)));
+### Atualizar itens via CSV
+Na pasta `public/data/` existe o script `atualizar_items.py` que converte o arquivo `CSV-itens.csv` em `items.json`. Execute:
+
+```bash
+python3 public/data/atualizar_items.py
 ```
+
+para gerar ou atualizar a lista de itens.
 
 ### Registro de usuários
 
@@ -112,7 +119,6 @@ considerados jogadores.
 O projeto está hospedado em:
 [https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html](https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html)
 
-> *(substituir pelo link real quando publicado)*
 
 ---
 
@@ -187,6 +193,8 @@ The goal is to enhance the RPG experience with a fun, interactive inventory syst
 
 ### 🖥️ Run Locally
 
+Prerequisites: **Node.js 18+** and **Python 3** if you plan to run the item update script.
+
 ```bash
 git clone https://github.com/your-username/inventario-tetris.git
 cd inventario-tetris
@@ -205,22 +213,26 @@ The backend automatically creates `users.json` if missing and exposes the API ro
 fetch('http://localhost:3000/login')
 ```
 
-The repository also provides a sample `users.json` file containing hashed passwords and secret questions. To load it manually:
+The `/master-hash` endpoint returns the value of the `MASTER_PASSWORD_HASH` environment variable when it is defined. Set this variable before starting the server if you need to provide your own master password hash.
 
-```javascript
-fetch('data/users.json')
-  .then(r => r.json())
-  .then(data => localStorage.setItem('tetris-users', JSON.stringify(data)));
+### `users.json`
+The file `server/users.json` is created automatically when the server first starts and stores all registered users. Delete this file before launching the server if you wish to reset the credentials.
+
+### Update items from CSV
+Inside `public/data/` there is a script called `atualizar_items.py` that converts `CSV-itens.csv` into `items.json`. Run:
+
+```bash
+python3 public/data/atualizar_items.py
 ```
+
+to generate or update the item list.
 
 ---
 
 ### 🌍 Live Demo
 
 Access online:
-**[https://your-username.github.io/inventario-tetris](https://your-username.github.io/inventario-tetris)**
-
-> *(replace with actual link)*
+**[https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html](https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html)**
 
 ---
 
