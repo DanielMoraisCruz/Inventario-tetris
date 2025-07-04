@@ -326,7 +326,6 @@ export function removeGridImage(cell) {
         legacyImg.remove();
     }
     cell.classList.remove('has-img');
-}
 
 export function resetCell(cell) {
     cell.classList.remove('placed', 'selected');
