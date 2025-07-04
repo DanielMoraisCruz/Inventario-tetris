@@ -296,7 +296,9 @@ export function createStressElement(item, width, height) {
     const div = document.createElement('div');
     div.className = 'stress-display';
     div.textContent = `${item.estresseAtual ?? 0} / ${item.maxEstresse ?? 3}`;
-    div.classList.add(`w${width}`, `h${height}`);
+    // only width is needed; height would create a dark overlay over the item
+    // leading to a "shadow" effect. We want a small bar at the bottom.
+    div.classList.add(`w${width}`);
     return div;
 }
 
