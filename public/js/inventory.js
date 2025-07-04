@@ -61,6 +61,9 @@ export function updateItemList() {
 
             const preview = document.createElement('div');
             preview.className = 'item-preview';
+            if (item.rotacionado) {
+                preview.classList.add('rotacionado');
+            }
             if (item.img) {
                 const img = document.createElement('img');
                 img.src = item.img;
@@ -237,20 +240,21 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
     if (item.img) {
         const cell0 = inventory.children[y * COLS + x];
         cell0.classList.add('has-img');
-        const img = createItemImageElement({ ...item, rotacionado: fromRedraw ? item.rotacionado : item.rotacionado }, w, h);
+        const wrapper = createItemImageElement({ ...item, rotacionado: fromRedraw ? item.rotacionado : item.rotacionado }, w, h);
         removeGridImage(cell0);
-        cell0.appendChild(img);
-        const stressEl = createStressElement(item, w, h);
-        removeStressDisplay(cell0);
-        cell0.appendChild(stressEl);
+        cell0.appendChild(wrapper);
         const broken = (item.estresseAtual ?? 0) >= (item.maxEstresse ?? 3);
         if (broken) {
-            img.style.opacity = '0.3';
-            img.style.border = '2px solid #ccc';
+            const imgEl = wrapper.querySelector('.grid-item-img');
+            if (imgEl) {
+                imgEl.style.opacity = '0.3';
+                imgEl.style.border = '2px solid #ccc';
+            }
         }
     } else {
         const cell0 = inventory.children[y * COLS + x];
-        const stressEl = createStressElement(item, w, h);
+        removeGridImage(cell0);
+        const stressEl = createStressElement(item, w);
         removeStressDisplay(cell0);
         cell0.appendChild(stressEl);
     }
@@ -275,24 +279,31 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
 }
 
 export function createItemImageElement(item, width, height, isGhost = false) {
+    const wrapper = document.createElement('div');
+    const w = item.rotacionado ? height : width;
+    const h = item.rotacionado ? width : height;
+    wrapper.className = 'grid-item-wrapper';
+    wrapper.classList.add(`w${w}`, `h${h}`);
+    if (item.rotacionado) {
+        wrapper.classList.add('rotacionado');
+    }
+
     const img = document.createElement('img');
     img.src = item.img;
     img.alt = item.nome;
     img.className = 'grid-item-img';
     img.style.border = `2px solid ${item.color}`;
     img.style.backgroundColor = 'transparent';
+    wrapper.appendChild(img);
+
     if (!isGhost) {
-        img.classList.add(`w${width}`, `h${height}`);
-        if (item.rotacionado) {
-            img.classList.add('rotacionado');
-        }
-    } else if (item.rotacionado) {
-        img.classList.add('rotacionado');
+        const stress = createStressElement(item, w);
+        wrapper.appendChild(stress);
     }
-    return img;
+    return wrapper;
 }
 
-export function createStressElement(item, width, height) {
+export function createStressElement(item, width) {
     const div = document.createElement('div');
     div.className = 'stress-display';
     div.textContent = `${item.estresseAtual ?? 0} / ${item.maxEstresse ?? 3}`;
@@ -304,12 +315,16 @@ export function createStressElement(item, width, height) {
 
 export function removeStressDisplay(cell) {
     const el = cell.querySelector('.stress-display');
-    if (el) cell.removeChild(el);
+    if (el) el.remove();
 }
 
 export function removeGridImage(cell) {
-    const img = cell.querySelector('.grid-item-img');
-    if (img) cell.removeChild(img);
+    const wrapper = cell.querySelector('.grid-item-wrapper');
+    if (wrapper) wrapper.remove();
+    const legacyImg = cell.querySelector('.grid-item-img');
+    if (legacyImg && !legacyImg.closest('.grid-item-wrapper')) {
+        legacyImg.remove();
+    }
     cell.classList.remove('has-img');
 }
 
