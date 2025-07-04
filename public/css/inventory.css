@@ -80,13 +80,13 @@
     overflow: hidden;
     box-sizing: border-box;
     pointer-events: none;
+
 }
 
 .item-preview.broken {
     border-color: #ccc;
     background: transparent;
 }
-
 
 .broken img {
     opacity: 0.3;
