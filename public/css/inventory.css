@@ -86,6 +86,19 @@
     background: transparent;
 }
 
+.item-stress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 0.55rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
 
 .broken img {
     opacity: 0.3;
