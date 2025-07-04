@@ -69,6 +69,20 @@ export function updateItemList() {
             }
             el.appendChild(preview);
 
+            const stress = document.createElement('div');
+            stress.className = 'item-stress';
+            const cur = item.estresseAtual ?? 0;
+            const max = item.maxEstresse ?? 3;
+            stress.textContent = `${cur} / ${max}`;
+            preview.appendChild(stress);
+
+            if (cur >= max) {
+                preview.classList.add('broken');
+                if (item.img) {
+                    preview.querySelector('img').style.opacity = '0.3';
+                }
+            }
+
             const nameSpan = document.createElement('span');
             nameSpan.className = 'item-name';
             nameSpan.textContent = item.nome;
@@ -97,7 +111,9 @@ export function addNewItem(data) {
         width: data.width,
         height: data.height,
         img: data.img,
-        color: data.color
+        color: data.color,
+        maxEstresse: 3,
+        estresseAtual: 0
     });
     updateItemList();
     saveInventory(itemsData, placedItems);
@@ -116,7 +132,9 @@ export function returnItemToPanel(item) {
         width: item.originalWidth ?? item.width,
         height: item.originalHeight ?? item.height,
         img: item.img || null,
-        color: item.color
+        color: item.color,
+        maxEstresse: item.maxEstresse ?? 3,
+        estresseAtual: item.estresseAtual ?? 0
     });
     updateItemList();
     saveInventory(itemsData, placedItems);
@@ -201,8 +219,9 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
             cell.dataset.itemid = item.id;
             cell.title = item.nome || '';
             if (!item.img) {
-                cell.style.background = item.color;
-                cell.style.border = `2px solid ${item.color}`;
+                const broken = (item.estresseAtual ?? 0) >= (item.maxEstresse ?? 3);
+                cell.style.background = broken ? 'transparent' : item.color;
+                cell.style.border = `2px solid ${broken ? '#ccc' : item.color}`;
                 if (dx > 0) cell.style.borderLeft = '0';
                 if (dy > 0) cell.style.borderTop = '0';
                 if (dx < w - 1) cell.style.borderRight = '0';
@@ -221,6 +240,19 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
         const img = createItemImageElement({ ...item, rotacionado: fromRedraw ? item.rotacionado : item.rotacionado }, w, h);
         removeGridImage(cell0);
         cell0.appendChild(img);
+        const stressEl = createStressElement(item, w, h);
+        removeStressDisplay(cell0);
+        cell0.appendChild(stressEl);
+        const broken = (item.estresseAtual ?? 0) >= (item.maxEstresse ?? 3);
+        if (broken) {
+            img.style.opacity = '0.3';
+            img.style.border = '2px solid #ccc';
+        }
+    } else {
+        const cell0 = inventory.children[y * COLS + x];
+        const stressEl = createStressElement(item, w, h);
+        removeStressDisplay(cell0);
+        cell0.appendChild(stressEl);
     }
 
     if (!fromRedraw) {
@@ -234,7 +266,9 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
             img: item.img || null,
             color: item.color,
             originalWidth: item.originalWidth ?? (item.rotacionado ? item.height : item.width),
-            originalHeight: item.originalHeight ?? (item.rotacionado ? item.width : item.height)
+            originalHeight: item.originalHeight ?? (item.rotacionado ? item.width : item.height),
+            maxEstresse: item.maxEstresse ?? 3,
+            estresseAtual: item.estresseAtual ?? 0
         });
         saveInventory(itemsData, placedItems);
     }
@@ -258,6 +292,19 @@ export function createItemImageElement(item, width, height, isGhost = false) {
     return img;
 }
 
+export function createStressElement(item, width, height) {
+    const div = document.createElement('div');
+    div.className = 'stress-display';
+    div.textContent = `${item.estresseAtual ?? 0} / ${item.maxEstresse ?? 3}`;
+    div.classList.add(`w${width}`, `h${height}`);
+    return div;
+}
+
+export function removeStressDisplay(cell) {
+    const el = cell.querySelector('.stress-display');
+    if (el) cell.removeChild(el);
+}
+
 export function removeGridImage(cell) {
     const img = cell.querySelector('.grid-item-img');
     if (img) cell.removeChild(img);
@@ -275,11 +322,38 @@ export function resetCell(cell) {
     cell.style.borderBottom = '';
     cell.style.background = '';
     removeGridImage(cell);
+    removeStressDisplay(cell);
 }
 
 export function hideGhostElement(ghost) {
     ghost.style.display = 'none';
     ghost.innerHTML = '';
+}
+
+export function updateStressDisplay(item) {
+    const cell0 = inventory.children[item.y * COLS + item.x];
+    if (!cell0) return;
+    const el = cell0.querySelector('.stress-display');
+    if (el) el.textContent = `${item.estresseAtual ?? 0} / ${item.maxEstresse ?? 3}`;
+    const broken = (item.estresseAtual ?? 0) >= (item.maxEstresse ?? 3);
+    if (item.img) {
+        const img = cell0.querySelector('.grid-item-img');
+        if (img) {
+            img.style.opacity = broken ? '0.3' : '1';
+            img.style.border = broken ? '2px solid #ccc' : `2px solid ${item.color}`;
+        }
+    } else {
+        clearCells(item.x, item.y, item.width, item.height);
+        placeItem(item.x, item.y, item.width, item.height, item, true);
+    }
+}
+
+export function adjustItemStress(itemId, delta) {
+    const item = placedItems.find(it => it.id === itemId);
+    if (!item) return;
+    item.estresseAtual = Math.max(0, Math.min(item.maxEstresse ?? 3, item.estresseAtual + delta));
+    updateStressDisplay(item);
+    saveInventory(itemsData, placedItems);
 }
 
 export function generateId() {

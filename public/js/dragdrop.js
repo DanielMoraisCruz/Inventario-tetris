@@ -1,4 +1,4 @@
-import { inventory, itemList, clearGridSelection, removeItemFromGrid, clearCells, canPlace, placeItem, createItemImageElement, returnItemToPanel, removeItemFromPanel, getInventoryState, setInventoryState, updateItemList } from './inventory.js';
+import { inventory, itemList, clearGridSelection, removeItemFromGrid, clearCells, canPlace, placeItem, createItemImageElement, returnItemToPanel, removeItemFromPanel, getInventoryState, setInventoryState, updateItemList, adjustItemStress } from './inventory.js';
 import { saveInventory } from './storage.js';
 import { ROWS, COLS, CELL_GAP, getCellSize } from './constants.js';
 import { session } from './login.js';
@@ -77,7 +77,21 @@ function onKeyDown(e) {
         selectedItemId = null;
         return;
     }
-    if (!draggedItem) return;
+    if (!draggedItem) {
+        if (session.isMaster && selectedItemId) {
+            if (e.key === '+' || e.key === '=' || e.key === 'Add' || e.key === 'NumpadAdd') {
+                e.preventDefault();
+                adjustItemStress(selectedItemId, 1);
+                return;
+            }
+            if (e.key === '-' || e.key === '_' || e.key === 'Subtract' || e.key === 'NumpadSubtract') {
+                e.preventDefault();
+                adjustItemStress(selectedItemId, -1);
+                return;
+            }
+        }
+        return;
+    }
     if (e.key.toLowerCase() === 'r') {
         previewRotation = !previewRotation;
         currentPreviewSize = {
