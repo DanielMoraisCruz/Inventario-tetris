@@ -55,6 +55,7 @@ export function registerPanelDragHandlers() {
                         const tmpW = item.width;
                         item.width = item.height;
                         item.height = tmpW;
+                        item.rotacionado = !item.rotacionado;
                         updateItemList();
                         saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
                     } },
