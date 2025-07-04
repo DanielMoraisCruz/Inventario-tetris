@@ -1,7 +1,8 @@
-import { inventory, itemList, clearGridSelection, removeItemFromGrid, clearCells, canPlace, placeItem, createItemImageElement, returnItemToPanel, removeItemFromPanel, getInventoryState, setInventoryState, updateItemList, adjustItemStress } from './inventory.js';
+import { inventory, itemList, clearGridSelection, removeItemFromGrid, clearCells, canPlace, placeItem, createItemImageElement, returnItemToPanel, removeItemFromPanel, getInventoryState, setInventoryState, updateItemList, adjustItemStress, readImageFile, redrawPlacedItems } from './inventory.js';
 import { saveInventory } from './storage.js';
 import { ROWS, COLS, CELL_GAP, getCellSize } from './constants.js';
 import { session } from './login.js';
+import { showContextMenu, hideContextMenu, openEditModal, currentMenu } from './context-menu.js';
 
 const dragGhost = document.getElementById('drag-ghost');
 
@@ -12,7 +13,7 @@ let currentPreviewSize = { width: 1, height: 1 };
 let previousPlacement = null;
 let lastGhostPos = { x: null, y: null, valid: true };
 let selectedItemId = null;
-let deleteBtn = null;
+let deleteBtn = null; // legacy, kept for backward compatibility
 let panelDeleteBtn = null;
 
 // Reaplica handlers sempre que a lista de itens é atualizada
@@ -42,19 +43,47 @@ export function registerPanelDragHandlers() {
         el.addEventListener('contextmenu', e => {
             e.preventDefault();
             if (!session.isMaster) return;
-            hidePanelDeleteButton();
-            hideDeleteButton();
-            panelDeleteBtn = document.createElement('button');
-            panelDeleteBtn.className = 'delete-item-btn';
-            panelDeleteBtn.textContent = 'X';
-            panelDeleteBtn.addEventListener('click', ev => {
-                ev.stopPropagation();
-                if (confirm('Tem certeza que deseja excluir este item do catálogo?')) {
-                    removeItemFromPanel(item.id);
-                }
-                hidePanelDeleteButton();
-            });
-            el.appendChild(panelDeleteBtn);
+            hideContextMenu();
+            const opts = [
+                { label: 'Remover', action: () => removeItemFromPanel(item.id) },
+                { label: 'Editar', action: () => openEditModal(item, updates => {
+                        Object.assign(item, updates);
+                        updateItemList();
+                        saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
+                    }) },
+                { label: 'Girar', action: () => {
+                        const tmpW = item.width;
+                        item.width = item.height;
+                        item.height = tmpW;
+                        updateItemList();
+                        saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
+                    } },
+                { label: 'Add Imagem', action: async () => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.addEventListener('change', async () => {
+                            const img = await readImageFile(input);
+                            if (img) {
+                                item.img = img;
+                                updateItemList();
+                                saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
+                            }
+                        });
+                        input.click();
+                    } },
+                { label: 'Remover Imagem', action: () => {
+                        item.img = null;
+                        updateItemList();
+                        saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
+                    } },
+                { label: 'Deletar', action: () => {
+                        if (confirm('Tem certeza que deseja excluir este item permanentemente?')) {
+                            removeItemFromPanel(item.id);
+                        }
+                    } }
+            ];
+            showContextMenu(opts, e.clientX, e.clientY);
         });
     });
 }
@@ -298,6 +327,7 @@ function hideDeleteButton() {
         deleteBtn.remove();
         deleteBtn = null;
     }
+    hideContextMenu();
 }
 
 function hidePanelDeleteButton() {
@@ -305,6 +335,7 @@ function hidePanelDeleteButton() {
         panelDeleteBtn.remove();
         panelDeleteBtn = null;
     }
+    hideContextMenu();
 }
 
 function onDocumentClick(e) {
@@ -314,6 +345,9 @@ function onDocumentClick(e) {
     if (panelDeleteBtn && !panelDeleteBtn.contains(e.target)) {
         hidePanelDeleteButton();
     }
+    if (currentMenu && !currentMenu.contains(e.target)) {
+        hideContextMenu();
+    }
 }
 
 function onInventoryContextMenu(e) {
@@ -321,8 +355,7 @@ function onInventoryContextMenu(e) {
     if (!session.isMaster) return;
     const cell = e.target.closest('.cell');
     if (!cell || !cell.classList.contains('placed')) {
-        hideDeleteButton();
-        hidePanelDeleteButton();
+        hideContextMenu();
         return;
     }
     const itemId = cell.dataset.itemid;
@@ -330,30 +363,50 @@ function onInventoryContextMenu(e) {
     const state = getInventoryState();
     const placed = state.placedItems.find(it => it.id === itemId);
     if (!placed) return;
-
-    hideDeleteButton();
-    hidePanelDeleteButton();
-
-    const invRect = inventory.getBoundingClientRect();
-    const total = getCellSize() + CELL_GAP;
-    const left = invRect.left + window.scrollX + placed.x * total + placed.width * total - CELL_GAP - 22;
-    const top = invRect.top + window.scrollY + placed.y * total + 2;
-
-    deleteBtn = document.createElement('button');
-    deleteBtn.className = 'delete-btn';
-    deleteBtn.textContent = 'X';
-    deleteBtn.style.position = 'absolute';
-    deleteBtn.style.left = `${left}px`;
-    deleteBtn.style.top = `${top}px`;
-
-    deleteBtn.addEventListener('click', ev => {
-        ev.stopPropagation();
-        if (confirm('Tem certeza que deseja remover este item do invent\u00e1rio?')) {
-            removeItemFromGrid(itemId, true);
-        }
-        hideDeleteButton();
-        hidePanelDeleteButton();
-    });
-
-    document.body.appendChild(deleteBtn);
+    hideContextMenu();
+    const opts = [
+        { label: 'Remover', action: () => removeItemFromGrid(itemId, false) },
+        { label: 'Editar', action: () => openEditModal(placed, updates => {
+                Object.assign(placed, updates);
+                redrawPlacedItems();
+                saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
+            }) },
+        { label: 'Girar', action: () => {
+                const tmpW = placed.width;
+                const tmpH = placed.height;
+                const newItem = { ...placed, width: tmpH, height: tmpW, rotacionado: !placed.rotacionado };
+                removeItemFromGrid(itemId, true);
+                if (canPlace(placed.x, placed.y, newItem.width, newItem.height)) {
+                    placeItem(placed.x, placed.y, newItem.width, newItem.height, newItem);
+                } else {
+                    placeItem(placed.x, placed.y, placed.width, placed.height, placed);
+                    alert('N\u00e3o h\u00e1 espa\u00e7o para girar o item.');
+                }
+            } },
+        { label: 'Add Imagem', action: async () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.addEventListener('change', async () => {
+                    const img = await readImageFile(input);
+                    if (img) {
+                        placed.img = img;
+                        redrawPlacedItems();
+                        saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
+                    }
+                });
+                input.click();
+            } },
+        { label: 'Remover Imagem', action: () => {
+                placed.img = null;
+                redrawPlacedItems();
+                saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
+            } },
+        { label: 'Deletar', action: () => {
+                if (confirm('Tem certeza que deseja excluir este item permanentemente?')) {
+                    removeItemFromGrid(itemId, true);
+                }
+            } }
+    ];
+    showContextMenu(opts, e.clientX, e.clientY);
 }
