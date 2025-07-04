@@ -79,25 +79,13 @@
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
+    pointer-events: none;
+
 }
 
 .item-preview.broken {
     border-color: #ccc;
     background: transparent;
-}
-
-.item-stress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.5);
-    color: white;
-    font-size: 0.55rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none;
 }
 
 .broken img {
@@ -220,6 +208,7 @@
 }
 .rotacionado {
     transform: rotate(90deg);
+    transform-origin: top left;
 }
 .w1 { width: calc(1 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
 .w2 { width: calc(2 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
