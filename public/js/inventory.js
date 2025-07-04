@@ -319,7 +319,10 @@ export function removeStressDisplay(cell) {
 export function removeGridImage(cell) {
     const wrapper = cell.querySelector('.grid-item-wrapper');
     if (wrapper) wrapper.remove();
-    cell.classList.remove('has-img');
+    const legacyImg = cell.querySelector('.grid-item-img');
+    if (legacyImg && !legacyImg.closest('.grid-item-wrapper')) {
+        legacyImg.remove();
+    }
 }
 
 export function resetCell(cell) {
