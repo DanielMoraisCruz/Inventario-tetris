@@ -98,13 +98,13 @@ Pré-requisitos: **Node.js 18+** e **Python 3** caso queira utilizar o script de
 O arquivo `server/users.json` é gerado automaticamente na primeira execução do servidor e armazena os usuários cadastrados. Se quiser reiniciar os cadastros, exclua esse arquivo antes de iniciar o servidor.
 
 ### Atualizar itens via CSV
-Na pasta `public/data/` existe o script `atualizar_items.py` que converte o arquivo `CSV-itens.csv` em `items.json`. Execute:
+Na pasta `public/data/` existe o script `atualizar_items.py` que converte o arquivo `CSV-itens.csv` em `items.json`. Caso tenha a dependência `openpyxl` instalada, o script também aceita `CSV-itens.xlsx` (não incluído no repositório). Execute:
 
 ```bash
 python3 public/data/atualizar_items.py
 ```
 
-para gerar ou atualizar a lista de itens.
+para gerar ou atualizar a lista de itens. O CSV possui as colunas `nome`, `width`, `height`, `color`, `img`, `maxEstresse`, `tipo` e `slot`. Todos esses valores serão copiados para `items.json`.
 
 ### Registro de usuários
 
@@ -219,13 +219,13 @@ The `/master-hash` endpoint returns the value of the `MASTER_PASSWORD_HASH` envi
 The file `server/users.json` is created automatically when the server first starts and stores all registered users. Delete this file before launching the server if you wish to reset the credentials.
 
 ### Update items from CSV
-Inside `public/data/` there is a script called `atualizar_items.py` that converts `CSV-itens.csv` into `items.json`. Run:
+Inside `public/data/` there is a script called `atualizar_items.py` that converts `CSV-itens.csv` into `items.json`. If the `openpyxl` dependency is installed the script will also accept `CSV-itens.xlsx` (not included in the repository). Run:
 
 ```bash
 python3 public/data/atualizar_items.py
 ```
 
-to generate or update the item list.
+to generate or update the item list. The CSV includes the columns `nome`, `width`, `height`, `color`, `img`, `maxEstresse`, `tipo` and `slot`. All of them are written to `items.json`.
 
 ---
 

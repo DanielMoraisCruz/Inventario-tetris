@@ -1,3 +1,282 @@
 [
-
+  {
+    "nome": "Espada",
+    "width": 2,
+    "height": 1,
+    "color": "#0b00fd",
+    "img": "img/Espada.png",
+    "maxEstresse": 3,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Lança",
+    "width": 1,
+    "height": 3,
+    "color": "#2b8a3e",
+    "img": "img/Lança.png",
+    "maxEstresse": 3,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Escudo",
+    "width": 2,
+    "height": 2,
+    "color": "#2b8a3e",
+    "img": "img/Escudo.png",
+    "maxEstresse": 5,
+    "tipo": "Escudo",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Machado",
+    "width": 2,
+    "height": 1,
+    "color": "#fd0000",
+    "img": "img/Machado.png",
+    "maxEstresse": 3,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Arco",
+    "width": 1,
+    "height": 2,
+    "color": "#fd8a00",
+    "img": "img/Arco.png",
+    "maxEstresse": 3,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Besta",
+    "width": 2,
+    "height": 1,
+    "color": "#fd8a00",
+    "img": "img/Besta.png",
+    "maxEstresse": 3,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Adaga",
+    "width": 1,
+    "height": 1,
+    "color": "#fd00fd",
+    "img": "img/Adaga.png",
+    "maxEstresse": 3,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Cajado",
+    "width": 1,
+    "height": 3,
+    "color": "#00fdfd",
+    "img": "img/Cajado.png",
+    "maxEstresse": 3,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Varinha",
+    "width": 1,
+    "height": 2,
+    "color": "#00fdfd",
+    "img": "img/Varinha.png",
+    "maxEstresse": 3,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Livro",
+    "width": 2,
+    "height": 2,
+    "color": "#8a00fd",
+    "img": "img/Livro.png",
+    "maxEstresse": 3,
+    "tipo": "Utilitário",
+    "slot": "Mochila"
+  },
+  {
+    "nome": "Poção",
+    "width": 1,
+    "height": 1,
+    "color": "#fd00fd",
+    "img": "img/Poção.png",
+    "maxEstresse": 1,
+    "tipo": "Consumível",
+    "slot": "Bolsa"
+  },
+  {
+    "nome": "Chave",
+    "width": 1,
+    "height": 1,
+    "color": "#8a8a8a",
+    "img": "img/Chave.png",
+    "maxEstresse": 3,
+    "tipo": "Ferramenta",
+    "slot": "Mochila"
+  },
+  {
+    "nome": "Mapa",
+    "width": 2,
+    "height": 1,
+    "color": "#8a8a8a",
+    "img": "img/Mapa.png",
+    "maxEstresse": 3,
+    "tipo": "Ferramenta",
+    "slot": "Mochila"
+  },
+  {
+    "nome": "Lanterna",
+    "width": 1,
+    "height": 2,
+    "color": "#fd8a8a",
+    "img": "img/Lanterna.png",
+    "maxEstresse": 3,
+    "tipo": "Ferramenta",
+    "slot": "Mochila"
+  },
+  {
+    "nome": "Bomba",
+    "width": 1,
+    "height": 1,
+    "color": "#fd0000",
+    "img": "img/Bomba.png",
+    "maxEstresse": 1,
+    "tipo": "Consumível",
+    "slot": "Bolsa"
+  },
+  {
+    "nome": "Rede",
+    "width": 2,
+    "height": 1,
+    "color": "#00fd00",
+    "img": "img/Rede.png",
+    "maxEstresse": 3,
+    "tipo": "Ferramenta",
+    "slot": "Mochila"
+  },
+  {
+    "nome": "Corda",
+    "width": 1,
+    "height": 3,
+    "color": "#8a8a00",
+    "img": "img/Corda.png",
+    "maxEstresse": 3,
+    "tipo": "Ferramenta",
+    "slot": "Mochila"
+  },
+  {
+    "nome": "Escada",
+    "width": 2,
+    "height": 2,
+    "color": "#8a8a00",
+    "img": "img/Escada.png",
+    "maxEstresse": 3,
+    "tipo": "Ferramenta",
+    "slot": "Mochila"
+  },
+  {
+    "nome": "Ferramenta",
+    "width": 1,
+    "height": 1,
+    "color": "#00fd8a",
+    "img": "img/Ferramenta.png",
+    "maxEstresse": 3,
+    "tipo": "Ferramenta",
+    "slot": "Mochila"
+  },
+  {
+    "nome": "Semente",
+    "width": 1,
+    "height": 1,
+    "color": "#8a00fd",
+    "img": "img/Semente.png",
+    "maxEstresse": 1,
+    "tipo": "Material",
+    "slot": "Bolsa"
+  },
+  {
+    "nome": "Fruta",
+    "width": 1,
+    "height": 1,
+    "color": "#fd8a00",
+    "img": "img/Fruta.png",
+    "maxEstresse": 1,
+    "tipo": "Consumível",
+    "slot": "Bolsa"
+  },
+  {
+    "nome": "Bebida",
+    "width": 1,
+    "height": 1,
+    "color": "#00fdfd",
+    "img": "img/Bebida.png",
+    "maxEstresse": 1,
+    "tipo": "Consumível",
+    "slot": "Bolsa"
+  },
+  {
+    "nome": "Comida",
+    "width": 2,
+    "height": 2,
+    "color": "#fd8a8a",
+    "img": "img/Comida.png",
+    "maxEstresse": 1,
+    "tipo": "Consumível",
+    "slot": "Bolsa"
+  },
+  {
+    "nome": "Vestimenta",
+    "width": 2,
+    "height": 2,
+    "color": "#8a00fd",
+    "img": "img/Vestimenta.png",
+    "maxEstresse": 5,
+    "tipo": "Vestimenta",
+    "slot": "Corpo"
+  },
+  {
+    "nome": "Anel",
+    "width": 1,
+    "height": 1,
+    "color": "#fd00fd",
+    "img": "img/Anel.png",
+    "maxEstresse": 5,
+    "tipo": "Acessório",
+    "slot": "Dedo"
+  },
+  {
+    "nome": "Colar",
+    "width": 1,
+    "height": 1,
+    "color": "#00fdfd",
+    "img": "img/Colar.png",
+    "maxEstresse": 5,
+    "tipo": "Acessório",
+    "slot": "Pescoço"
+  },
+  {
+    "nome": "Bracelete",
+    "width": 1,
+    "height": 1,
+    "color": "#8a8a8a",
+    "img": "img/Bracelete.png",
+    "maxEstresse": 5,
+    "tipo": "Acessório",
+    "slot": "Pulso"
+  },
+  {
+    "nome": "Broche",
+    "width": 1,
+    "height": 1,
+    "color": "#fd8a00",
+    "img": "img/Broche.png",
+    "maxEstresse": 5,
+    "tipo": "Acessório",
+    "slot": "Peito"
+  }
 ]
