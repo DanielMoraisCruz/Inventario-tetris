@@ -323,7 +323,6 @@ export function removeGridImage(cell) {
     if (legacyImg && !legacyImg.closest('.grid-item-wrapper')) {
         legacyImg.remove();
     }
-    cell.classList.remove('has-img');
 }
 
 export function resetCell(cell) {
