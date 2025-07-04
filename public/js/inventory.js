@@ -280,8 +280,10 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
 
 export function createItemImageElement(item, width, height, isGhost = false) {
     const wrapper = document.createElement('div');
+    const w = item.rotacionado ? height : width;
+    const h = item.rotacionado ? width : height;
     wrapper.className = 'grid-item-wrapper';
-    wrapper.classList.add(`w${width}`, `h${height}`);
+    wrapper.classList.add(`w${w}`, `h${h}`);
     if (item.rotacionado) {
         wrapper.classList.add('rotacionado');
     }
@@ -295,7 +297,7 @@ export function createItemImageElement(item, width, height, isGhost = false) {
     wrapper.appendChild(img);
 
     if (!isGhost) {
-        const stress = createStressElement(item, width);
+        const stress = createStressElement(item, w);
         wrapper.appendChild(stress);
     }
     return wrapper;
@@ -323,7 +325,7 @@ export function removeGridImage(cell) {
     if (legacyImg && !legacyImg.closest('.grid-item-wrapper')) {
         legacyImg.remove();
     }
-}
+    cell.classList.remove('has-img');
 
 export function resetCell(cell) {
     cell.classList.remove('placed', 'selected');
