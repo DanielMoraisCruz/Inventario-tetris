@@ -75,7 +75,7 @@ app.get('/master-hash', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-// Altere 'localhost' para '0.0.0.0' para permitir conexões externas (Radmin VPN etc.)
+// O servidor escuta em '0.0.0.0', permitindo conexões externas (VPN, LAN etc.)
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
   console.log(`🌐 Acesse pela rede VPN usando: http://26.219.159.252:${PORT}`);
