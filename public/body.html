@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Corpo do Personagem</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/body.css">
+</head>
+<body>
+    <button id="toggle-theme" class="btn">🌙</button>
+    <h1>Corpo do Personagem</h1>
+    <div id="body-diagram">
+        <div id="head" class="zone panel">
+            <div class="zone-name">Cabeça</div>
+            <div class="controls">
+                <button class="btn dec">-</button>
+                <span class="stress">0/3</span>
+                <button class="btn inc">+</button>
+            </div>
+        </div>
+        <div id="left-arm" class="zone panel">
+            <div class="zone-name">Braço Esquerdo</div>
+            <div class="controls">
+                <button class="btn dec">-</button>
+                <span class="stress">0/3</span>
+                <button class="btn inc">+</button>
+            </div>
+        </div>
+        <div id="torso" class="zone panel">
+            <div class="zone-name">Torso</div>
+            <div class="controls">
+                <button class="btn dec">-</button>
+                <span class="stress">0/3</span>
+                <button class="btn inc">+</button>
+            </div>
+        </div>
+        <div id="right-arm" class="zone panel">
+            <div class="zone-name">Braço Direito</div>
+            <div class="controls">
+                <button class="btn dec">-</button>
+                <span class="stress">0/3</span>
+                <button class="btn inc">+</button>
+            </div>
+        </div>
+        <div id="left-leg" class="zone panel">
+            <div class="zone-name">Perna Esquerda</div>
+            <div class="controls">
+                <button class="btn dec">-</button>
+                <span class="stress">0/3</span>
+                <button class="btn inc">+</button>
+            </div>
+        </div>
+        <div id="right-leg" class="zone panel">
+            <div class="zone-name">Perna Direita</div>
+            <div class="controls">
+                <button class="btn dec">-</button>
+                <span class="stress">0/3</span>
+                <button class="btn inc">+</button>
+            </div>
+        </div>
+    </div>
+    <button id="roll-body" class="btn">Rolar Corpo</button>
+
+    <script type="module" src="js/body-page.js"></script>
+</body>
+</html>
