@@ -9,10 +9,7 @@
     width: 100vw;
     height: 100vh;
     z-index: 999;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    background: #fff;
+    background: var(--primary-bg);
 }
 
 #login-form {
@@ -37,13 +34,14 @@
 #login-box,
 #register-box,
 #initial-screen {
-    background: #fff;
+    background: var(--panel-bg);
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(255,255,255,0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
+    border: 1px solid var(--border-color);
 }
 
 #login-err {
@@ -55,7 +53,9 @@
     margin-bottom: 7px;
     padding: 5px;
     border-radius: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--border-color);
+    background: var(--panel-bg);
+    color: var(--text-color);
 }
 #login-screen label {
     margin-top: 6px;
@@ -65,45 +65,42 @@
 }
 #login-screen button {
     font-size: 1.1em;
-    background: #82c91e;
-    color: #fff;
-    border-radius: 6px;
     padding: 6px 16px;
-    border: none;
-    cursor: pointer;
+}
+#login-screen button.btn {
+    /* ensures btn class overrides previous properties */
 }
 #login-screen a {
     margin-top: 6px;
-    color: #0077cc;
+    color: var(--text-color);
     text-decoration: underline;
     cursor: pointer;
 }
 
 /* Dark mode styles */
 body.dark-mode #login-screen {
-    background: #2B2B2B;
+    background: var(--primary-bg);
 }
 
 body.dark-mode #login-box,
 body.dark-mode #register-box,
 body.dark-mode #initial-screen {
-    background: #3C3F41;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    background: var(--panel-bg);
+    box-shadow: 0 2px 10px rgba(255,255,255,0.1);
 }
 
 body.dark-mode #login-screen label,
 body.dark-mode #login-screen a {
-    color: #A9B7C6;
+    color: var(--text-color);
 }
 
 body.dark-mode #login-screen input,
 body.dark-mode #login-screen button {
-    background-color: #3C3F41;
-    color: #A9B7C6;
-    border: 1px solid #555;
+    background: var(--panel-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 
 body.dark-mode #login-screen button {
-    background: #4E94CE;
-    color: #fff;
+    background: var(--button-bg);
 }
