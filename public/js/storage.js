@@ -1,5 +1,5 @@
 import { ROWS, COLS } from './constants.js';
-const DATA_VERSION = 1;
+const DATA_VERSION = 2;
 
 function generateId() {
     return '_' + Math.random().toString(36).substr(2, 9);
@@ -14,15 +14,17 @@ async function fetchDefaultItems() {
         width: it.width,
         height: it.height,
         img: typeof it.img === 'string' && it.img.length ? it.img : null,
-        color: typeof it.color === 'string' ? it.color : '#2b8a3e'
+        color: typeof it.color === 'string' ? it.color : '#2b8a3e',
+        maxEstresse: Number.isFinite(it.maxEstresse) ? it.maxEstresse : 3,
+        estresseAtual: Number.isFinite(it.estresseAtual) ? it.estresseAtual : 0
     }));
 }
 
 function defaultItems() {
     return [
-        { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null, color: '#2b8a3e' },
-        { id: generateId(), nome: 'Lan\u00e7a', width: 1, height: 3, img: null, color: '#2b8a3e' },
-        { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null, color: '#2b8a3e' }
+        { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null, color: '#2b8a3e', maxEstresse: 3, estresseAtual: 0 },
+        { id: generateId(), nome: 'Lan\u00e7a', width: 1, height: 3, img: null, color: '#2b8a3e', maxEstresse: 3, estresseAtual: 0 },
+        { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null, color: '#2b8a3e', maxEstresse: 3, estresseAtual: 0 }
     ];
 }
 
@@ -41,7 +43,9 @@ function sanitizeItems(items) {
             width,
             height,
             img: it.img || null,
-            color: typeof it.color === 'string' ? it.color : '#2b8a3e'
+            color: typeof it.color === 'string' ? it.color : '#2b8a3e',
+            maxEstresse: Number.isFinite(parseInt(it.maxEstresse)) ? parseInt(it.maxEstresse) : 3,
+            estresseAtual: Number.isFinite(parseInt(it.estresseAtual)) ? parseInt(it.estresseAtual) : 0
         });
     }
     return valid;
@@ -70,7 +74,9 @@ function sanitizePlaced(items) {
             img: it.img || null,
             color: typeof it.color === 'string' ? it.color : '#2b8a3e',
             originalWidth: it.originalWidth ?? width,
-            originalHeight: it.originalHeight ?? height
+            originalHeight: it.originalHeight ?? height,
+            maxEstresse: Number.isFinite(parseInt(it.maxEstresse)) ? parseInt(it.maxEstresse) : 3,
+            estresseAtual: Number.isFinite(parseInt(it.estresseAtual)) ? parseInt(it.estresseAtual) : 0
         });
     }
     return valid;
