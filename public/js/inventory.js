@@ -61,6 +61,9 @@ export function updateItemList() {
 
             const preview = document.createElement('div');
             preview.className = 'item-preview';
+            if (item.rotacionado) {
+                preview.classList.add('rotacionado');
+            }
             if (item.img) {
                 const img = document.createElement('img');
                 img.src = item.img;
