@@ -1,0 +1,47 @@
+.attr-list, #skill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.attr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.attr-name {
+    flex: 1;
+    text-align: left;
+}
+
+.attr .controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.attr .value {
+    min-width: 2em;
+    text-align: center;
+    display: inline-block;
+}
+
+.skill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.skill input {
+    flex: 1;
+}
+
+.skill button.remove {
+    padding: 4px 8px;
+}
+
+#add-skill {
+    margin-top: 10px;
+}
