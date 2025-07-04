@@ -320,6 +320,7 @@ function removePreview() {
 function hideGhost() {
     dragGhost.style.display = 'none';
     dragGhost.innerHTML = '';
+    dragGhost.className = '';
     lastGhostPos = { x: null, y: null, valid: true };
 }
 
