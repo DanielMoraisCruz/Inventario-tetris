@@ -17,14 +17,22 @@
     
     <div id="drag-ghost"></div>
     <h1>Ficha de Magia &amp; Mágica</h1>
-    <div id="attributes" class="panel">
-        <h2>Atributos</h2>
-        <div id="attr-list" class="attr-list"></div>
-    </div>
-    <div id="layout">
-        <div id="inventory"></div>
-        <div id="character-body" class="panel">
-            <div id="body-diagram">
+
+    <div class="ficha-container">
+        <div class="linha atributos">
+            <div id="attributes" class="panel">
+                <h2>Atributos</h2>
+                <div id="attr-list" class="attr-list"></div>
+            </div>
+        </div>
+
+        <div class="linha">
+            <div class="coluna inventario">
+                <div id="inventory"></div>
+            </div>
+            <div class="coluna corpo">
+                <div id="character-body" class="panel">
+                    <div id="body-diagram">
                 <div class="body-part panel" id="head">
                     <label class="zone-name">Cabeça</label>
                     <div class="stress-indicator"><button class="stress-minus btn">-</button><span class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
@@ -55,9 +63,29 @@
                     <div class="stress-indicator"><button class="stress-minus btn">-</button><span class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
                     <div class="equip-space" data-part="right-leg">Espaço para item</div>
                 </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="linha">
+            <div class="coluna habilidades">
+                <div id="skills" class="panel habilidades">
+                    <h2>Habilidades</h2>
+                    <div id="skill-list"></div>
+                    <button id="add-skill" class="btn">Nova habilidade</button>
+                </div>
+            </div>
+            <div class="coluna magias">
+                <div id="spells" class="panel magias">
+                    <h2>Magias Conhecidas</h2>
+                    <div id="spell-list"></div>
+                    <button id="add-spell" class="btn">Nova magia</button>
+                </div>
             </div>
         </div>
     </div>
+
     <div id="items" class="panel">
         <div id="side-actions">
             <button id="logout-btn" class="btn">Sair</button>
@@ -82,18 +110,6 @@
         </form>
     </div>
 
-    <div id="skills-container" class="habilidades-magias">
-        <div id="skills" class="panel habilidades">
-            <h2>Habilidades</h2>
-            <div id="skill-list"></div>
-            <button id="add-skill" class="btn">Nova habilidade</button>
-        </div>
-        <div id="spells" class="panel magias">
-            <h2>Magias Conhecidas</h2>
-            <div id="spell-list"></div>
-            <button id="add-spell" class="btn">Nova magia</button>
-        </div>
-    </div>
 
     <script type="module" src="js/inventory.js"></script>
     <script type="module" src="js/inventory-page.js"></script>

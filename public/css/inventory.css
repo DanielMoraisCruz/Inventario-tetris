@@ -407,3 +407,39 @@ body.dark-mode #reset-btn {
   width: 300px;
 }
 
+.ficha-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px;
+  background-color: #111;
+  color: white;
+  font-family: 'Georgia', serif;
+}
+
+.linha {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.atributos {
+  justify-content: center;
+}
+
+.coluna {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.inventario, .habilidades {
+  align-items: flex-start;
+}
+
+.corpo, .magias {
+  align-items: flex-end;
+}
+
