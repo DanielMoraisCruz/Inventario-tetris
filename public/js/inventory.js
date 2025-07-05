@@ -2,11 +2,21 @@ import { saveInventory, loadInventory } from './storage.js';
 import { session } from './login.js';
 import { ROWS, COLS } from './constants.js';
 
-export const inventory = document.getElementById('inventory');
-export const itemList = document.getElementById('item-list');
-export const form = document.getElementById('item-form');
-export const itemsPanel = document.getElementById('items');
-export const searchInput = document.getElementById('item-search');
+// DOM elements are resolved after the document is ready. They are declared
+// using `let` so they can be assigned during initialization.
+export let inventory;
+export let itemList;
+export let form;
+export let itemsPanel;
+export let searchInput;
+
+export function cacheDomElements() {
+    inventory = document.getElementById('inventory');
+    itemList = document.getElementById('item-list');
+    form = document.getElementById('item-form');
+    itemsPanel = document.getElementById('items');
+    searchInput = document.getElementById('item-search');
+}
 
 let itemsData = [];
 
