@@ -1,7 +1,11 @@
 const express = require('express');
 const path = require('path');
 const { ensureUsersFile, loadUsers } = require('./server/storage');
-const { registerUser, authenticateUser, resetPassword } = require('./server/auth');
+const {
+  registerUser,
+  authenticateUser,
+  resetPassword
+} = require('./server/auth');
 
 const app = express();
 
@@ -76,8 +80,35 @@ app.get('/question/:username', (req, res) => {
 // List all users (only for development/testing)
 app.get('/users', (req, res) => {
   const users = loadUsers();
-  res.json(users);
+  const user = users[username];
+  if (!user || !user.pergunta) {
+    return res.status(404).json({ error: 'Usu\u00e1rio n\u00e3o encontrado ou sem pergunta secreta.' });
+  }
+  res.json({ pergunta: user.pergunta });
 });
+
+// List all users - optional and protected
+if (process.env.ENABLE_USERS_ROUTE === 'true') {
+  const basicMasterAuth = (req, res, next) => {
+    const auth = req.headers.authorization || '';
+    if (!auth.startsWith('Basic ')) {
+      res.set('WWW-Authenticate', 'Basic');
+      return res.status(401).send('Authentication required');
+    }
+    const decoded = Buffer.from(auth.split(' ')[1], 'base64').toString('utf8');
+    const [user, pass] = decoded.split(':');
+    const result = authenticateUser(user, pass);
+    if (!result.ok || !result.userData.isMaster) {
+      return res.status(403).send('Forbidden');
+    }
+    next();
+  };
+
+  app.get('/users', basicMasterAuth, (req, res) => {
+    const users = loadUsers();
+    res.json(users);
+  });
+}
 
 app.get('/master-hash', (req, res) => {
   const hash = process.env.MASTER_PASSWORD_HASH || '';
