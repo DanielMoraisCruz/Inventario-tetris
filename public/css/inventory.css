@@ -392,3 +392,18 @@ body.dark-mode #reset-btn {
     gap: 10px;
     justify-content: flex-end;
 }
+
+.habilidades-magias {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.habilidades, .magias {
+  background: #000;
+  border: 1px solid #fff;
+  padding: 1rem;
+  width: 300px;
+}
+
