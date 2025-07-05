@@ -385,5 +385,5 @@ export function adjustItemStress(itemId, delta) {
 }
 
 export function generateId() {
-    return '_' + Math.random().toString(36).substr(2, 9);
+    return crypto.randomUUID();
 }
