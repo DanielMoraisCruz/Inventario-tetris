@@ -1,6 +1,11 @@
 const express = require('express');
 const path = require('path');
-const helmet = require('helmet');
+let helmet;
+try {
+  helmet = require('helmet');
+} catch (e) {
+  console.warn('Helmet module not found. Continuing without it.');
+}
 const { body, validationResult } = require('express-validator');
 const { ensureUsersFile, loadUsers } = require('./server/storage');
 const {
@@ -12,7 +17,9 @@ const {
 const app = express();
 
 app.use(express.json());
-app.use(helmet());
+if (helmet) {
+  app.use(helmet());
+}
 app.use(express.static(path.join(__dirname, 'public')));
 
 ensureUsersFile();
