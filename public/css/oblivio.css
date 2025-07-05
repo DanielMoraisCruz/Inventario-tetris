@@ -62,3 +62,23 @@
     justify-content: center;
     flex-wrap: wrap;
 }
+
+.atributos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    max-width: 800px;
+    margin: 1rem auto;
+}
+
+.atributo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.atributo .valor {
+    min-width: 1.5em;
+    text-align: center;
+}
