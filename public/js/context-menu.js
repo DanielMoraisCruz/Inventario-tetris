@@ -42,8 +42,8 @@ export function openEditModal(item, onSave) {
     const modal = document.createElement('div');
     modal.className = 'modal panel';
     modal.innerHTML = `
-        <form class="edit-form">
-            <h3>Editar Item</h3>
+        <h3>Editar Item</h3>
+        <form id="item-form" class="edit-form">
             <label>Nome</label>
             <input type="text" id="edit-name" value="${item.nome}">
             <label>Cor</label>

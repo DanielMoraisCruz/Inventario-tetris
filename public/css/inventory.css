@@ -42,7 +42,7 @@
     left: 0;
     width: 260px;
     max-height: 100vh;
-    padding: 40px;
+    padding: 15px;
     background: var(--panel-bg);
     box-shadow: 2px 0 8px rgba(255,255,255,0.1);
     overflow-y: auto;
@@ -110,7 +110,7 @@
     flex-direction: column;
     gap: 6px;
     max-width: 220px;
-    padding-bottom: 2rem;
+    margin: 2rem;
 }
 
 #item-form input {
