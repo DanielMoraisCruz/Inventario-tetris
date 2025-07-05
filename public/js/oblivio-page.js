@@ -1,4 +1,5 @@
 import { setupThemeToggle } from './theme.js';
+import { loadSession } from './login.js';
 
 const ATTRS = [
     'Carne', 'Fôlego', 'Dano', 'Força', 'Fuga',
@@ -79,6 +80,11 @@ function addSkill(name = '', type = 'ativa') {
 
 window.addEventListener('DOMContentLoaded', () => {
     setupThemeToggle();
+
+    if (!loadSession()) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     const attrList = document.getElementById('attr-list');
     ATTRS.forEach(a => {

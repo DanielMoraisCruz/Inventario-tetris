@@ -1,4 +1,5 @@
 import { setupThemeToggle } from './theme.js';
+import { session, loadSession, saveSession } from './login.js';
 
 window.addEventListener('DOMContentLoaded', () => {
   setupThemeToggle();
@@ -57,8 +58,9 @@ window.addEventListener('DOMContentLoaded', () => {
         loginErr.textContent = result.error || 'Falha no login.';
         return;
       }
-      const sessionData = { userName: username, isMaster: result.isMaster };
-      localStorage.setItem('session', JSON.stringify(sessionData));
+      session.userName = username;
+      session.isMaster = result.isMaster;
+      saveSession();
       window.location.href = 'inventory.html';
     } catch (err) {
       console.error(err);
@@ -146,8 +148,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const saved = localStorage.getItem('session');
-  if (saved) {
+  if (loadSession()) {
     window.location.href = 'inventory.html';
   }
 });
