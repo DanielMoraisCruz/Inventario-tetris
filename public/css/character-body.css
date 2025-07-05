@@ -10,9 +10,29 @@
     align-items: center;
 }
 
+#body-diagram {
+    display: grid;
+    grid-template-columns: repeat(3, 120px);
+    grid-template-rows: repeat(4, 120px);
+    gap: 10px;
+    margin: 20px auto;
+}
+
+#head { grid-column: 2; grid-row: 1; }
+#left-arm { grid-column: 1; grid-row: 2; }
+#torso { grid-column: 2; grid-row: 2 / span 2; }
+#right-arm { grid-column: 3; grid-row: 2; }
+#left-leg { grid-column: 1; grid-row: 4; }
+#right-leg { grid-column: 3; grid-row: 4; }
+
 .body-part {
-    margin-bottom: 20px;
+    margin: 0;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
 }
 
 .stress-indicator {
@@ -42,8 +62,3 @@
     object-fit: contain;
 }
 
-#body-img {
-    width: 300px;
-    height: auto;
-    margin-bottom: 10px;
-}
