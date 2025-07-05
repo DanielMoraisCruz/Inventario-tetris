@@ -228,6 +228,16 @@ You can also set `USERS_FILE_PATH` to change where the `users.json` file is stor
 ### `users.json`
 The file `server/users.json` is created automatically when the server first starts and stores all registered users. Delete this file before launching the server if you wish to reset the credentials.
 
+### Problemas ao carregar scripts ou imagens
+Se ao abrir a página os botões não responderem ou a imagem do personagem estiver ausente, verifique no console do navegador se `inventory-page.js` e `body-ui.js` foram carregados corretamente. Esses arquivos ficam em `public/js/` e devem ser incluídos assim:
+
+```html
+<script type="module" src="js/inventory-page.js"></script>
+<script type="module" src="js/body-ui.js"></script>
+```
+
+Se você salvou os arquivos pelo navegador e eles possuem o sufixo `.download`, renomeie-os para `.js` e recarregue a página. A imagem do personagem será definida automaticamente pelo script.
+
 ### Update items from CSV
 Inside `public/data/` there is a script called `atualizar_items.py` that converts `CSV-itens.csv` into `items.json`. If the `openpyxl` dependency is installed the script will also accept `CSV-itens.xlsx` (not included in the repository). Run:
 
