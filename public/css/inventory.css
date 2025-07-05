@@ -77,17 +77,14 @@
 .item-preview {
     width: calc(var(--w) * 30px);
     height: calc(var(--h) * 30px);
+    background: var(--button-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 7px;
     position: relative;
     pointer-events: none;
     overflow: hidden;
     box-sizing: border-box;
-}
-
-.item-preview,
-.grid-item-wrapper {
-    border: 2px solid var(--border-color);
-    border-radius: 7px;
-    background: var(--button-bg);
+    pointer-events: none;
 }
 
 .item-preview.broken {
@@ -215,9 +212,8 @@
     z-index: 15;
 }
 .rotacionado {
-    transform: rotate(90deg) translateY(-100%);
+    transform: rotate(90deg);
     transform-origin: top left;
-    display: block;
 }
 .w1 { width: calc(1 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
 .w2 { width: calc(2 * (var(--cell-size) + var(--cell-gap)) - var(--cell-gap) - 2px); }
