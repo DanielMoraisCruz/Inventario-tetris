@@ -393,42 +393,13 @@ body.dark-mode #reset-btn {
     justify-content: flex-end;
 }
 
-.layout-principal {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.col-esquerda {
-  flex: 1;
-  max-width: 60%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.col-direita {
-  flex: 1;
-  max-width: 40%;
-  display: flex;
-  justify-content: center;
-}
-
-.atributos, .inventario {
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
 .habilidades-magias {
   display: flex;
-  gap: 2rem;
   justify-content: center;
-  flex-wrap: wrap;
+  gap: 2rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
 }
-
 .habilidades, .magias {
   background: #000;
   border: 1px solid #fff;
