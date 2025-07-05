@@ -2,7 +2,7 @@ import { ROWS, COLS } from './constants.js';
 const DATA_VERSION = 2;
 
 function generateId() {
-    return '_' + Math.random().toString(36).substr(2, 9);
+    return crypto.randomUUID();
 }
 
 async function fetchDefaultItems() {
