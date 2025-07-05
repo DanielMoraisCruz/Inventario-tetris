@@ -1,8 +1,9 @@
-const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const { loadUsers, saveUsers } = require('./storage');
 
-function sha256(text) {
-  return crypto.createHash('sha256').update(text).digest('hex');
+function hash(text) {
+  const salt = bcrypt.genSaltSync(10);
+  return bcrypt.hashSync(text, salt);
 }
 
 function registerUser(username, password, pergunta = '', resposta = '') {
@@ -12,12 +13,12 @@ function registerUser(username, password, pergunta = '', resposta = '') {
   }
   const isMaster = Object.keys(users).length === 0;
   const userData = {
-    passwordHash: sha256(password),
+    passwordHash: hash(password),
     isMaster
   };
   if (pergunta && resposta) {
     userData.pergunta = pergunta;
-    userData.respostaHash = sha256(resposta);
+    userData.respostaHash = hash(resposta);
   }
   users[username] = userData;
   try {
@@ -34,8 +35,8 @@ function authenticateUser(username, password) {
   if (!user) {
     return { ok: false, code: 'notfound' };
   }
-  const candidateHash = sha256(password);
-  if (candidateHash !== user.passwordHash) {
+  const valid = bcrypt.compareSync(password, user.passwordHash);
+  if (!valid) {
     return { ok: false, code: 'wrongpass' };
   }
   return { ok: true, userData: user };
@@ -49,7 +50,7 @@ function verifyResposta(username, resposta) {
   const users = loadUsers();
   const user = users[username];
   if (!user || !user.respostaHash) return false;
-  return user.respostaHash === sha256(resposta);
+  return bcrypt.compareSync(resposta, user.respostaHash);
 }
 
 function resetPassword(username, resposta, novaSenha) {
@@ -58,10 +59,10 @@ function resetPassword(username, resposta, novaSenha) {
   if (!user || !user.respostaHash) {
     return { ok: false, code: 'notfound' };
   }
-  if (sha256(resposta) !== user.respostaHash) {
+  if (!bcrypt.compareSync(resposta, user.respostaHash)) {
     return { ok: false, code: 'wronganswer' };
   }
-  user.passwordHash = sha256(novaSenha);
+  user.passwordHash = hash(novaSenha);
   try {
     saveUsers(users);
   } catch (e) {
@@ -70,4 +71,4 @@ function resetPassword(username, resposta, novaSenha) {
   return { ok: true };
 }
 
-module.exports = { registerUser, authenticateUser, verifyUser, verifyResposta, resetPassword, sha256 };
+module.exports = { registerUser, authenticateUser, verifyUser, verifyResposta, resetPassword };
