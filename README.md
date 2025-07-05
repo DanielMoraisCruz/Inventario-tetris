@@ -85,7 +85,9 @@ Pré-requisitos: **Node.js 18+** e **Python 3** caso queira utilizar o script de
    Isso levantará o servidor Express em `http://localhost:3000`.
    Abra `http://localhost:3000/login.html` (ou `index.html`) no navegador para acessar o front‑end.
 
-   O backend criará automaticamente o arquivo `server/users.json` se ele não existir e disponibilizará as rotas de API (`/register`, `/login`, `/reset-password`, `/security-question` etc.) para a aplicação. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo:
+   O backend criará automaticamente o arquivo `server/users.json` se ele não existir e disponibilizará as rotas de API (`/register`, `/login`, `/reset-password`, `/security-question` etc.) para a aplicação. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo: 
+   
+   As senhas são armazenadas usando **bcryptjs** para maior segurança. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo:
 
    ```javascript
    fetch('http://localhost:3000/login')
@@ -207,7 +209,11 @@ npm start
 ```
 
 This starts the Express backend on `http://localhost:3000`. Open `http://localhost:3000/login.html` (or `index.html`) in your browser to view the front-end.
+
 The backend automatically creates `users.json` if missing and exposes the API routes (`/register`, `/login`, `/reset-password`, `/security-question`, etc.) used by the app. All communication happens through JSON, so remember to prefix your requests, e.g.:
+
+The backend automatically creates `users.json` if missing and exposes the API routes (`/register`, `/login`, `/reset-password`, etc.) used by the app. Passwords are stored using **bcryptjs** for better security. All communication happens through JSON, so remember to prefix your requests, e.g.:
+
 
 ```javascript
 fetch('http://localhost:3000/login')
