@@ -320,7 +320,6 @@ export function removeGridImage(cell) {
     const wrapper = cell.querySelector('.grid-item-wrapper');
     if (wrapper) wrapper.remove();
     cell.classList.remove('has-img');
-}
 
 export function resetCell(cell) {
     cell.classList.remove('placed', 'selected');
