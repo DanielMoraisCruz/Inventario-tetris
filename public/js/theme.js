@@ -3,11 +3,11 @@ function applyTheme(theme) {
     const toggleBtn = document.getElementById('toggle-theme');
     if (!toggleBtn) return;
     if (theme === 'dark') {
-        body.classList.add('dark-mode');
+        body.classList.add('dark-mode', 'dark-theme');
         body.classList.remove('light-mode');
         toggleBtn.textContent = '☀️';
     } else {
-        body.classList.remove('dark-mode');
+        body.classList.remove('dark-mode', 'dark-theme');
         body.classList.add('light-mode');
         toggleBtn.textContent = '🌙';
     }
@@ -20,9 +20,8 @@ export function setupThemeToggle() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     applyTheme(savedTheme);
     toggleBtn.addEventListener('click', () => {
-        const current = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-        const next = current === 'dark' ? 'light' : 'dark';
-        applyTheme(next);
+        const isDark = document.body.classList.contains('dark-theme');
+        applyTheme(isDark ? 'light' : 'dark');
     });
 }
 
