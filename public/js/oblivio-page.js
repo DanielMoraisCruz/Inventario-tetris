@@ -78,6 +78,37 @@ function addSkill(name = '', type = 'ativa') {
     list.appendChild(div);
 }
 
+function addSpell(name = '', type = 'ativa') {
+    const list = document.getElementById('spell-list');
+    const div = document.createElement('div');
+    div.className = 'skill';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Nome';
+    input.value = name;
+
+    const select = document.createElement('select');
+    const optA = document.createElement('option');
+    optA.value = 'ativa';
+    optA.textContent = 'Ativa';
+    const optP = document.createElement('option');
+    optP.value = 'passiva';
+    optP.textContent = 'Passiva';
+    select.append(optA, optP);
+    select.value = type;
+
+    const remove = document.createElement('button');
+    remove.className = 'btn remove';
+    remove.textContent = '✕';
+    remove.addEventListener('click', () => {
+        list.removeChild(div);
+    });
+
+    div.append(input, select, remove);
+    list.appendChild(div);
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     setupThemeToggle();
 
@@ -92,4 +123,8 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('add-skill').addEventListener('click', () => addSkill());
+    const addSpellBtn = document.getElementById('add-spell');
+    if (addSpellBtn) {
+        addSpellBtn.addEventListener('click', () => addSpell());
+    }
 });

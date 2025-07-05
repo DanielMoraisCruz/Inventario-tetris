@@ -1,4 +1,4 @@
-.attr-list, #skill-list {
+.attr-list, #skill-list, #spell-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -44,4 +44,14 @@
 
 #add-skill {
     margin-top: 10px;
+}
+#add-spell {
+    margin-top: 10px;
+}
+
+#skills-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
