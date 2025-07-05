@@ -2,8 +2,15 @@ import { setupThemeToggle } from './theme.js';
 import { loadSession } from './login.js';
 
 const ATTRS = [
-    'Carne', 'Fôlego', 'Dano', 'Força', 'Fuga',
-    'Determinação', 'Mente', 'Coragem', 'Proteção', 'Velocidade'
+    'Força',
+    'Destresa',
+    'Vigor',
+    'Carisma',
+    'Aparência',
+    'Autocontrole',
+    'Inteligência',
+    'Raciocínio',
+    'Determinação'
 ];
 
 function createAttrRow(name) {
