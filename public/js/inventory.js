@@ -18,6 +18,14 @@ export function cacheDomElements() {
     searchInput = document.getElementById('item-search');
 }
 
+// Automatically cache elements once the DOM is ready so other modules can use
+// them without needing to manually call cacheDomElements.
+if (document.readyState !== 'loading') {
+    cacheDomElements();
+} else {
+    window.addEventListener('DOMContentLoaded', cacheDomElements, { once: true });
+}
+
 let itemsData = [];
 
 let placedItems = [];
