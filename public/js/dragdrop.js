@@ -30,6 +30,7 @@ export function registerPanelDragHandlers() {
             previewRotation = false;
             currentPreviewSize = { width: item.width, height: item.height };
             setTimeout(() => el.style.opacity = 0.5, 0);
+            try { e.dataTransfer.setData('text/plain', item.id); } catch {}
             snapGhostToGrid(e.pageX, e.pageY);
         });
         el.addEventListener('dragend', () => {
