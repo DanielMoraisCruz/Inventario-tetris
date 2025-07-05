@@ -4,7 +4,7 @@
   "description": "Um sistema visual e interativo de gerenciamento de inventário inspirado em Tetris, voltado para mesas de RPG.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node server.js"
   },
   "keywords": [],
@@ -13,5 +13,8 @@
   "type": "commonjs",
   "dependencies": {
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }

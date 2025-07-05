@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const USERS_FILE = path.join(__dirname, 'users.json');
+const USERS_FILE = process.env.USERS_FILE || path.join(__dirname, 'users.json');
 
 function ensureUsersFile() {
   if (!fs.existsSync(USERS_FILE)) {
