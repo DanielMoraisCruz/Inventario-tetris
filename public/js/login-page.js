@@ -1,4 +1,5 @@
 import { setupThemeToggle } from './theme.js';
+import { session, loadSession, saveSession } from './login.js';
 
 window.addEventListener('DOMContentLoaded', () => {
   setupThemeToggle();
@@ -57,8 +58,9 @@ window.addEventListener('DOMContentLoaded', () => {
         loginErr.textContent = result.error || 'Falha no login.';
         return;
       }
-      const sessionData = { userName: username, isMaster: result.isMaster };
-      localStorage.setItem('session', JSON.stringify(sessionData));
+      session.userName = username;
+      session.isMaster = result.isMaster;
+      saveSession();
       window.location.href = 'inventory.html';
     } catch (err) {
       console.error(err);
@@ -118,13 +120,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const username = prompt('Nome de usuário:');
     if (!username) return;
     try {
-      const res = await fetch('/users');
-      const users = await res.json();
-      if (!users[username] || !users[username].pergunta) {
-        alert('Usuário não encontrado ou sem pergunta secreta cadastrada.');
+      const res = await fetch(`/question/${encodeURIComponent(username)}`);
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Usuário não encontrado ou sem pergunta secreta cadastrada.');
         return;
       }
-      const question = users[username].pergunta;
+      const question = data.pergunta;
       const answer = prompt(question);
       if (!answer) return;
       const newPass = prompt('Digite a nova senha:');
@@ -134,9 +136,9 @@ window.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, resposta: answer, novaSenha: newPass })
       });
-      const result = await res2.json();
+      const resetResult = await res2.json();
       if (!res2.ok) {
-        alert(result.error || 'Não foi possível redefinir a senha.');
+        alert(resetResult.error || 'Não foi possível redefinir a senha.');
       } else {
         alert('Senha redefinida com sucesso! Faça login com sua nova senha.');
       }
@@ -146,8 +148,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const saved = localStorage.getItem('session');
-  if (saved) {
+  if (loadSession()) {
     window.location.href = 'inventory.html';
   }
 });

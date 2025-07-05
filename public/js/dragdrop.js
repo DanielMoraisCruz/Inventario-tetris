@@ -1,17 +1,15 @@
-import { inventory, itemList, clearGridSelection, removeItemFromGrid, clearCells, canPlace, placeItem, createItemImageElement, returnItemToPanel, removeItemFromPanel, getInventoryState, setInventoryState, updateItemList, adjustItemStress, readImageFile, redrawPlacedItems } from './inventory.js';
+import { inventory, itemList, clearGridSelection, removeItemFromGrid, clearCells, getInventoryState, setInventoryState, updateItemList, adjustItemStress } from './inventory.js';
 import { saveInventory } from './storage.js';
-import { ROWS, COLS, CELL_GAP, getCellSize } from './constants.js';
 import { session } from './login.js';
-import { showContextMenu, hideContextMenu, openEditModal, currentMenu } from './context-menu.js';
-
-const dragGhost = document.getElementById('drag-ghost');
+import { currentMenu, hideContextMenu } from './context-menu.js';
+import { COLS } from './constants.js';
+import { initGhost, snapGhostToGrid, showGhostOnGrid, removePreview, hideGhost, setPreviewSize, setPreviewRotation, getLastGhostPos, getCurrentPreviewSize, getPreviewRotation } from './ghost-preview.js';
+import { finalizeMouseDrop, handlePanelDrop } from './placement.js';
+import { showPanelContextMenu, handleInventoryContextMenu } from './context-handlers.js';
 
 let draggedItem = null;
 let draggedFromGrid = false;
-let previewRotation = false;
-let currentPreviewSize = { width: 1, height: 1 };
 let previousPlacement = null;
-let lastGhostPos = { x: null, y: null, valid: true };
 let selectedItemId = null;
 let deleteBtn = null; // legacy, kept for backward compatibility
 let panelDeleteBtn = null;
@@ -19,78 +17,50 @@ let panelDeleteBtn = null;
 // Reaplica handlers sempre que a lista de itens é atualizada
 document.addEventListener('itemListUpdated', registerPanelDragHandlers);
 
-export function registerPanelDragHandlers() {
-    const { itemsData } = getInventoryState();
-    itemList.querySelectorAll('.item').forEach(el => {
-        const idx = parseInt(el.dataset.idx, 10);
-        const item = itemsData[idx];
-        el.addEventListener('dragstart', e => {
-            hidePanelDeleteButton();
-            draggedItem = { ...item, source: 'panel' };
-            previewRotation = false;
-            currentPreviewSize = { width: item.width, height: item.height };
-            setTimeout(() => el.style.opacity = 0.5, 0);
-            try { e.dataTransfer.setData('text/plain', item.id); } catch {}
-            snapGhostToGrid(e.pageX, e.pageY);
-        });
-        el.addEventListener('dragend', () => {
-            draggedItem = null;
-            el.style.opacity = 1;
-            removePreview();
-            hideGhost();
-            hidePanelDeleteButton();
-        });
+let panelHandlersRegistered = false;
 
-        el.addEventListener('contextmenu', e => {
-            e.preventDefault();
-            if (!session.isMaster) return;
-            hideContextMenu();
-            const opts = [
-                { label: 'Remover', action: () => removeItemFromPanel(item.id) },
-                { label: 'Editar', action: () => openEditModal(item, updates => {
-                        Object.assign(item, updates);
-                        updateItemList();
-                        saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
-                    }) },
-                { label: 'Girar', action: () => {
-                        const tmpW = item.width;
-                        item.width = item.height;
-                        item.height = tmpW;
-                        item.rotacionado = !item.rotacionado;
-                        updateItemList();
-                        saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
-                    } },
-                { label: 'Add Imagem', action: async () => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
-                        input.addEventListener('change', async () => {
-                            const img = await readImageFile(input);
-                            if (img) {
-                                item.img = img;
-                                updateItemList();
-                                saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
-                            }
-                        });
-                        input.click();
-                    } },
-                { label: 'Remover Imagem', action: () => {
-                        item.img = null;
-                        updateItemList();
-                        saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
-                    } },
-                { label: 'Deletar', action: () => {
-                        if (confirm('Tem certeza que deseja excluir este item permanentemente?')) {
-                            removeItemFromPanel(item.id);
-                        }
-                    } }
-            ];
-            showContextMenu(opts, e.clientX, e.clientY);
-        });
+export function registerPanelDragHandlers() {
+    if (panelHandlersRegistered) return;
+    panelHandlersRegistered = true;
+
+    itemList.addEventListener('dragstart', e => {
+        const el = e.target.closest('.item');
+        if (!el) return;
+        const idx = parseInt(el.dataset.idx, 10);
+        const { itemsData } = getInventoryState();
+        const item = itemsData[idx];
+        hidePanelDeleteButton();
+        draggedItem = { ...item, source: 'panel' };
+        setPreviewRotation(false);
+        setPreviewSize(item.width, item.height);
+        setTimeout(() => el.style.opacity = 0.5, 0);
+        try { e.dataTransfer.setData('text/plain', item.id); } catch {}
+        snapGhostToGrid(e.pageX, e.pageY, draggedItem);
+    });
+
+    itemList.addEventListener('dragend', e => {
+        const el = e.target.closest('.item');
+        if (!el) return;
+        draggedItem = null;
+        el.style.opacity = 1;
+        removePreview();
+        hideGhost();
+        hidePanelDeleteButton();
+    });
+
+    itemList.addEventListener('contextmenu', e => {
+        const el = e.target.closest('.item');
+        if (!el || !session.isMaster) return;
+        e.preventDefault();
+        const idx = parseInt(el.dataset.idx, 10);
+        const { itemsData } = getInventoryState();
+        const item = itemsData[idx];
+        showPanelContextMenu(item, e);
     });
 }
 
 export function initDragDrop() {
+    initGhost(document.getElementById('drag-ghost'));
     window.addEventListener('keydown', onKeyDown);
     inventory.addEventListener('click', onInventoryClick);
     inventory.addEventListener('mousedown', onInventoryMouseDown);
@@ -124,13 +94,16 @@ function onKeyDown(e) {
         return;
     }
     if (e.key.toLowerCase() === 'r') {
-        previewRotation = !previewRotation;
-        currentPreviewSize = {
-            width: previewRotation ? draggedItem.height : draggedItem.width,
-            height: previewRotation ? draggedItem.width : draggedItem.height
+        const rotation = !getPreviewRotation();
+        setPreviewRotation(rotation);
+        const size = {
+            width: rotation ? draggedItem.height : draggedItem.width,
+            height: rotation ? draggedItem.width : draggedItem.height
         };
-        if (lastGhostPos.x !== null && lastGhostPos.y !== null) {
-            showGhostOnGrid(lastGhostPos.x, lastGhostPos.y);
+        setPreviewSize(size.width, size.height);
+        const pos = getLastGhostPos();
+        if (pos.x !== null && pos.y !== null) {
+            showGhostOnGrid(pos.x, pos.y, draggedItem);
         }
     }
 }
@@ -181,8 +154,8 @@ function onInventoryMouseDown(e) {
 
     draggedItem = { ...placed, source: 'grid' };
     draggedFromGrid = true;
-    previewRotation = placed.rotacionado;
-    currentPreviewSize = { width: placed.width, height: placed.height };
+    setPreviewRotation(placed.rotacionado);
+    setPreviewSize(placed.width, placed.height);
     previousPlacement = { ...placed };
 
     clearCells(placed.x, placed.y, placed.width, placed.height);
@@ -190,107 +163,39 @@ function onInventoryMouseDown(e) {
     setInventoryState(state);
     saveInventory(state.itemsData, state.placedItems);
 
-    snapGhostToGrid(e.pageX, e.pageY);
+    snapGhostToGrid(e.pageX, e.pageY, draggedItem);
 
     document.addEventListener('mousemove', snapGhostToGridMouseMove);
     document.addEventListener('mouseup', mouseupDrop);
 }
 
 function snapGhostToGridMouseMove(e) {
-    snapGhostToGrid(e.pageX, e.pageY);
+    snapGhostToGrid(e.pageX, e.pageY, draggedItem);
 }
 
-function computeGridPosition(pageX, pageY) {
-    const invRect = inventory.getBoundingClientRect();
-    const relX = pageX - invRect.left;
-    const relY = pageY - invRect.top;
-    const total = getCellSize() + CELL_GAP;
-    let gridX = Math.floor(relX / total);
-    let gridY = Math.floor(relY / total);
-    if (gridX < 0) gridX = 0;
-    if (gridY < 0) gridY = 0;
-    if (gridX > COLS - currentPreviewSize.width) gridX = COLS - currentPreviewSize.width;
-    if (gridY > ROWS - currentPreviewSize.height) gridY = ROWS - currentPreviewSize.height;
-    return { gridX, gridY };
-}
-
-function snapGhostToGrid(pageX, pageY) {
-    const { gridX, gridY } = computeGridPosition(pageX, pageY);
-    lastGhostPos = { x: gridX, y: gridY };
-    showGhostOnGrid(gridX, gridY);
-}
-
-function showGhostOnGrid(gridX, gridY) {
-    const valid = canPlace(gridX, gridY, currentPreviewSize.width, currentPreviewSize.height);
-    dragGhost.innerHTML = '';
-    const total = getCellSize() + CELL_GAP;
-    dragGhost.style.width = (currentPreviewSize.width * total - CELL_GAP - 2) + 'px';
-    dragGhost.style.height = (currentPreviewSize.height * total - CELL_GAP - 2) + 'px';
-    dragGhost.style.display = 'block';
-
-    dragGhost.className = valid ? '' : 'ghost-invalid';
-
-    for (let i = 0; i < currentPreviewSize.width * currentPreviewSize.height; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'ghost-cell';
-        dragGhost.appendChild(cell);
-    }
-    if (draggedItem && draggedItem.img) {
-        const img = createItemImageElement({ ...draggedItem, rotacionado: previewRotation }, currentPreviewSize.width, currentPreviewSize.height, true);
-        dragGhost.appendChild(img);
-    }
-    const invRect = inventory.getBoundingClientRect();
-    dragGhost.style.left = (invRect.left + gridX * total) + 'px';
-    dragGhost.style.top = (invRect.top + gridY * total) + 'px';
-
-    removePreview();
-    if (valid) {
-        for (let dy = 0; dy < currentPreviewSize.height; dy++) {
-            for (let dx = 0; dx < currentPreviewSize.width; dx++) {
-                const index = (gridY + dy) * COLS + (gridX + dx);
-                const c = inventory.children[index];
-                if (c) c.classList.add('preview');
-            }
-        }
-    }
-    lastGhostPos.valid = valid;
-}
 
 function mouseupDrop(e) {
-    const invRect = inventory.getBoundingClientRect();
-    const outOfGrid = (
-        e.clientX < invRect.left ||
-        e.clientY < invRect.top ||
-        e.clientX > invRect.right ||
-        e.clientY > invRect.bottom
-    );
-
-    const state = getInventoryState();
-
-    if (outOfGrid && draggedItem) {
-        returnItemToPanel(draggedItem);
-    } else if (lastGhostPos.x !== null && lastGhostPos.y !== null && draggedItem) {
-        if (lastGhostPos.valid) {
-            placeItem(lastGhostPos.x, lastGhostPos.y, currentPreviewSize.width, currentPreviewSize.height, { ...draggedItem, rotacionado: previewRotation });
-        } else if (draggedFromGrid) {
-            placeItem(previousPlacement.x, previousPlacement.y, previousPlacement.width, previousPlacement.height, previousPlacement);
-        }
-    }
+    finalizeMouseDrop(e, {
+        inventory,
+        lastGhostPos: getLastGhostPos(),
+        draggedItem,
+        draggedFromGrid,
+        currentPreviewSize: getCurrentPreviewSize(),
+        previewRotation: getPreviewRotation(),
+        previousPlacement,
+        hideGhost,
+        removePreview
+    });
     draggedItem = null;
     draggedFromGrid = false;
-    removePreview();
-    hideGhost();
     document.removeEventListener('mousemove', snapGhostToGridMouseMove);
     document.removeEventListener('mouseup', mouseupDrop);
-    saveInventory(state.itemsData, state.placedItems);
 }
 
 function onDragOver(e) {
     e.preventDefault();
     if (!draggedItem) return;
-    const { gridX, gridY } = computeGridPosition(e.clientX, e.clientY);
-    lastGhostPos = { x: gridX, y: gridY };
-    showGhostOnGrid(gridX, gridY);
+    snapGhostToGrid(e.clientX, e.clientY, draggedItem);
 }
 
 function onDragLeave() {
@@ -302,28 +207,11 @@ function onDrop(e) {
     e.preventDefault();
     if (!draggedItem) return;
     if (draggedFromGrid) return;
-    if (lastGhostPos.x !== null && lastGhostPos.y !== null && lastGhostPos.valid) {
-        removeItemFromPanel(draggedItem.id);
-        placeItem(lastGhostPos.x, lastGhostPos.y, currentPreviewSize.width, currentPreviewSize.height, { ...draggedItem, rotacionado: previewRotation });
-    }
-    removePreview();
-    hideGhost();
+    handlePanelDrop(draggedItem, getLastGhostPos(), getCurrentPreviewSize(), getPreviewRotation(), removePreview, hideGhost);
     draggedItem = null;
-    const state = getInventoryState();
-    saveInventory(state.itemsData, state.placedItems);
     updateItemList();
 }
 
-function removePreview() {
-    document.querySelectorAll('.cell.preview').forEach(c => c.classList.remove('preview'));
-}
-
-function hideGhost() {
-    dragGhost.style.display = 'none';
-    dragGhost.innerHTML = '';
-    dragGhost.className = '';
-    lastGhostPos = { x: null, y: null, valid: true };
-}
 
 function hideDeleteButton() {
     if (deleteBtn) {
@@ -352,64 +240,8 @@ function onDocumentClick(e) {
         hideContextMenu();
     }
 }
-
 function onInventoryContextMenu(e) {
-    e.preventDefault();
-    if (!session.isMaster) return;
-    const cell = e.target.closest('.cell');
-    if (!cell || !cell.classList.contains('placed')) {
-        hideContextMenu();
-        return;
-    }
-    const itemId = cell.dataset.itemid;
-    if (!itemId) return;
-    const state = getInventoryState();
-    const placed = state.placedItems.find(it => it.id === itemId);
-    if (!placed) return;
-    hideContextMenu();
-    const opts = [
-        { label: 'Remover', action: () => removeItemFromGrid(itemId, false) },
-        { label: 'Editar', action: () => openEditModal(placed, updates => {
-                Object.assign(placed, updates);
-                redrawPlacedItems();
-                saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
-            }) },
-        { label: 'Girar', action: () => {
-                const tmpW = placed.width;
-                const tmpH = placed.height;
-                const newItem = { ...placed, width: tmpH, height: tmpW, rotacionado: !placed.rotacionado };
-                removeItemFromGrid(itemId, true);
-                if (canPlace(placed.x, placed.y, newItem.width, newItem.height)) {
-                    placeItem(placed.x, placed.y, newItem.width, newItem.height, newItem);
-                } else {
-                    placeItem(placed.x, placed.y, placed.width, placed.height, placed);
-                    alert('N\u00e3o h\u00e1 espa\u00e7o para girar o item.');
-                }
-            } },
-        { label: 'Add Imagem', action: async () => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.addEventListener('change', async () => {
-                    const img = await readImageFile(input);
-                    if (img) {
-                        placed.img = img;
-                        redrawPlacedItems();
-                        saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
-                    }
-                });
-                input.click();
-            } },
-        { label: 'Remover Imagem', action: () => {
-                placed.img = null;
-                redrawPlacedItems();
-                saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
-            } },
-        { label: 'Deletar', action: () => {
-                if (confirm('Tem certeza que deseja excluir este item permanentemente?')) {
-                    removeItemFromGrid(itemId, true);
-                }
-            } }
-    ];
-    showContextMenu(opts, e.clientX, e.clientY);
+    handleInventoryContextMenu(e);
 }
+
+
