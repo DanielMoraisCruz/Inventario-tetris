@@ -118,13 +118,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const username = prompt('Nome de usuário:');
     if (!username) return;
     try {
-      const res = await fetch('/users');
-      const users = await res.json();
-      if (!users[username] || !users[username].pergunta) {
-        alert('Usuário não encontrado ou sem pergunta secreta cadastrada.');
+      const res = await fetch(`/question/${encodeURIComponent(username)}`);
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Usuário não encontrado ou sem pergunta secreta cadastrada.');
         return;
       }
-      const question = users[username].pergunta;
+      const question = data.pergunta;
       const answer = prompt(question);
       if (!answer) return;
       const newPass = prompt('Digite a nova senha:');

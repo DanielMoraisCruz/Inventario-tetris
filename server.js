@@ -62,6 +62,17 @@ app.post('/reset-password', (req, res) => {
   res.json({ message: 'Senha redefinida com sucesso!' });
 });
 
+// Return only the secret question for a specific user
+app.get('/question/:username', (req, res) => {
+  const { username } = req.params;
+  const users = loadUsers();
+  const user = users[username];
+  if (!user || !user.pergunta) {
+    return res.status(404).json({ error: 'Usuário não encontrado ou sem pergunta secreta.' });
+  }
+  res.json({ pergunta: user.pergunta });
+});
+
 // List all users (only for development/testing)
 app.get('/users', (req, res) => {
   const users = loadUsers();
