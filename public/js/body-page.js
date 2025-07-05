@@ -1,7 +1,13 @@
 import { setupThemeToggle } from './theme.js';
+import { loadSession } from './login.js';
 
 window.addEventListener('DOMContentLoaded', () => {
     setupThemeToggle();
+
+    if (!loadSession()) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     const zones = [
         { id: 'head', name: 'Cabeça' },

@@ -1,21 +1,37 @@
 const express = require('express');
 const path = require('path');
+const helmet = require('helmet');
+const { body, validationResult } = require('express-validator');
 const { ensureUsersFile, loadUsers } = require('./server/storage');
-const { registerUser, authenticateUser, resetPassword } = require('./server/auth');
+const {
+  registerUser,
+  authenticateUser,
+  resetPassword
+} = require('./server/auth');
 
 const app = express();
 
 app.use(express.json());
+app.use(helmet());
 app.use(express.static(path.join(__dirname, 'public')));
 
 ensureUsersFile();
 
-app.post('/register', (req, res) => {
-  const { username, password, pergunta, resposta } = req.body;
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Nome de usu\u00e1rio e senha s\u00e3o obrigat\u00f3rios.' });
-  }
-  const result = registerUser(username, password, pergunta, resposta);
+app.post(
+  '/register',
+  [
+    body('username').trim().notEmpty().withMessage('Nome de usu\u00e1rio \u00e9 obrigat\u00f3rio.'),
+    body('password').notEmpty().withMessage('Senha \u00e9 obrigat\u00f3ria.'),
+    body('pergunta').optional().isString(),
+    body('resposta').optional().isString()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { username, password, pergunta, resposta } = req.body;
+    const result = registerUser(username, password, pergunta, resposta);
   if (!result.created) {
     if (result.code === 'exists') {
       return res.status(409).json({ error: 'Nome de usu\u00e1rio j\u00e1 est\u00e1 em uso.' });
@@ -25,12 +41,19 @@ app.post('/register', (req, res) => {
   res.status(201).json({ message: 'Usu\u00e1rio registrado com sucesso!' });
 });
 
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Nome de usu\u00e1rio e senha s\u00e3o obrigat\u00f3rios.' });
-  }
-  const result = authenticateUser(username, password);
+app.post(
+  '/login',
+  [
+    body('username').trim().notEmpty().withMessage('Nome de usu\u00e1rio \u00e9 obrigat\u00f3rio.'),
+    body('password').notEmpty().withMessage('Senha \u00e9 obrigat\u00f3ria.')
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { username, password } = req.body;
+    const result = authenticateUser(username, password);
   if (!result.ok) {
     if (result.code === 'notfound') {
       return res.status(401).json({ error: 'Usu\u00e1rio n\u00e3o encontrado.' });
@@ -44,12 +67,20 @@ app.post('/login', (req, res) => {
   });
 });
 
-app.post('/reset-password', (req, res) => {
-  const { username, resposta, novaSenha } = req.body;
-  if (!username || !resposta || !novaSenha) {
-    return res.status(400).json({ error: 'Nome de usu\u00e1rio, resposta e nova senha s\u00e3o obrigat\u00f3rios.' });
-  }
-  const result = resetPassword(username, resposta, novaSenha);
+app.post(
+  '/reset-password',
+  [
+    body('username').trim().notEmpty().withMessage('Nome de usu\u00e1rio \u00e9 obrigat\u00f3rio.'),
+    body('resposta').notEmpty().withMessage('Resposta \u00e9 obrigat\u00f3ria.'),
+    body('novaSenha').notEmpty().withMessage('Nova senha \u00e9 obrigat\u00f3ria.')
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { username, resposta, novaSenha } = req.body;
+    const result = resetPassword(username, resposta, novaSenha);
   if (!result.ok) {
     if (result.code === 'notfound') {
       return res.status(404).json({ error: 'Usu\u00e1rio n\u00e3o encontrado ou sem pergunta secreta.' });
@@ -62,11 +93,49 @@ app.post('/reset-password', (req, res) => {
   res.json({ message: 'Senha redefinida com sucesso!' });
 });
 
+// Return only the secret question for a specific user
+app.get('/question/:username', (req, res) => {
+  const { username } = req.params;
+  const users = loadUsers();
+  const user = users[username];
+  if (!user || !user.pergunta) {
+    return res.status(404).json({ error: 'Usuário não encontrado ou sem pergunta secreta.' });
+  }
+  res.json({ pergunta: user.pergunta });
+});
+
 // List all users (only for development/testing)
 app.get('/users', (req, res) => {
   const users = loadUsers();
-  res.json(users);
+  const user = users[username];
+  if (!user || !user.pergunta) {
+    return res.status(404).json({ error: 'Usu\u00e1rio n\u00e3o encontrado ou sem pergunta secreta.' });
+  }
+  res.json({ pergunta: user.pergunta });
 });
+
+// List all users - optional and protected
+if (process.env.ENABLE_USERS_ROUTE === 'true') {
+  const basicMasterAuth = (req, res, next) => {
+    const auth = req.headers.authorization || '';
+    if (!auth.startsWith('Basic ')) {
+      res.set('WWW-Authenticate', 'Basic');
+      return res.status(401).send('Authentication required');
+    }
+    const decoded = Buffer.from(auth.split(' ')[1], 'base64').toString('utf8');
+    const [user, pass] = decoded.split(':');
+    const result = authenticateUser(user, pass);
+    if (!result.ok || !result.userData.isMaster) {
+      return res.status(403).send('Forbidden');
+    }
+    next();
+  };
+
+  app.get('/users', basicMasterAuth, (req, res) => {
+    const users = loadUsers();
+    res.json(users);
+  });
+}
 
 app.get('/master-hash', (req, res) => {
   const hash = process.env.MASTER_PASSWORD_HASH || '';
