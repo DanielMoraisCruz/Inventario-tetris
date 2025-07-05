@@ -1,4 +1,11 @@
-.attr-list, #skill-list, #spell-list {
+.attr-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+#skill-list,
+#spell-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
