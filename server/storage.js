@@ -1,7 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const USERS_FILE = path.join(__dirname, 'users.json');
+// Allow overriding the users file location with the USERS_FILE_PATH environment
+// variable, falling back to the default path within the server directory.
+const DEFAULT_USERS_FILE = path.join(__dirname, 'users.json');
+const USERS_FILE = process.env.USERS_FILE_PATH
+  ? path.resolve(process.env.USERS_FILE_PATH)
+  : DEFAULT_USERS_FILE;
 
 function ensureUsersFile() {
   if (!fs.existsSync(USERS_FILE)) {
