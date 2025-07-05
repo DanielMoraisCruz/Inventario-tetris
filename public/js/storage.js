@@ -6,18 +6,24 @@ function generateId() {
 }
 
 async function fetchDefaultItems() {
-    const res = await fetch('data/items.json');
-    const data = await res.json();
-    return data.map(it => ({
-        id: generateId(),
-        nome: it.nome,
-        width: it.width,
-        height: it.height,
-        img: typeof it.img === 'string' && it.img.length ? it.img : null,
-        color: typeof it.color === 'string' ? it.color : '#2b8a3e',
-        maxEstresse: Number.isFinite(it.maxEstresse) ? it.maxEstresse : 3,
-        estresseAtual: Number.isFinite(it.estresseAtual) ? it.estresseAtual : 0
-    }));
+    try {
+        const res = await fetch('data/items.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        return data.map(it => ({
+            id: generateId(),
+            nome: it.nome,
+            width: it.width,
+            height: it.height,
+            img: typeof it.img === 'string' && it.img.length ? it.img : null,
+            color: typeof it.color === 'string' ? it.color : '#2b8a3e',
+            maxEstresse: Number.isFinite(it.maxEstresse) ? it.maxEstresse : 3,
+            estresseAtual: Number.isFinite(it.estresseAtual) ? it.estresseAtual : 0
+        }));
+    } catch (e) {
+        console.warn('Could not load items.json, falling back to defaults.', e);
+        return defaultItems();
+    }
 }
 
 function defaultItems() {
