@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Inventário Tetris</title>
+    <title>Ficha de Magia &amp; Mágica</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
@@ -17,10 +17,6 @@
     
     <div id="drag-ghost"></div>
     <h1>Inventário Tetris</h1>
-    <div id="attributes" class="panel">
-        <h2>Atributos</h2>
-        <div id="attr-list" class="attr-list"></div>
-    </div>
     <div id="layout">
         <div id="inventory"></div>
         <div id="character-body" class="panel">
@@ -58,6 +54,10 @@
             </div>
         </div>
     </div>
+    <div id="attributes" class="panel">
+        <h2>Atributos</h2>
+        <div id="attr-list" class="attr-list"></div>
+    </div>
 
     <div id="items" class="panel">
         <div id="side-actions">
@@ -83,10 +83,17 @@
         </form>
     </div>
 
-    <div id="skills" class="panel">
-        <h2>Habilidades</h2>
-        <div id="skill-list"></div>
-        <button id="add-skill" class="btn">Nova habilidade</button>
+    <div id="skills-container">
+        <div id="skills" class="panel">
+            <h2>Habilidades</h2>
+            <div id="skill-list"></div>
+            <button id="add-skill" class="btn">Nova habilidade</button>
+        </div>
+        <div id="spells" class="panel">
+            <h2>Magias Conhecidas</h2>
+            <div id="spell-list"></div>
+            <button id="add-spell" class="btn">Nova magia</button>
+        </div>
     </div>
 
     <script type="module" src="js/inventory.js"></script>

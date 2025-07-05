@@ -1,5 +1,5 @@
 import { getInventoryState } from './inventory.js';
-const BODY_IMG_SRC = 'img/body.png';
+const BODY_IMG_SRC = '/img/body.png';
 
 const MAX_STRESS = 3;
 const parts = [
