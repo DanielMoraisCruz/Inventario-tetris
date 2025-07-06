@@ -9,7 +9,7 @@
 
 #inventory {
     display: grid;
-    width: calc(var(--cols) * var(--cell-size) + (var(--cols) - 1) * var(--cell-gap));
+    width: calc(var(--cols) * var(--cell-size) + (var(--cols) - 1) * var(--cell-gap) + 1);
     grid-template-columns: repeat(var(--cols), var(--cell-size));
     grid-template-rows: repeat(var(--rows), var(--cell-size));
     gap: var(--cell-gap);
@@ -26,7 +26,6 @@
     width: 100%;
     padding: var(--cell-gap);
     margin: 0 0 1rem;
-    box-sizing: border-box;
 }
 
 .cell {
