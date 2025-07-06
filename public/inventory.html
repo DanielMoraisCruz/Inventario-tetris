@@ -24,21 +24,53 @@
 
     <div class="ficha-container">
         <div id="attributes" class="panel">
-            <h2 style="margin-top: 5px;">Atributos</h2>
+            <h2>Atributos</h2>
             <div id="attr-list" class="attr-list"></div>
         </div>
 
-        <div class="grid">
-            <div class="linha">
-                <div id="coluna-inventario" class="coluna inventario">
-                    <div id="inventory"></div>
-                    <div id="resize-panel" class="panel" style="display:none;">
-                        <label for="resize-rows">Linhas</label>
-                        <input type="number" id="resize-rows" min="3" max="20" value="6">
-                        <label for="resize-cols">Colunas</label>
-                        <input type="number" id="resize-cols" min="3" max="20" value="10">
-                        <button id="resize-btn" class="btn">Redimensionar Grid</button>
-                    </div>
+        <div id="section-grid">
+            <div id="coluna-inventario" class="coluna inventario">
+                <div id="inventory"></div>
+                <div id="resize-panel" class="panel" style="display:none;">
+                    <label for="resize-rows">Linhas</label>
+                    <input type="number" id="resize-rows" min="3" max="20" value="6">
+                    <label for="resize-cols">Colunas</label>
+                    <input type="number" id="resize-cols" min="3" max="20" value="10">
+                    <button id="resize-btn" class="btn">Redimensionar Grid</button>
+                </div>
+            </div>
+            <div class="coluna corpo">
+                <div id="character-body" class="panel">
+                    <div id="body-diagram">
+                <div class="body-part panel" id="head">
+                    <label class="zone-name">Cabeça</label>
+                    <div class="stress-indicator"><button class="stress-minus btn">-</button><span class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                    <div class="equip-space" data-part="head">Espaço para item</div>
+                </div>
+                <div class="body-part panel" id="left-arm">
+                    <label class="zone-name">Braço Esquerdo</label>
+                    <div class="stress-indicator"><button class="stress-minus btn">-</button><span class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                    <div class="equip-space" data-part="left-arm">Espaço para item</div>
+                </div>
+                <div class="body-part panel" id="torso">
+                    <label class="zone-name">Torso</label>
+                    <div class="stress-indicator"><button class="stress-minus btn">-</button><span class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                    <div class="equip-space" data-part="torso">Espaço para item</div>
+                </div>
+                <div class="body-part panel" id="right-arm">
+                    <label class="zone-name">Braço Direito</label>
+                    <div class="stress-indicator"><button class="stress-minus btn">-</button><span class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                    <div class="equip-space" data-part="right-arm">Espaço para item</div>
+                </div>
+                <div class="body-part panel" id="left-leg">
+                    <label class="zone-name">Perna Esquerda</label>
+                    <div class="stress-indicator"><button class="stress-minus btn">-</button><span class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                    <div class="equip-space" data-part="left-leg">Espaço para item</div>
+                </div>
+                <div class="body-part panel" id="right-leg">
+                    <label class="zone-name">Perna Direita</label>
+                    <div class="stress-indicator"><button class="stress-minus btn">-</button><span class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                    <div class="equip-space" data-part="right-leg">Espaço para item</div>
                 </div>
                 <div class="coluna corpo">
                     <div id="character-body" class="panel">
@@ -83,14 +115,11 @@
                     </div>
                 </div>
             </div>
-
-            <div class="linha">
-                <div class="coluna habilidades">
-                    <div id="skills" class="panel habilidades">
-                        <h2>Habilidades</h2>
-                        <div id="skill-list"></div>
-                        <button id="add-skill" class="btn">Nova habilidade</button>
-                    </div>
+            <div class="coluna habilidades">
+                <div id="skills" class="panel habilidades">
+                    <h2>Habilidades</h2>
+                    <div id="skill-list"></div>
+                    <button id="add-skill" class="btn">Nova habilidade</button>
                 </div>
                 <div class="coluna magias">
                     <div id="spells" class="panel magias">
@@ -101,7 +130,7 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
     <div id="items" class="panel">
         <div id="side-actions">
