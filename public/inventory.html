@@ -29,6 +29,13 @@
         <div class="linha">
             <div id="coluna-inventario" class="coluna inventario">
                 <div id="inventory"></div>
+                <div id="resize-panel" class="panel" style="display:none;">
+                    <label for="resize-rows">Linhas</label>
+                    <input type="number" id="resize-rows" min="3" max="20" value="6">
+                    <label for="resize-cols">Colunas</label>
+                    <input type="number" id="resize-cols" min="3" max="20" value="10">
+                    <button id="resize-btn" class="btn">Redimensionar Grid</button>
+                </div>
             </div>
             <div class="coluna corpo">
                 <div id="character-body" class="panel">

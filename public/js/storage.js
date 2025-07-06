@@ -89,7 +89,7 @@ function sanitizePlaced(items) {
 }
 
 export function saveInventory(itemsData, placedItems) {
-    const data = { version: DATA_VERSION, itemsData, placedItems };
+    const data = { version: DATA_VERSION, itemsData, placedItems, rows: ROWS, cols: COLS };
     localStorage.setItem('tetris-inventory', JSON.stringify(data));
 }
 
@@ -105,7 +105,9 @@ export async function loadInventory() {
         let itemsData = sanitizeItems(obj.itemsData);
         if (!itemsData.length) itemsData = await fetchDefaultItems();
         const placedItems = sanitizePlaced(obj.placedItems);
-        return { itemsData, placedItems };
+        const rows = Number.isFinite(parseInt(obj.rows)) ? parseInt(obj.rows) : undefined;
+        const cols = Number.isFinite(parseInt(obj.cols)) ? parseInt(obj.cols) : undefined;
+        return { itemsData, placedItems, rows, cols };
     } catch (e) {
         console.warn('Dados do invent\u00e1rio corrompidos, restaurando padr\u00e3o.');
         localStorage.removeItem('tetris-inventory');
@@ -113,6 +115,6 @@ export async function loadInventory() {
             alert('Dados do invent\u00e1rio estavam corrompidos e foram reiniciados.');
         }
         const itemsData = await fetchDefaultItems();
-        return { itemsData, placedItems: [] };
+        return { itemsData, placedItems: [], rows: ROWS, cols: COLS };
     }
 }
