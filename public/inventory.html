@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Ficha de Magia &amp; Mágica</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Cinzel+Decorative:wght@400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/inventory.css">
     <link rel="stylesheet" href="css/character-body.css">
     <link rel="stylesheet" href="css/oblivio.css">
 </head>
+
 <body>
     <div id="user-welcome"></div>
     <button id="menu-btn" class="btn">&#9776;</button>
     <button id="toggle-theme" class="btn">🌙</button>
-    
+
     <div id="drag-ghost"></div>
     <h1>Ficha de Magia &amp; Mágica</h1>
 
@@ -68,22 +72,61 @@
                     <div class="stress-indicator"><button class="stress-minus btn">-</button><span class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
                     <div class="equip-space" data-part="right-leg">Espaço para item</div>
                 </div>
+                <div class="coluna corpo">
+                    <div id="character-body" class="panel">
+                        <div id="body-diagram">
+                            <div class="body-part panel" id="head">
+                                <label class="zone-name">Cabeça</label>
+                                <div class="stress-indicator"><button class="stress-minus btn">-</button><span
+                                        class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                                <div class="equip-space" data-part="head">Espaço para item</div>
+                            </div>
+                            <div class="body-part panel" id="left-arm">
+                                <label class="zone-name">Braço Esquerdo</label>
+                                <div class="stress-indicator"><button class="stress-minus btn">-</button><span
+                                        class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                                <div class="equip-space" data-part="left-arm">Espaço para item</div>
+                            </div>
+                            <div class="body-part panel" id="torso">
+                                <label class="zone-name">Torso</label>
+                                <div class="stress-indicator"><button class="stress-minus btn">-</button><span
+                                        class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                                <div class="equip-space" data-part="torso">Espaço para item</div>
+                            </div>
+                            <div class="body-part panel" id="right-arm">
+                                <label class="zone-name">Braço Direito</label>
+                                <div class="stress-indicator"><button class="stress-minus btn">-</button><span
+                                        class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                                <div class="equip-space" data-part="right-arm">Espaço para item</div>
+                            </div>
+                            <div class="body-part panel" id="left-leg">
+                                <label class="zone-name">Perna Esquerda</label>
+                                <div class="stress-indicator"><button class="stress-minus btn">-</button><span
+                                        class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                                <div class="equip-space" data-part="left-leg">Espaço para item</div>
+                            </div>
+                            <div class="body-part panel" id="right-leg">
+                                <label class="zone-name">Perna Direita</label>
+                                <div class="stress-indicator"><button class="stress-minus btn">-</button><span
+                                        class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                                <div class="equip-space" data-part="right-leg">Espaço para item</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
             <div class="coluna habilidades">
                 <div id="skills" class="panel habilidades">
                     <h2>Habilidades</h2>
                     <div id="skill-list"></div>
                     <button id="add-skill" class="btn">Nova habilidade</button>
                 </div>
-            </div>
-            <div class="coluna magias">
-                <div id="spells" class="panel magias">
-                    <h2>Magias Conhecidas</h2>
-                    <div id="spell-list"></div>
-                    <button id="add-spell" class="btn">Nova magia</button>
+                <div class="coluna magias">
+                    <div id="spells" class="panel magias">
+                        <h2>Magias Conhecidas</h2>
+                        <div id="spell-list"></div>
+                        <button id="add-spell" class="btn">Nova magia</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -119,4 +162,5 @@
     <script type="module" src="js/body-ui.js"></script>
     <script type="module" src="js/oblivio-page.js"></script>
 </body>
+
 </html>
