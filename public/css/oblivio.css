@@ -4,6 +4,7 @@
     gap: 10px;
     column-gap: 1rem;
 }
+
 #skill-list,
 #spell-list {
     display: flex;
@@ -53,6 +54,7 @@
 #add-skill {
     margin-top: 10px;
 }
+
 #add-spell {
     margin-top: 10px;
 }
@@ -62,10 +64,10 @@
     gap: 20px;
     justify-content: center;
     flex-wrap: wrap;
+    margin-top: 20px;
 }
 
 .atributos {
-    display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     max-width: 800px;
