@@ -25,7 +25,7 @@
 #attributes {
     width: 100%;
     padding: var(--cell-gap);
-    margin: 0;
+    margin: 0 0 1rem;
     box-sizing: border-box;
 }
 
@@ -485,6 +485,12 @@ body.dark-mode #reset-btn {
     background-color: #111;
     color: white;
     font-family: 'Georgia', serif;
+}
+
+.grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .linha {
