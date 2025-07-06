@@ -1,8 +1,9 @@
 import { session, loadSession, clearSession } from './login.js';
-import { cacheDomElements, initInventory, form, searchInput, updateItemList } from './inventory.js';
+import { cacheDomElements, initInventory, form, searchInput, updateItemList, redrawPlacedItems, createGrid, inventory, getInventoryState } from './inventory.js';
 import { handleItemSubmit } from './inventory.js';
 import { initDragDrop, registerPanelDragHandlers } from './dragdrop.js';
-import { applyLayoutSettings } from './constants.js';
+import { applyLayoutSettings, calcDefaultSize, setInventorySize } from './constants.js';
+import { saveInventory } from './storage.js';
 import { setupThemeToggle } from './theme.js';
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -14,6 +15,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     const itemsPanel = document.getElementById('items');
     const inventoryEl = document.getElementById('inventory');
     const menuBtn = document.getElementById('menu-btn');
+    const resizePanel = document.getElementById('resize-panel');
+    const resizeRows = document.getElementById('resize-rows');
+    const resizeCols = document.getElementById('resize-cols');
+    const resizeBtn = document.getElementById('resize-btn');
 
     if (!loadSession()) {
         window.location.href = 'login.html';
@@ -28,6 +33,24 @@ window.addEventListener('DOMContentLoaded', async () => {
     inventoryEl.style.display = '';
     form.style.display = session.isMaster ? 'block' : 'none';
 
+    if (session.isMaster) {
+        resizePanel.style.display = 'block';
+        const savedSize = localStorage.getItem('inventory-size');
+        if (savedSize) {
+            try {
+                const obj = JSON.parse(savedSize);
+                if (obj.rows && obj.cols) {
+                    setInventorySize(obj.rows, obj.cols);
+                    resizeRows.value = obj.rows;
+                    resizeCols.value = obj.cols;
+                }
+            } catch {}
+        }
+    } else {
+        const { rows, cols } = calcDefaultSize(session.userStats);
+        setInventorySize(rows, cols);
+    }
+
     applyLayoutSettings();
     await initInventory();
     if (searchInput) {
@@ -36,6 +59,25 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
     initDragDrop();
+
+    if (resizeBtn) {
+        resizeBtn.addEventListener('click', () => {
+            const r = parseInt(resizeRows.value);
+            const c = parseInt(resizeCols.value);
+            if (!Number.isFinite(r) || !Number.isFinite(c)) return;
+            if (r < 3 || r > 20 || c < 3 || c > 20) {
+                alert('Valores fora do limite.');
+                return;
+            }
+            setInventorySize(r, c);
+            inventory.innerHTML = '';
+            createGrid();
+            redrawPlacedItems();
+            const state = getInventoryState();
+            saveInventory(state.itemsData, state.placedItems);
+            localStorage.setItem('inventory-size', JSON.stringify({ rows: r, cols: c }));
+        });
+    }
 
     form.addEventListener('submit', async (e) => {
         await handleItemSubmit(e);

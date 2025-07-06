@@ -1,6 +1,6 @@
 import { saveInventory, loadInventory } from './storage.js';
 import { session } from './login.js';
-import { ROWS, COLS } from './constants.js';
+import { ROWS, COLS, setInventorySize } from './constants.js';
 
 // DOM elements are resolved after the document is ready. They are declared
 // using `let` so they can be assigned during initialization.
@@ -40,15 +40,18 @@ export function setInventoryState(data) {
 }
 
 export async function initInventory() {
-    createGrid();
     const loaded = await loadInventory();
+    if (loaded.rows && loaded.cols) {
+        setInventorySize(loaded.rows, loaded.cols);
+    }
+    createGrid();
     itemsData = loaded.itemsData;
     placedItems = loaded.placedItems;
     updateItemList();
     redrawPlacedItems();
 }
 
-function createGrid() {
+export function createGrid() {
     for (let y = 0; y < ROWS; y++) {
         for (let x = 0; x < COLS; x++) {
             const cell = document.createElement('div');
