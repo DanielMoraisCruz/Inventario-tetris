@@ -5,6 +5,7 @@
     height: 100%;
     align-items: center;
     justify-content: center;
+    grid-area: inventory;
 }
 
 #inventory {
@@ -23,9 +24,9 @@
 }
 
 #attributes {
-    width: calc(var(--cols) * var(--cell-size) + (var(--cols) - 1) * var(--cell-gap));
+    width: 100%;
     padding: var(--cell-gap);
-    margin: 0 auto;
+    margin: 0 0 1rem;
     box-sizing: border-box;
 }
 
@@ -487,12 +488,17 @@ body.dark-mode #reset-btn {
     font-family: 'Georgia', serif;
 }
 
-.linha {
-    display: flex;
-    justify-content: space-between;
+#section-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, auto);
+    grid-template-areas:
+        "inventory inventory body body"
+        "inventory inventory body body"
+        "skills skills spells spells"
+        "skills skills spells spells";
     gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
+    width: 100%;
 }
 
 .atributos {
@@ -519,3 +525,7 @@ body.dark-mode #reset-btn {
     width: 100%;
     height: 100%;
 }
+
+.corpo { grid-area: body; }
+.habilidades { grid-area: skills; }
+.magias { grid-area: spells; }
