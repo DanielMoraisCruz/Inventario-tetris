@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    column-gap: 1rem;
+    column-gap: 6rem;
 }
 
 #skill-list,
