@@ -23,9 +23,9 @@
 }
 
 #attributes {
-    width: calc(var(--cols) * var(--cell-size) + (var(--cols) - 1) * var(--cell-gap));
+    width: 100%;
     padding: var(--cell-gap);
-    margin: 0 auto;
+    margin: 0;
     box-sizing: border-box;
 }
 
