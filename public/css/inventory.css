@@ -485,12 +485,12 @@ body.dark-mode #reset-btn {
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
-    padding: 10px;
 }
 
 #inventory {
     grid-column: 1;
     grid-row: 1;
+    padding: 20px;
 }
 
 #body {
