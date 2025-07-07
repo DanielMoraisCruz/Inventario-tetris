@@ -1,17 +1,24 @@
-
 #inventory {
     display: grid;
-    width: calc(var(--cols) * var(--cell-size) + (var(--cols) - 1) * var(--cell-gap) + 1);
+    width: calc(var(--cols) * var(--cell-size) + (var(--cols) - 1) * var(--cell-gap));
     grid-template-columns: repeat(var(--cols), var(--cell-size));
     grid-template-rows: repeat(var(--rows), var(--cell-size));
     gap: var(--cell-gap);
     background: var(--panel-bg);
     padding: var(--cell-gap);
     max-width: 100%;
-    border: 1px solid var(--border-color);
     position: relative;
     box-sizing: border-box;
     visibility: visible;
+}
+
+#inventory-grid {
+    display: grid;
+    align-items: self-end;
+}
+
+#resize-panel {
+    display: none;
 }
 
 #attributes {
@@ -480,17 +487,16 @@ body.dark-mode #reset-btn {
 #main-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 3fr 1fr;
     gap: 10px;
     width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
+    margin: auto;
 }
 
 #inventory {
     grid-column: 1;
     grid-row: 1;
-    padding: 20px;
+    justify-self: center;
 }
 
 #body {
@@ -507,5 +513,3 @@ body.dark-mode #reset-btn {
     grid-column: 2;
     grid-row: 2;
 }
-
-
