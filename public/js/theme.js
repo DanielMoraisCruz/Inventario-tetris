@@ -17,8 +17,12 @@ function applyTheme(theme) {
 export function setupThemeToggle() {
     const toggleBtn = document.getElementById('toggle-theme');
     if (!toggleBtn) return;
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    applyTheme(savedTheme);
+    let theme = localStorage.getItem('theme');
+    if (!theme) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        theme = prefersDark ? 'dark' : 'light';
+    }
+    applyTheme(theme);
     toggleBtn.addEventListener('click', () => {
         const isDark = document.body.classList.contains('dark-theme');
         applyTheme(isDark ? 'light' : 'dark');
