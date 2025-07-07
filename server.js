@@ -140,9 +140,12 @@ app.get('/master-hash', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+const externalAddress = process.env.EXTERNAL_ADDRESS;
 
 // O servidor escuta em '0.0.0.0', permitindo conexões externas (VPN, LAN etc.)
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
-  console.log(`🌐 Acesse pela rede VPN usando: http://26.219.159.252:${PORT}`);
+  if (externalAddress) {
+    console.log(`🌐 Acesse externamente usando: ${externalAddress}`);
+  }
 });
