@@ -95,7 +95,7 @@ Pré-requisitos: **Node.js 18+** e **Python 3** caso queira utilizar o script de
 
    A rota `/master-hash` permite consultar o valor da variável de ambiente `MASTER_PASSWORD_HASH`, caso ela esteja definida. Defina essa variável antes de iniciar o servidor se precisar fornecer o hash de uma senha mestre externa.
 
-   Você também pode definir `USERS_FILE_PATH` para alterar o local do arquivo `users.json`. O diretório será criado automaticamente caso não exista.
+  Você também pode definir `USERS_FILE_PATH` (ou o antigo `USERS_FILE`) para alterar o local do arquivo `users.json`. O diretório será criado automaticamente caso não exista.
 
 
 ## 📑 users.json
@@ -223,7 +223,7 @@ fetch('http://localhost:3000/login')
 
 The `/master-hash` endpoint returns the value of the `MASTER_PASSWORD_HASH` environment variable when it is defined. Set this variable before starting the server if you need to provide your own master password hash.
 
-You can also set `USERS_FILE_PATH` to change where the `users.json` file is stored. The folder will be created automatically if it does not exist.
+You can also set `USERS_FILE_PATH` (or the legacy `USERS_FILE`) to change where the `users.json` file is stored. The folder will be created automatically if it does not exist.
 
 ### `users.json`
 The file `server/users.json` is created automatically when the server first starts and stores all registered users. Delete this file before launching the server if you wish to reset the credentials.

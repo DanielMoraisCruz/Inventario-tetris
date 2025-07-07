@@ -2,7 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 
-const USERS_FILE = process.env.USERS_FILE || path.join(__dirname, 'users.json');
+// Allow both USERS_FILE_PATH and the legacy USERS_FILE variable
+const USERS_FILE =
+  process.env.USERS_FILE_PATH ||
+  process.env.USERS_FILE ||
+  path.join(__dirname, 'users.json');
 
 
 function ensureUsersFile() {
