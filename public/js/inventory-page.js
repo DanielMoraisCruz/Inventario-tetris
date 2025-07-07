@@ -53,9 +53,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     applyLayoutSettings();
     await initInventory();
-    if (session.isMaster) {
-        inventoryEl.appendChild(resizePanel);
-    }
     if (searchInput) {
         searchInput.addEventListener('input', () => {
             updateItemList();
@@ -75,9 +72,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             setInventorySize(r, c);
             inventory.innerHTML = '';
             createGrid();
-            if (session.isMaster) {
-                inventoryEl.appendChild(resizePanel);
-            }
             redrawPlacedItems();
             const state = getInventoryState();
             saveInventory(state.itemsData, state.placedItems);
