@@ -111,16 +111,6 @@ app.get('/question/:username', (req, res) => {
   res.json({ pergunta: user.pergunta });
 });
 
-// List all users (only for development/testing)
-app.get('/users', (req, res) => {
-  const users = loadUsers();
-  const user = users[username];
-  if (!user || !user.pergunta) {
-    return res.status(404).json({ error: 'Usu\u00e1rio n\u00e3o encontrado ou sem pergunta secreta.' });
-  }
-  res.json({ pergunta: user.pergunta });
-});
-
 // List all users - optional and protected
 if (process.env.ENABLE_USERS_ROUTE === 'true') {
   const basicMasterAuth = (req, res, next) => {
