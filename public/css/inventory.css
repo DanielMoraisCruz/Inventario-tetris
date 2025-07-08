@@ -53,7 +53,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 260px;
+    width: var(--items-width);
     max-height: 100vh;
     padding: 15px;
     background: var(--panel-bg);
@@ -68,6 +68,15 @@
 
 #items.open {
     transform: translateX(0);
+}
+
+#items-resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    cursor: ew-resize;
 }
 
 #item-list {
@@ -343,7 +352,7 @@
 }
 
 #menu-btn.open {
-    transform: translateX(250px);
+    transform: translateX(calc(var(--items-width) - 10px));
 }
 
 #item-search {
