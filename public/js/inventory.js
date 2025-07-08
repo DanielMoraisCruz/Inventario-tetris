@@ -331,13 +331,12 @@ export function createItemImageElement(item, width, height, isGhost = false) {
             canvas.width = pxW;
             canvas.height = pxH;
             const ctx = canvas.getContext('2d');
-            const scale = Math.min(pxW / img.height, pxH / img.width);
-            const drawW = img.height * scale;
-            const drawH = img.width * scale;
+            const cx = pxW / 2;
+            const cy = pxH / 2;
             ctx.save();
-            ctx.translate(pxW / 2, pxH / 2);
+            ctx.translate(cx, cy);
             ctx.rotate(Math.PI / 2);
-            ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+            ctx.drawImage(img, -pxH / 2, -pxW / 2, pxH, pxW);
             ctx.restore();
         };
     } else {
