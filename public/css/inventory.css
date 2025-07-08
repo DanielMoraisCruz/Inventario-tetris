@@ -10,13 +10,13 @@
     position: relative;
     box-sizing: border-box;
     visibility: visible;
-    /* Impede que imagens de itens vazem para fora do grid */
-    overflow: hidden;
 }
 
 #inventory-grid {
     display: grid;
     align-items: self-end;
+    /* Garante que itens grandes nao ultrapassem a area visivel */
+    overflow: hidden;
 }
 
 #resize-panel {
