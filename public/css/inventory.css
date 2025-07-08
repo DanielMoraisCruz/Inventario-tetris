@@ -54,6 +54,7 @@
     top: 0;
     left: 0;
     width: var(--items-width);
+    --preview-scale: 1;
     max-height: 100vh;
     padding: 15px;
     background: var(--panel-bg);
@@ -97,8 +98,8 @@
 }
 
 .item-preview {
-    width: calc(var(--w) * var(--cell-size));
-    height: calc(var(--h) * var(--cell-size));
+    width: calc(var(--w) * var(--cell-size) * var(--preview-scale));
+    height: calc(var(--h) * var(--cell-size) * var(--preview-scale));
     background: var(--button-bg);
     border: 2px solid var(--border-color);
     border-radius: 7px;
