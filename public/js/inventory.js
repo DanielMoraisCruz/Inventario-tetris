@@ -49,7 +49,7 @@ export async function initInventory() {
     createGrid();
     itemsData = loaded.itemsData;
     placedItems = loaded.placedItems;
-    updateItemList();
+    renderItemList();
     redrawPlacedItems();
 }
 
@@ -65,7 +65,7 @@ export function createGrid() {
     }
 }
 
-export function updateItemList() {
+export function renderItemList() {
     const query = searchInput ? searchInput.value.toLowerCase() : '';
     itemList.innerHTML = '';
     itemsData
@@ -116,8 +116,12 @@ export function updateItemList() {
 
             itemList.appendChild(el);
         });
-    saveInventory(itemsData, placedItems);
     document.dispatchEvent(new Event('itemListUpdated'));
+}
+
+export function updateItemList() {
+    renderItemList();
+    saveInventory(itemsData, placedItems);
 }
 
 export function getItemFormData() {
@@ -142,13 +146,11 @@ export function addNewItem(data) {
         estresseAtual: 0
     });
     updateItemList();
-    saveInventory(itemsData, placedItems);
 }
 
 export function removeItemFromPanel(itemId) {
     itemsData = itemsData.filter(item => item.id !== itemId);
     updateItemList();
-    saveInventory(itemsData, placedItems);
 }
 
 export function returnItemToPanel(item) {
@@ -163,7 +165,6 @@ export function returnItemToPanel(item) {
         estresseAtual: item.estresseAtual ?? 0
     });
     updateItemList();
-    saveInventory(itemsData, placedItems);
 }
 
 export function readImageFile(input) {
@@ -212,8 +213,9 @@ export function removeItemFromGrid(itemId, isDeleteKey = false) {
 
     if (!isDeleteKey) {
         returnItemToPanel(placed);
+    } else {
+        saveInventory(itemsData, placedItems);
     }
-    saveInventory(itemsData, placedItems);
 }
 
 export function clearCells(x, y, w, h) {
