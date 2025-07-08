@@ -1,5 +1,4 @@
-import { placeItem, returnItemToPanel, removeItemFromPanel, updateItemList, getInventoryState } from './inventory.js';
-import { saveInventory } from './storage.js';
+import { placeItem, returnItemToPanel, removeItemFromPanel, updateItemList } from './inventory.js';
 
 export function finalizeMouseDrop(e, params) {
     const { inventory, lastGhostPos, draggedItem, draggedFromGrid, currentPreviewSize, previewRotation, previousPlacement, hideGhost, removePreview } = params;
@@ -10,8 +9,6 @@ export function finalizeMouseDrop(e, params) {
         e.clientX > invRect.right ||
         e.clientY > invRect.bottom
     );
-
-    const state = getInventoryState();
 
     if (outOfGrid && draggedItem) {
         returnItemToPanel(draggedItem);
@@ -25,7 +22,6 @@ export function finalizeMouseDrop(e, params) {
 
     removePreview();
     hideGhost();
-    saveInventory(state.itemsData, state.placedItems);
 }
 
 export function handlePanelDrop(draggedItem, lastGhostPos, currentPreviewSize, previewRotation, removePreview, hideGhost) {
@@ -36,7 +32,5 @@ export function handlePanelDrop(draggedItem, lastGhostPos, currentPreviewSize, p
     }
     removePreview();
     hideGhost();
-    const state = getInventoryState();
-    saveInventory(state.itemsData, state.placedItems);
     updateItemList();
 }

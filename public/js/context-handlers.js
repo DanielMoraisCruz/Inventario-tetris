@@ -1,6 +1,5 @@
 import { session } from './login.js';
 import { removeItemFromPanel, updateItemList, readImageFile, getInventoryState, redrawPlacedItems, removeItemFromGrid, placeItem, canPlace } from './inventory.js';
-import { saveInventory } from './storage.js';
 import { showContextMenu, hideContextMenu, openEditModal } from './context-menu.js';
 
 export function showPanelContextMenu(item, e) {
@@ -9,7 +8,6 @@ export function showPanelContextMenu(item, e) {
         { label: 'Editar', action: () => openEditModal(item, updates => {
                 Object.assign(item, updates);
                 updateItemList();
-                saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
             }) },
         { label: 'Girar', action: () => {
                 const tmpW = item.width;
@@ -17,7 +15,6 @@ export function showPanelContextMenu(item, e) {
                 item.height = tmpW;
                 item.rotacionado = !item.rotacionado;
                 updateItemList();
-                saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
             } },
         { label: 'Add Imagem', action: async () => {
                 const input = document.createElement('input');
@@ -28,7 +25,6 @@ export function showPanelContextMenu(item, e) {
                     if (img) {
                         item.img = img;
                         updateItemList();
-                        saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
                     }
                 });
                 input.click();
@@ -36,7 +32,6 @@ export function showPanelContextMenu(item, e) {
         { label: 'Remover Imagem', action: () => {
                 item.img = null;
                 updateItemList();
-                saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
             } },
         { label: 'Deletar', action: () => {
                 if (confirm('Tem certeza que deseja excluir este item permanentemente?')) {

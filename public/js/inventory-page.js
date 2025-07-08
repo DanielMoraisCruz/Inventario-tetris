@@ -1,5 +1,5 @@
 import { session, loadSession, clearSession } from './login.js';
-import { cacheDomElements, initInventory, form, searchInput, updateItemList, redrawPlacedItems, createGrid, inventory, getInventoryState } from './inventory.js';
+import { cacheDomElements, initInventory, form, searchInput, renderItemList, updateItemList, redrawPlacedItems, createGrid, inventory, getInventoryState } from './inventory.js';
 import { handleItemSubmit } from './inventory.js';
 import { initDragDrop, registerPanelDragHandlers } from './dragdrop.js';
 import { applyLayoutSettings, calcDefaultSize, setInventorySize } from './constants.js';
@@ -55,7 +55,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     await initInventory();
     if (searchInput) {
         searchInput.addEventListener('input', () => {
-            updateItemList();
+            renderItemList();
         });
     }
     initDragDrop();

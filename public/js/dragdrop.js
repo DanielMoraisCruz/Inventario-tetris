@@ -209,7 +209,6 @@ function onDrop(e) {
     if (draggedFromGrid) return;
     handlePanelDrop(draggedItem, getLastGhostPos(), getCurrentPreviewSize(), getPreviewRotation(), removePreview, hideGhost);
     draggedItem = null;
-    updateItemList();
 }
 
 
