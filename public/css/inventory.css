@@ -459,6 +459,8 @@ body.dark-mode #reset-btn {
     border: 1px solid var(--border-color);
     padding: 1rem;
     color: var(--text-color);
+    height: auto;
+    width: auto;
 }
 
 .modal-actions {
