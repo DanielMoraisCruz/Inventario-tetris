@@ -145,6 +145,11 @@
     margin-top: 5px;
 }
 
+#item-msg {
+    color: red;
+    margin-top: 8px;
+}
+
 #drag-ghost {
     position: fixed;
     pointer-events: none;

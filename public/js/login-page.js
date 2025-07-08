@@ -36,11 +36,13 @@ window.addEventListener('DOMContentLoaded', () => {
   const loginUser = document.getElementById('login-user');
   const loginPass = document.getElementById('login-pass');
   const loginErr = document.getElementById('login-err');
+  const loginMsg = document.getElementById('login-msg');
   const forgotBtn = document.getElementById('forgot-pass');
 
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     loginErr.textContent = '';
+    if (loginMsg) loginMsg.textContent = '';
     const username = loginUser.value.trim();
     const password = loginPass.value;
     if (!username || !password) {
@@ -75,10 +77,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const regPergunta = document.getElementById('register-question');
   const regResposta = document.getElementById('register-answer');
   const regErr = document.getElementById('register-err');
+  const regMsg = document.getElementById('register-msg');
 
   registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     regErr.textContent = '';
+    if (regMsg) regMsg.textContent = '';
     const username = regUser.value.trim();
     const password = regPass.value;
     const pergunta = regPergunta.value.trim();
@@ -103,7 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
         regErr.textContent = result.error || 'Erro no cadastro.';
         return;
       }
-      alert('✅ Cadastro realizado com sucesso! Faça login para continuar.');
+      if (regMsg) regMsg.textContent = '✅ Cadastro realizado com sucesso! Faça login para continuar.';
       regUser.value = '';
       regPass.value = '';
       regPergunta.value = '';
@@ -118,13 +122,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
   forgotBtn.addEventListener('click', async (e) => {
     e.preventDefault();
+    if (loginErr) loginErr.textContent = '';
+    if (loginMsg) loginMsg.textContent = '';
     const username = prompt('Nome de usuário:');
     if (!username) return;
     try {
       const res = await fetch(`/question/${encodeURIComponent(username)}`);
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || 'Usuário não encontrado ou sem pergunta secreta cadastrada.');
+        loginErr.textContent = data.error || 'Usuário não encontrado ou sem pergunta secreta cadastrada.';
         return;
       }
       const question = data.pergunta;
@@ -139,13 +145,13 @@ window.addEventListener('DOMContentLoaded', () => {
       });
       const resetResult = await res2.json();
       if (!res2.ok) {
-        alert(resetResult.error || 'Não foi possível redefinir a senha.');
+        loginErr.textContent = resetResult.error || 'Não foi possível redefinir a senha.';
       } else {
-        alert('Senha redefinida com sucesso! Faça login com sua nova senha.');
+        if (loginMsg) loginMsg.textContent = 'Senha redefinida com sucesso! Faça login com sua nova senha.';
       }
     } catch (err) {
       console.error(err);
-      alert('Erro ao tentar recuperar senha.');
+      loginErr.textContent = 'Erro ao tentar recuperar senha.';
     }
   });
 
