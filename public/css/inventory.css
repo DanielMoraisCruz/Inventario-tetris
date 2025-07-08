@@ -15,6 +15,7 @@
 #inventory-grid {
     display: grid;
     align-items: self-end;
+    /* Removido overflow para evitar corte das imagens */
 }
 
 #resize-panel {
