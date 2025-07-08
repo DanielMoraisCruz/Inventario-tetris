@@ -32,8 +32,8 @@ export function getLastGhostPos() {
 
 export function computeGridPosition(pageX, pageY) {
     const invRect = inventory.getBoundingClientRect();
-    const relX = pageX - invRect.left;
-    const relY = pageY - invRect.top;
+    const relX = pageX - window.scrollX - invRect.left;
+    const relY = pageY - window.scrollY - invRect.top;
     const total = getCellSize() + CELL_GAP;
     let gridX = Math.floor(relX / total);
     let gridY = Math.floor(relY / total);
