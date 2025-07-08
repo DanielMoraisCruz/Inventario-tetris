@@ -3,6 +3,7 @@
     --rows: 6;
     --cell-size: 2.5rem;
     --cell-gap: 0.1875rem;
+    --items-width: 260px;
     --primary-bg: #0f0f0f;
     --panel-bg: #000;
     --text-color: #fff;

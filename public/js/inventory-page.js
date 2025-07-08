@@ -13,12 +13,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     const logoutBtn = document.getElementById('logout-btn');
     const resetBtn = document.getElementById('reset-btn');
     const itemsPanel = document.getElementById('items');
+    const itemsResizer = document.getElementById('items-resizer');
     const inventoryEl = document.getElementById('inventory');
     const menuBtn = document.getElementById('menu-btn');
     const resizePanel = document.getElementById('resize-panel');
     const resizeRows = document.getElementById('resize-rows');
     const resizeCols = document.getElementById('resize-cols');
     const resizeBtn = document.getElementById('resize-btn');
+    const root = document.documentElement;
+    const savedWidth = localStorage.getItem('items-width');
+    if (savedWidth) {
+        root.style.setProperty('--items-width', `${savedWidth}px`);
+    }
 
     if (!loadSession()) {
         window.location.href = 'login.html';
@@ -94,6 +100,32 @@ window.addEventListener('DOMContentLoaded', async () => {
         clearSession();
         window.location.href = 'login.html';
     });
+
+    if (itemsResizer) {
+        let startX = 0;
+        let startWidth = 0;
+
+        const onMove = (e) => {
+            let newWidth = startWidth + e.clientX - startX;
+            newWidth = Math.max(180, Math.min(400, newWidth));
+            root.style.setProperty('--items-width', `${newWidth}px`);
+        };
+
+        const onUp = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            const finalWidth = parseInt(getComputedStyle(itemsPanel).width, 10);
+            localStorage.setItem('items-width', finalWidth);
+        };
+
+        itemsResizer.addEventListener('mousedown', (e) => {
+            startX = e.clientX;
+            startWidth = parseInt(getComputedStyle(itemsPanel).width, 10);
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+            e.preventDefault();
+        });
+    }
 
     if (menuBtn) {
         menuBtn.addEventListener('click', () => {
