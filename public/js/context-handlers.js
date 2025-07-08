@@ -65,6 +65,8 @@ export function handleInventoryContextMenu(e) {
         { label: 'Remover', action: () => removeItemFromGrid(itemId, false) },
         { label: 'Editar', action: () => openEditModal(placed, updates => {
                 Object.assign(placed, updates);
+                placed.originalWidth = placed.rotacionado ? updates.height : updates.width;
+                placed.originalHeight = placed.rotacionado ? updates.width : updates.height;
                 redrawPlacedItems();
                 saveInventory(getInventoryState().itemsData, getInventoryState().placedItems);
             }) },
