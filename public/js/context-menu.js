@@ -1,3 +1,5 @@
+import { ROWS, COLS } from './constants.js';
+
 export let currentMenu = null;
 
 export function hideContextMenu() {
@@ -49,7 +51,7 @@ export function openEditModal(item, onSave) {
     form.id = 'item-form';
     form.className = 'edit-form';
 
-    function addInput(labelText, type, id, value, min) {
+    function addInput(labelText, type, id, value, min, max) {
         const label = document.createElement('label');
         label.textContent = labelText;
         form.appendChild(label);
@@ -58,6 +60,7 @@ export function openEditModal(item, onSave) {
         input.type = type;
         input.id = id;
         if (min !== undefined) input.min = String(min);
+        if (max !== undefined) input.max = String(max);
         input.value = value ?? '';
         form.appendChild(input);
         return input;
@@ -67,8 +70,8 @@ export function openEditModal(item, onSave) {
     addInput('Cor', 'color', 'edit-color', item.color);
     addInput('Estresse Atual', 'number', 'edit-stress', item.estresseAtual ?? 0, 0);
     addInput('Estresse Máximo', 'number', 'edit-max', item.maxEstresse ?? 3, 1);
-    addInput('Largura', 'number', 'edit-width', item.width, 1);
-    addInput('Altura', 'number', 'edit-height', item.height, 1);
+    addInput('Largura', 'number', 'edit-width', item.width, 1, COLS);
+    addInput('Altura', 'number', 'edit-height', item.height, 1, ROWS);
 
     const actions = document.createElement('div');
     actions.className = 'modal-actions';
@@ -100,13 +103,15 @@ export function openEditModal(item, onSave) {
     cancelBtn.addEventListener('click', close);
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+        const updatedWidth = Math.min(Math.max(parseInt(modal.querySelector('#edit-width').value) || 1, 1), COLS);
+        const updatedHeight = Math.min(Math.max(parseInt(modal.querySelector('#edit-height').value) || 1, 1), ROWS);
         const updated = {
             nome: modal.querySelector('#edit-name').value,
             color: modal.querySelector('#edit-color').value,
             estresseAtual: parseInt(modal.querySelector('#edit-stress').value) || 0,
             maxEstresse: parseInt(modal.querySelector('#edit-max').value) || 1,
-            width: parseInt(modal.querySelector('#edit-width').value) || 1,
-            height: parseInt(modal.querySelector('#edit-height').value) || 1
+            width: updatedWidth,
+            height: updatedHeight
         };
         onSave(updated);
         close();
