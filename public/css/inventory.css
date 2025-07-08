@@ -243,15 +243,8 @@
 }
 
 .rotacionado {
-    /* Quando rotacionado, apenas a imagem interna gira. */
-}
-
-/* Aplica a rotação apenas na imagem para manter a caixa externa
-   com as dimensões corretas após o giro. */
-.rotacionado > img,
-.rotacionado .grid-item-img {
-    transform: rotate(90deg);
-    transform-origin: top left;
+    /* Mantido para semântica de rotação, mas a rotação é aplicada
+       diretamente no canvas durante o desenho. */
 }
 
 .w1 {
