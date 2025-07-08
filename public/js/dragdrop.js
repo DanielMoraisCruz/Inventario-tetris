@@ -31,7 +31,7 @@ export function registerPanelDragHandlers() {
         const item = itemsData[idx];
         hidePanelDeleteButton();
         draggedItem = { ...item, source: 'panel' };
-        setPreviewRotation(false);
+        setPreviewRotation(item.rotacionado);
         setPreviewSize(item.width, item.height);
         setTimeout(() => el.style.opacity = 0.5, 0);
         try { e.dataTransfer.setData('text/plain', item.id); } catch {}
@@ -96,10 +96,13 @@ function onKeyDown(e) {
     if (e.key.toLowerCase() === 'r') {
         const rotation = !getPreviewRotation();
         setPreviewRotation(rotation);
+
+        const swap = rotation !== draggedItem.rotacionado;
         const size = {
-            width: rotation ? draggedItem.height : draggedItem.width,
-            height: rotation ? draggedItem.width : draggedItem.height
+            width: swap ? draggedItem.height : draggedItem.width,
+            height: swap ? draggedItem.width : draggedItem.height
         };
+
         setPreviewSize(size.width, size.height);
         const pos = getLastGhostPos();
         if (pos.x !== null && pos.y !== null) {
