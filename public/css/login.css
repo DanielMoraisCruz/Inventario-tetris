@@ -52,6 +52,11 @@
     margin-top: 10px;
 }
 
+#login-msg, #register-msg {
+    color: limegreen;
+    margin-top: 10px;
+}
+
 #login-screen input {
     font-size: 1.1em;
     margin-bottom: 7px;

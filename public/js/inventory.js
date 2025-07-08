@@ -9,6 +9,7 @@ export let itemList;
 export let form;
 export let itemsPanel;
 export let searchInput;
+export let itemMsg;
 
 export function cacheDomElements() {
     inventory = document.getElementById('inventory');
@@ -16,6 +17,7 @@ export function cacheDomElements() {
     form = document.getElementById('item-form');
     itemsPanel = document.getElementById('items');
     searchInput = document.getElementById('item-search');
+    itemMsg = document.getElementById('item-msg');
 }
 
 // Automatically cache elements once the DOM is ready so other modules can use
@@ -178,8 +180,9 @@ export function readImageFile(input) {
 
 export async function handleItemSubmit(e) {
     e.preventDefault();
+    if (itemMsg) itemMsg.textContent = '';
     if (!session.isMaster) {
-        alert("Só o mestre pode criar itens.");
+        if (itemMsg) itemMsg.textContent = 'Só o mestre pode criar itens.';
         return;
     }
     const data = getItemFormData();
@@ -187,6 +190,7 @@ export async function handleItemSubmit(e) {
     data.img = await readImageFile(data.imgInput);
     addNewItem(data);
     form.reset();
+    if (itemMsg) itemMsg.textContent = 'Item adicionado com sucesso.';
 }
 
 export function redrawPlacedItems() {
