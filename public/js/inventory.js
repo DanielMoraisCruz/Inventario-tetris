@@ -296,8 +296,8 @@ export function placeItem(x, y, w, h, item, fromRedraw = false) {
             rotacionado: item.rotacionado,
             img: item.img || null,
             color: item.color,
-            originalWidth: item.originalWidth ?? (item.rotacionado ? item.height : item.width),
-            originalHeight: item.originalHeight ?? (item.rotacionado ? item.width : item.height),
+            originalWidth: item.originalWidth ?? item.width,
+            originalHeight: item.originalHeight ?? item.height,
             maxEstresse: item.maxEstresse ?? 3,
             estresseAtual: item.estresseAtual ?? 0
         });
