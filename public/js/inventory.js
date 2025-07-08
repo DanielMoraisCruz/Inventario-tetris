@@ -1,6 +1,6 @@
 import { saveInventory, loadInventory } from './storage.js';
 import { session } from './login.js';
-import { ROWS, COLS, setInventorySize } from './constants.js';
+import { ROWS, COLS, setInventorySize, CELL_GAP, getCellSize } from './constants.js';
 
 // DOM elements are resolved after the document is ready. They are declared
 // using `let` so they can be assigned during initialization.
@@ -313,13 +313,41 @@ export function createItemImageElement(item, width, height, isGhost = false) {
         wrapper.classList.add('rotacionado');
     }
 
-    const img = document.createElement('img');
-    img.src = item.img;
-    img.alt = item.nome;
-    img.className = 'grid-item-img';
-    img.style.border = `2px solid ${item.color}`;
-    img.style.backgroundColor = 'transparent';
-    wrapper.appendChild(img);
+    if (item.rotacionado) {
+        const canvas = document.createElement('canvas');
+        canvas.className = 'grid-item-img';
+        canvas.style.border = `2px solid ${item.color}`;
+        canvas.style.backgroundColor = 'transparent';
+        canvas.width = 1; // temporary until image loads
+        canvas.height = 1;
+        wrapper.appendChild(canvas);
+
+        const img = new Image();
+        img.src = item.img;
+        img.onload = () => {
+            const cellSize = getCellSize();
+            const pxW = width * (cellSize + CELL_GAP) - CELL_GAP;
+            const pxH = height * (cellSize + CELL_GAP) - CELL_GAP;
+            canvas.width = pxW;
+            canvas.height = pxH;
+            const ctx = canvas.getContext('2d');
+            const cx = pxW / 2;
+            const cy = pxH / 2;
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(Math.PI / 2);
+            ctx.drawImage(img, -pxH / 2, -pxW / 2, pxH, pxW);
+            ctx.restore();
+        };
+    } else {
+        const img = document.createElement('img');
+        img.src = item.img;
+        img.alt = item.nome;
+        img.className = 'grid-item-img';
+        img.style.border = `2px solid ${item.color}`;
+        img.style.backgroundColor = 'transparent';
+        wrapper.appendChild(img);
+    }
 
     if (!isGhost) {
         const stress = createStressElement(item, width);

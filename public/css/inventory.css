@@ -243,8 +243,8 @@
 }
 
 .rotacionado {
-    transform: rotate(90deg);
-    transform-origin: top left;
+    /* Mantido para semântica de rotação, mas a rotação é aplicada
+       diretamente no canvas durante o desenho. */
 }
 
 .w1 {
