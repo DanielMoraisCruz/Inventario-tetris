@@ -21,9 +21,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     const resizeCols = document.getElementById('resize-cols');
     const resizeBtn = document.getElementById('resize-btn');
     const root = document.documentElement;
+    const DEFAULT_WIDTH = 260;
     const savedWidth = localStorage.getItem('items-width');
     if (savedWidth) {
-        root.style.setProperty('--items-width', `${savedWidth}px`);
+        const w = parseInt(savedWidth, 10);
+        root.style.setProperty('--items-width', `${w}px`);
+        root.style.setProperty('--preview-scale', (w / DEFAULT_WIDTH).toString());
     }
 
     if (!loadSession()) {
@@ -109,6 +112,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             let newWidth = startWidth + e.clientX - startX;
             newWidth = Math.max(180, Math.min(400, newWidth));
             root.style.setProperty('--items-width', `${newWidth}px`);
+            root.style.setProperty('--preview-scale', (newWidth / DEFAULT_WIDTH).toString());
         };
 
         const onUp = () => {
@@ -116,6 +120,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             document.removeEventListener('mouseup', onUp);
             const finalWidth = parseInt(getComputedStyle(itemsPanel).width, 10);
             localStorage.setItem('items-width', finalWidth);
+            root.style.setProperty('--preview-scale', (finalWidth / DEFAULT_WIDTH).toString());
         };
 
         itemsResizer.addEventListener('mousedown', (e) => {
