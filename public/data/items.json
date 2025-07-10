@@ -1,60 +1,10 @@
 [
   {
-    "nome": "Espada",
-    "width": 2,
-    "height": 1,
-    "color": "#0b00fd",
-    "img": "img/Espada.png",
-    "maxEstresse": 3,
-    "tipo": "Arma",
-    "slot": "Mão"
-  },
-  {
     "nome": "Lança",
     "width": 1,
     "height": 3,
     "color": "#2b8a3e",
     "img": "img/Lança.png",
-    "maxEstresse": 3,
-    "tipo": "Arma",
-    "slot": "Mão"
-  },
-  {
-    "nome": "Escudo",
-    "width": 2,
-    "height": 2,
-    "color": "#2b8a3e",
-    "img": "img/Escudo.png",
-    "maxEstresse": 5,
-    "tipo": "Escudo",
-    "slot": "Mão"
-  },
-  {
-    "nome": "Machado",
-    "width": 2,
-    "height": 1,
-    "color": "#fd0000",
-    "img": "img/Machado.png",
-    "maxEstresse": 3,
-    "tipo": "Arma",
-    "slot": "Mão"
-  },
-  {
-    "nome": "Arco",
-    "width": 1,
-    "height": 2,
-    "color": "#fd8a00",
-    "img": "img/Arco.png",
-    "maxEstresse": 3,
-    "tipo": "Arma",
-    "slot": "Mão"
-  },
-  {
-    "nome": "Besta",
-    "width": 2,
-    "height": 1,
-    "color": "#fd8a00",
-    "img": "img/Besta.png",
     "maxEstresse": 3,
     "tipo": "Arma",
     "slot": "Mão"
@@ -80,203 +30,383 @@
     "slot": "Mão"
   },
   {
-    "nome": "Varinha",
+    "nome": "ArcoCurto",
     "width": 1,
-    "height": 2,
-    "color": "#00fdfd",
-    "img": "img/Varinha.png",
-    "maxEstresse": 3,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/ArcoCurto.png",
+    "maxEstresse": 1,
     "tipo": "Arma",
     "slot": "Mão"
   },
   {
-    "nome": "Livro",
-    "width": 2,
-    "height": 2,
-    "color": "#8a00fd",
-    "img": "img/Livro.png",
-    "maxEstresse": 3,
-    "tipo": "Utilitário",
-    "slot": "Mochila"
-  },
-  {
-    "nome": "Poção",
+    "nome": "Azagaia",
     "width": 1,
     "height": 1,
-    "color": "#fd00fd",
-    "img": "img/Poção.png",
+    "color": "#888888",
+    "img": "img/Azagaia.png",
     "maxEstresse": 1,
-    "tipo": "Consumível",
-    "slot": "Bolsa"
+    "tipo": "Arma",
+    "slot": "Mão"
   },
   {
-    "nome": "Chave",
+    "nome": "BAR",
     "width": 1,
     "height": 1,
-    "color": "#8a8a8a",
-    "img": "img/Chave.png",
-    "maxEstresse": 3,
-    "tipo": "Ferramenta",
-    "slot": "Mochila"
-  },
-  {
-    "nome": "Mapa",
-    "width": 2,
-    "height": 1,
-    "color": "#8a8a8a",
-    "img": "img/Mapa.png",
-    "maxEstresse": 3,
-    "tipo": "Ferramenta",
-    "slot": "Mochila"
-  },
-  {
-    "nome": "Lanterna",
-    "width": 1,
-    "height": 2,
-    "color": "#fd8a8a",
-    "img": "img/Lanterna.png",
-    "maxEstresse": 3,
-    "tipo": "Ferramenta",
-    "slot": "Mochila"
-  },
-  {
-    "nome": "Bomba",
-    "width": 1,
-    "height": 1,
-    "color": "#fd0000",
-    "img": "img/Bomba.png",
+    "color": "#888888",
+    "img": "img/BAR.png",
     "maxEstresse": 1,
-    "tipo": "Consumível",
-    "slot": "Bolsa"
+    "tipo": "Arma",
+    "slot": "Mão"
   },
   {
-    "nome": "Rede",
-    "width": 2,
-    "height": 1,
-    "color": "#00fd00",
-    "img": "img/Rede.png",
-    "maxEstresse": 3,
-    "tipo": "Ferramenta",
-    "slot": "Mochila"
-  },
-  {
-    "nome": "Corda",
-    "width": 1,
-    "height": 3,
-    "color": "#8a8a00",
-    "img": "img/Corda.png",
-    "maxEstresse": 3,
-    "tipo": "Ferramenta",
-    "slot": "Mochila"
-  },
-  {
-    "nome": "Escada",
-    "width": 2,
-    "height": 2,
-    "color": "#8a8a00",
-    "img": "img/Escada.png",
-    "maxEstresse": 3,
-    "tipo": "Ferramenta",
-    "slot": "Mochila"
-  },
-  {
-    "nome": "Ferramenta",
+    "nome": "Bazooka",
     "width": 1,
     "height": 1,
-    "color": "#00fd8a",
-    "img": "img/Ferramenta.png",
-    "maxEstresse": 3,
-    "tipo": "Ferramenta",
-    "slot": "Mochila"
-  },
-  {
-    "nome": "Semente",
-    "width": 1,
-    "height": 1,
-    "color": "#8a00fd",
-    "img": "img/Semente.png",
+    "color": "#888888",
+    "img": "img/Bazooka.png",
     "maxEstresse": 1,
-    "tipo": "Material",
-    "slot": "Bolsa"
+    "tipo": "Arma",
+    "slot": "Mão"
   },
   {
-    "nome": "Fruta",
+    "nome": "BestaLeve",
     "width": 1,
     "height": 1,
-    "color": "#fd8a00",
-    "img": "img/Fruta.png",
+    "color": "#888888",
+    "img": "img/BestaLeve.png",
     "maxEstresse": 1,
-    "tipo": "Consumível",
-    "slot": "Bolsa"
+    "tipo": "Arma",
+    "slot": "Mão"
   },
   {
-    "nome": "Bebida",
+    "nome": "Bren LMG",
     "width": 1,
     "height": 1,
-    "color": "#00fdfd",
-    "img": "img/Bebida.png",
+    "color": "#888888",
+    "img": "img/Bren LMG.png",
     "maxEstresse": 1,
-    "tipo": "Consumível",
-    "slot": "Bolsa"
+    "tipo": "Arma",
+    "slot": "Mão"
   },
   {
-    "nome": "Comida",
-    "width": 2,
-    "height": 2,
-    "color": "#fd8a8a",
-    "img": "img/Comida.png",
+    "nome": "Clava",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Clava.png",
     "maxEstresse": 1,
-    "tipo": "Consumível",
-    "slot": "Bolsa"
+    "tipo": "Arma",
+    "slot": "Mão"
   },
   {
-    "nome": "Vestimenta",
-    "width": 2,
-    "height": 2,
-    "color": "#8a00fd",
-    "img": "img/Vestimenta.png",
-    "maxEstresse": 5,
-    "tipo": "Vestimenta",
-    "slot": "Corpo"
-  },
-  {
-    "nome": "Anel",
+    "nome": "ClavaGrande",
     "width": 1,
     "height": 1,
-    "color": "#fd00fd",
-    "img": "img/Anel.png",
-    "maxEstresse": 5,
-    "tipo": "Acessório",
-    "slot": "Dedo"
+    "color": "#888888",
+    "img": "img/ClavaGrande.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
   },
   {
-    "nome": "Colar",
+    "nome": "Colt M1911",
     "width": 1,
     "height": 1,
-    "color": "#00fdfd",
-    "img": "img/Colar.png",
-    "maxEstresse": 5,
-    "tipo": "Acessório",
-    "slot": "Pescoço"
+    "color": "#888888",
+    "img": "img/Colt M1911.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
   },
   {
-    "nome": "Bracelete",
+    "nome": "Dardo",
     "width": 1,
     "height": 1,
-    "color": "#8a8a8a",
-    "img": "img/Bracelete.png",
-    "maxEstresse": 5,
-    "tipo": "Acessório",
-    "slot": "Pulso"
+    "color": "#888888",
+    "img": "img/Dardo.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
   },
   {
-    "nome": "Broche",
+    "nome": "DP 28",
     "width": 1,
     "height": 1,
-    "color": "#fd8a00",
-    "img": "img/Broche.png",
-    "maxEstresse": 5,
-    "tipo": "Acessório",
-    "slot": "Peito"
+    "color": "#888888",
+    "img": "img/DP 28.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Enfield No. 2",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Enfield No. 2.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Foice",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Foice.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Funda",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Funda.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Gewehr 43",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Gewehr 43.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Karabiner 98k",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Karabiner 98k.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "M1 Garand",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/M1 Garand.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Maça",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Maça.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Machadinha",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Machadinha.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "MachadoDeBatalha",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/MachadoDeBatalha.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Mangual",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Mangual.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "MarteloLeve",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/MarteloLeve.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "MG 42",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/MG 42.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Mk 2 grenade",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Mk 2 grenade.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Mosin Nagant",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Mosin Nagant.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "MP 40",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/MP 40.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Panzerschreck",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Panzerschreck.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "PPSh 41",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/PPSh 41.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Springfield M1903",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Springfield M1903.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Sten",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Sten.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Stick grenade",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Stick grenade.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "SVT-40",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/SVT-40.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Thompson",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Thompson.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Tokarev TT-33",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Tokarev TT-33.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Type 97 grenade",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Type 97 grenade.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Type 99 Arisaka",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Type 99 Arisaka.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Type 99 LMG",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Type 99 LMG.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
+  },
+  {
+    "nome": "Walther P38",
+    "width": 1,
+    "height": 1,
+    "color": "#888888",
+    "img": "img/Walther P38.png",
+    "maxEstresse": 1,
+    "tipo": "Arma",
+    "slot": "Mão"
   }
 ]
