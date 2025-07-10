@@ -1,42 +1,42 @@
 nome,width,height,color,img,maxEstresse,tipo,slot
-Lança,1,3,#2b8a3e,img/Lança.png,3,Arma,Mão
-Adaga,1,1,#fd00fd,img/Adaga.png,3,Arma,Mão
-Cajado,1,3,#00fdfd,img/Cajado.png,3,Arma,Mão
-ArcoCurto,1,1,#888888,img/ArcoCurto.png,1,Arma,Mão
-Azagaia,1,1,#888888,img/Azagaia.png,1,Arma,Mão
-BAR,1,1,#888888,img/BAR.png,1,Arma,Mão
-Bazooka,1,1,#888888,img/Bazooka.png,1,Arma,Mão
-BestaLeve,1,1,#888888,img/BestaLeve.png,1,Arma,Mão
-Bren LMG,1,1,#888888,img/Bren LMG.png,1,Arma,Mão
-Clava,1,1,#888888,img/Clava.png,1,Arma,Mão
-ClavaGrande,1,1,#888888,img/ClavaGrande.png,1,Arma,Mão
-Colt M1911,1,1,#888888,img/Colt M1911.png,1,Arma,Mão
-Dardo,1,1,#888888,img/Dardo.png,1,Arma,Mão
-DP 28,1,1,#888888,img/DP 28.png,1,Arma,Mão
-Enfield No. 2,1,1,#888888,img/Enfield No. 2.png,1,Arma,Mão
-Foice,1,1,#888888,img/Foice.png,1,Arma,Mão
-Funda,1,1,#888888,img/Funda.png,1,Arma,Mão
-Gewehr 43,1,1,#888888,img/Gewehr 43.png,1,Arma,Mão
-Karabiner 98k,1,1,#888888,img/Karabiner 98k.png,1,Arma,Mão
-M1 Garand,1,1,#888888,img/M1 Garand.png,1,Arma,Mão
-Maça,1,1,#888888,img/Maça.png,1,Arma,Mão
-Machadinha,1,1,#888888,img/Machadinha.png,1,Arma,Mão
-MachadoDeBatalha,1,1,#888888,img/MachadoDeBatalha.png,1,Arma,Mão
-Mangual,1,1,#888888,img/Mangual.png,1,Arma,Mão
-MarteloLeve,1,1,#888888,img/MarteloLeve.png,1,Arma,Mão
-MG 42,1,1,#888888,img/MG 42.png,1,Arma,Mão
-Mk 2 grenade,1,1,#888888,img/Mk 2 grenade.png,1,Arma,Mão
-Mosin Nagant,1,1,#888888,img/Mosin Nagant.png,1,Arma,Mão
-MP 40,1,1,#888888,img/MP 40.png,1,Arma,Mão
-Panzerschreck,1,1,#888888,img/Panzerschreck.png,1,Arma,Mão
-PPSh 41,1,1,#888888,img/PPSh 41.png,1,Arma,Mão
-Springfield M1903,1,1,#888888,img/Springfield M1903.png,1,Arma,Mão
-Sten,1,1,#888888,img/Sten.png,1,Arma,Mão
-Stick grenade,1,1,#888888,img/Stick grenade.png,1,Arma,Mão
-SVT-40,1,1,#888888,img/SVT-40.png,1,Arma,Mão
-Thompson,1,1,#888888,img/Thompson.png,1,Arma,Mão
-Tokarev TT-33,1,1,#888888,img/Tokarev TT-33.png,1,Arma,Mão
-Type 97 grenade,1,1,#888888,img/Type 97 grenade.png,1,Arma,Mão
-Type 99 Arisaka,1,1,#888888,img/Type 99 Arisaka.png,1,Arma,Mão
-Type 99 LMG,1,1,#888888,img/Type 99 LMG.png,1,Arma,Mão
-Walther P38,1,1,#888888,img/Walther P38.png,1,Arma,Mão
+Lança,1,1,#2b8a3e,img/Lança.png,3,Arma,Mão
+Adaga,1,1,#2b8a3e,img/Adaga.png,3,Arma,Mão
+Cajado,1,1,#2b8a3e,img/Cajado.png,3,Arma,Mão
+ArcoCurto,1,1,#2b8a3e,img/ArcoCurto.png,3,Arma,Mão
+Azagaia,1,1,#2b8a3e,img/Azagaia.png,3,Arma,Mão
+BAR,5,1,#2b8a3e,img/BAR.png,3,Arma,Mão
+Bazooka,5,1,#2b8a3e,img/Bazooka.png,3,Arma,Mão
+BestaLeve,1,1,#2b8a3e,img/BestaLeve.png,3,Arma,Mão
+Bren LMG,5,1,#2b8a3e,img/Bren LMG.png,3,Arma,Mão
+Clava,1,1,#2b8a3e,img/Clava.png,3,Arma,Mão
+ClavaGrande,1,1,#2b8a3e,img/ClavaGrande.png,3,Arma,Mão
+Colt M1911,4,2,#2b8a3e,img/Colt M1911.png,3,Arma,Mão
+Dardo,1,1,#2b8a3e,img/Dardo.png,3,Arma,Mão
+DP 28,5,1,#2b8a3e,img/DP 28.png,3,Arma,Mão
+Enfield No. 2,1,1,#2b8a3e,img/Enfield No. 2.png,3,Arma,Mão
+Foice,1,1,#2b8a3e,img/Foice.png,3,Arma,Mão
+Funda,1,1,#2b8a3e,img/Funda.png,3,Arma,Mão
+Gewehr 43,5,1,#2b8a3e,img/Gewehr 43.png,3,Arma,Mão
+Karabiner 98k,5,1,#2b8a3e,img/Karabiner 98k.png,3,Arma,Mão
+M1 Garand,5,1,#2b8a3e,img/M1 Garand.png,3,Arma,Mão
+Maça,1,1,#2b8a3e,img/Maça.png,3,Arma,Mão
+Machadinha,1,1,#2b8a3e,img/Machadinha.png,3,Arma,Mão
+MachadoDeBatalha,1,1,#2b8a3e,img/MachadoDeBatalha.png,3,Arma,Mão
+Mangual,1,1,#2b8a3e,img/Mangual.png,3,Arma,Mão
+MarteloLeve,1,1,#2b8a3e,img/MarteloLeve.png,3,Arma,Mão
+MG 42,4,2,#2b8a3e,img/MG 42.png,3,Arma,Mão
+Mk 2 grenade,2,4,#2b8a3e,img/Mk 2 grenade.png,3,Arma,Mão
+Mosin Nagant,5,1,#2b8a3e,img/Mosin Nagant.png,3,Arma,Mão
+MP 40,4,2,#2b8a3e,img/MP 40.png,3,Arma,Mão
+Panzerschreck,5,1,#2b8a3e,img/Panzerschreck.png,3,Arma,Mão
+PPSh 41,5,1,#2b8a3e,img/PPSh 41.png,3,Arma,Mão
+Springfield M1903,5,1,#2b8a3e,img/Springfield M1903.png,3,Arma,Mão
+Sten,5,1,#2b8a3e,img/Sten.png,3,Arma,Mão
+Stick grenade,1,5,#2b8a3e,img/Stick grenade.png,3,Arma,Mão
+SVT-40,5,1,#2b8a3e,img/SVT-40.png,3,Arma,Mão
+Thompson,5,1,#2b8a3e,img/Thompson.png,3,Arma,Mão
+Tokarev TT-33,4,2,#2b8a3e,img/Tokarev TT-33.png,3,Arma,Mão
+Type 97 grenade,2,4,#2b8a3e,img/Type 97 grenade.png,3,Arma,Mão
+Type 99 Arisaka,5,1,#2b8a3e,img/Type 99 Arisaka.png,3,Arma,Mão
+Type 99 LMG,4,2,#2b8a3e,img/Type 99 LMG.png,3,Arma,Mão
+Walther P38,4,2,#2b8a3e,img/Walther P38.png,3,Arma,Mão
