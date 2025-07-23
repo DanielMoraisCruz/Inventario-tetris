@@ -80,11 +80,13 @@ Pré-requisitos: **Node.js 18+** e **Python 3** caso queira utilizar o script de
 3. Inicie o servidor:
 
    ```bash
-   npm start
-   ```
+npm start
+```
 
-   Isso levantará o servidor Express em `http://localhost:3000`.
-   Abra `http://localhost:3000/login.html` (ou `index.html`) no navegador para acessar o front‑end.
+Depois de configurado o projeto, execute `npm test` para rodar a suíte de testes do Jest.
+
+Isso levantará o servidor Express em `http://localhost:3000`.
+Abra `http://localhost:3000/login.html` (ou `index.html`) no navegador para acessar o front‑end.
 
    O backend criará automaticamente o arquivo `server/users.json` se ele não existir e disponibilizará as rotas de API (`/register`, `/login`, `/reset-password`, `/security-question` etc.) para a aplicação. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo: 
    
@@ -211,6 +213,12 @@ Install the server dependencies and start it:
 ```bash
 npm install
 npm start
+```
+
+After the setup you can run all Jest tests with:
+
+```bash
+npm test
 ```
 
 This starts the Express backend on `http://localhost:3000`. Open `http://localhost:3000/login.html` (or `index.html`) in your browser to view the front-end.
