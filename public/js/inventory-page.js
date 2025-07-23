@@ -93,6 +93,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
 
     logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('tetris-inventory');
         clearSession();
         window.location.href = 'login.html';
     });
