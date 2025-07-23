@@ -30,6 +30,9 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
 * 🗑️ Remoção com tecla `Delete`
 * 🧙‍♂️ Interface simplificada para mestre
 * 📏 O mestre é capaz de aumentar e diminuir o tamanho do inventário dos jogadores
+* 🌗 Alternância de tema claro/escuro
+* 🧍‍♂️ Corpo do personagem com slots equipáveis
+* 💥 Barra de estresse/durabilidade para cada item
 
 
 ---
@@ -37,9 +40,7 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
 ## 📈 Funcionalidades Futuras
 
 * 🎲 Rolagem de dados integrada
-* 🧍‍♂️ Corpo de personagem com slots equipáveis
 * 🛡️ Itens consumíveis, equipáveis, com efeitos especiais
-* 💥 Barra de estresse para cada item (item quebra quando atinge o limite)
 * ⭐ Sistema de raridade (comum a lendário)
 * 🐍 Backend em Python para inserção em massa de itens (futuramente)
 * 🧩 Sistema de categorias e filtros
@@ -168,15 +169,16 @@ The goal is to enhance the RPG experience with a fun, interactive inventory syst
 * 🗑️ Delete with `Delete` key
 * 🧙‍♂️ Simplified Master interface
 * 📏 Master can resize player inventories
+* 🌗 Light/dark theme toggle
+* 🧍‍♂️ Character body with equipable slots
+* 💥 Stress/durability tracking per item
 
 ---
 
 ### 🔮 Future Features
 
 * 🎲 Dice roller system
-* 🧍‍♂️ Character body with equipable slots
 * 🛡️ Item types: consumables, equipables, special effects
-* 💥 Stress bar for each item (item breaks when maxed)
 * ⭐ Rarity system: common → legendary
 * 🐍 Python backend for bulk item creation (future)
 * 🧩 Categories and filters
