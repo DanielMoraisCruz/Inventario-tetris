@@ -101,7 +101,7 @@ A rota `/master-hash` permite consultar o valor da variável de ambiente `MASTER
 O arquivo `server/users.json` é gerado automaticamente na primeira execução do servidor e armazena os usuários cadastrados. Se quiser reiniciar os cadastros, exclua esse arquivo antes de iniciar o servidor.
 
 ### Atualizar itens via CSV
-Na pasta `public/data/` existe o script `atualizar_items.py` que converte o arquivo `CSV-itens.csv` em `items.json`. Caso tenha a dependência `openpyxl` instalada, o script também aceita `CSV-itens.xlsx` (não incluído no repositório). Execute:
+Na pasta `public/data/` existe o script `atualizar_items.py` que converte o arquivo `CSV-itens.csv` em `items.json`. O arquivo `items.json` vem vazio no repositório e precisa ser gerado uma primeira vez com o script. Caso tenha a dependência `openpyxl` instalada, o script também aceita `CSV-itens.xlsx` (não incluído no repositório). Execute:
 
 ```bash
 python3 public/data/atualizar_items.py
@@ -226,7 +226,7 @@ The `/master-hash` endpoint returns the value of the `MASTER_PASSWORD_HASH` envi
 The file `server/users.json` is created automatically when the server first starts and stores all registered users. Delete this file before launching the server if you wish to reset the credentials.
 
 ### Update items from CSV
-Inside `public/data/` there is a script called `atualizar_items.py` that converts `CSV-itens.csv` into `items.json`. If the `openpyxl` dependency is installed the script will also accept `CSV-itens.xlsx` (not included in the repository). Run:
+Inside `public/data/` there is a script called `atualizar_items.py` that converts `CSV-itens.csv` into `items.json`. The repository ships with an empty `items.json`, so run the script once to create it. If the `openpyxl` dependency is installed the script will also accept `CSV-itens.xlsx` (not included in the repository). Run:
 
 ```bash
 python3 public/data/atualizar_items.py
