@@ -33,6 +33,7 @@ function colorFor(current, max) {
 window.addEventListener('DOMContentLoaded', () => {
     const bodyImg = document.getElementById('body-img');
     if (bodyImg) bodyImg.src = BODY_IMG_SRC;
+    const rollBtn = document.getElementById('roll-body');
     parts.forEach(p => {
         const el = document.getElementById(p.id);
         if (!el) return;
@@ -159,6 +160,13 @@ window.addEventListener('DOMContentLoaded', () => {
             delete draggedSlot.el._itemData;
             draggedSlot.update(null);
             draggedSlot = null;
+        });
+    }
+
+    if (rollBtn) {
+        rollBtn.addEventListener('click', () => {
+            const choice = parts[Math.floor(Math.random() * parts.length)];
+            alert(`Parte sorteada: ${choice.name}`);
         });
     }
 });
