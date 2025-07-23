@@ -1,6 +1,6 @@
 {
-  "Daniel": {
-    "passwordHash": "$2b$10$vICaWpFUVOBU4N.pYkSSvugO35BzSgwfKTPwMr3IlPiLQsHBEMUJ2",
-    "isMaster": true
-  }
+	"Daniel": {
+		"passwordHash": "$2b$10$vICaWpFUVOBU4N.pYkSSvugO35BzSgwfKTPwMr3IlPiLQsHBEMUJ2",
+		"isMaster": true
+	}
 }

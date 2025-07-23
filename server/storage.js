@@ -4,47 +4,47 @@ const path = require('path');
 
 // Allow both USERS_FILE_PATH and the legacy USERS_FILE variable
 const USERS_FILE =
-  process.env.USERS_FILE_PATH ||
-  process.env.USERS_FILE ||
-  path.join(__dirname, 'users.json');
+    process.env.USERS_FILE_PATH ||
+    process.env.USERS_FILE ||
+    path.join(__dirname, 'users.json');
 
 
 function ensureUsersFile() {
-  if (!fs.existsSync(USERS_FILE)) {
-    try {
-      fs.writeFileSync(USERS_FILE, JSON.stringify({}), 'utf-8');
-    } catch (err) {
-      throw err;
+    if (!fs.existsSync(USERS_FILE)) {
+        try {
+            fs.writeFileSync(USERS_FILE, JSON.stringify({}), 'utf-8');
+        } catch (err) {
+            throw err;
+        }
     }
-  }
 }
 
 function loadUsers() {
-  ensureUsersFile();
-  try {
-    const data = fs.readFileSync(USERS_FILE, 'utf-8');
-    return JSON.parse(data || '{}');
-  } catch (err) {
-    throw err;
-  }
+    ensureUsersFile();
+    try {
+        const data = fs.readFileSync(USERS_FILE, 'utf-8');
+        return JSON.parse(data || '{}');
+    } catch (err) {
+        throw err;
+    }
 }
 
 function saveUsers(usersObj) {
-  const tempFile = `${USERS_FILE}.tmp`;
-  const data = JSON.stringify(usersObj, null, 2);
-  try {
-    fs.writeFileSync(tempFile, data, 'utf-8');
-    fs.renameSync(tempFile, USERS_FILE);
-  } catch (err) {
+    const tempFile = `${USERS_FILE}.tmp`;
+    const data = JSON.stringify(usersObj, null, 2);
     try {
-      if (fs.existsSync(tempFile)) {
-        fs.unlinkSync(tempFile);
-      }
-    } catch (_) {
-      // ignore cleanup errors
+        fs.writeFileSync(tempFile, data, 'utf-8');
+        fs.renameSync(tempFile, USERS_FILE);
+    } catch (err) {
+        try {
+            if (fs.existsSync(tempFile)) {
+                fs.unlinkSync(tempFile);
+            }
+        } catch (_) {
+            // ignore cleanup errors
+        }
+        throw err;
     }
-    throw err;
-  }
 }
 
 module.exports = { USERS_FILE, ensureUsersFile, loadUsers, saveUsers };

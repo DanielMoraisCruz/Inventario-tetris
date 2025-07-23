@@ -1,24 +1,24 @@
 {
-  "name": "inventario-tetris",
-  "version": "1.0.0",
-  "description": "Um sistema visual e interativo de gerenciamento de inventário inspirado em Tetris, voltado para mesas de RPG.",
-  "main": "server.js",
-  "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "start": "node server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "bcryptjs": "^3.0.2",
-    "express": "^5.1.0",
-    "express-validator": "^7.2.1",
-    "helmet": "^8.1.0"
-  },
-  "devDependencies": {
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^30.0.4"
-  }
+    "name": "inventario-tetris",
+    "version": "1.0.0",
+    "description": "Um sistema visual e interativo de gerenciamento de inventário inspirado em Tetris, voltado para mesas de RPG.",
+    "main": "server.js",
+    "scripts": {
+        "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+        "start": "node server.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "dependencies": {
+        "bcryptjs": "^3.0.2",
+        "express": "^5.1.0",
+        "express-validator": "^7.2.1",
+        "helmet": "^8.1.0"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^30.0.4"
+    }
 }
