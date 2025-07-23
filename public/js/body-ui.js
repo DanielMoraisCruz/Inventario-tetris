@@ -12,8 +12,11 @@ const parts = [
 function colorFor(current, max) {
     const colors = ['#2b8a3e', '#f1c40f', '#fd7e14', '#c92a2a'];
     if (!max) return colors[0];
-    const idx = Math.min(colors.length - 1, Math.floor((current / max) * colors.length));
-    return colors[idx];
+    const ratio = current / max;
+    if (ratio < 0.25) return colors[0];
+    if (ratio < 0.5) return colors[1];
+    if (ratio < 0.75) return colors[2];
+    return colors[3];
 }
 
 window.addEventListener('DOMContentLoaded', () => {
