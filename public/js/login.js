@@ -1,4 +1,9 @@
-export const session = { isMaster: false, userName: '', userStats: { forca: 0, inteligencia: 0, determinacao: 0 } };
+export const session = {
+    isMaster: false,
+    userName: '',
+    userStats: { forca: 0, inteligencia: 0, determinacao: 0 },
+    userSkills: {}
+};
 
 export function loadSession() {
     const saved = localStorage.getItem('session');
@@ -14,6 +19,7 @@ export function loadSession() {
                 determinacao: parseInt(data.userStats.determinacao) || 0
             };
         }
+        session.userSkills = typeof data.userSkills === 'object' && data.userSkills !== null ? data.userSkills : {};
         return true;
     } catch {
         return false;
@@ -28,5 +34,6 @@ export function clearSession() {
     session.userName = '';
     session.isMaster = false;
     session.userStats = { forca: 0, inteligencia: 0, determinacao: 0 };
+    session.userSkills = {};
     localStorage.removeItem('session');
 }

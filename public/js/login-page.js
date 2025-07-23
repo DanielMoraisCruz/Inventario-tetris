@@ -63,6 +63,7 @@ window.addEventListener('DOMContentLoaded', () => {
       session.userName = username;
       session.isMaster = result.isMaster;
       session.userStats = result.userStats || { forca: 0, inteligencia: 0, determinacao: 0 };
+      session.userSkills = result.userSkills || {};
       saveSession();
       window.location.href = 'inventory.html';
     } catch (err) {
