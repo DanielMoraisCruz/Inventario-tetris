@@ -1,4 +1,4 @@
-import { getInventoryState, removeItemFromGrid, removeItemFromPanel } from './inventory.js';
+import { getInventoryState, removeItemFromGrid, removeItemFromPanel, adjustItemStress } from './inventory.js';
 const BODY_IMG_SRC = '/img/body.png';
 const parts = [
     { id: 'head', name: 'Cabeça' },
@@ -27,7 +27,14 @@ window.addEventListener('DOMContentLoaded', () => {
         const minus = el.querySelector('.stress-minus');
         const space = el.querySelector('.equip-space');
 
-        const update = (item) => {
+        const updateSlotDisplay = (id) => {
+            if (!id) {
+                span.textContent = '0/0';
+                el.style.backgroundColor = colorFor(0, 0);
+                return;
+            }
+            const state = getInventoryState();
+            const item = state.itemsData.find(it => it.id === id) || state.placedItems.find(it => it.id === id);
             if (!item) {
                 span.textContent = '0/0';
                 el.style.backgroundColor = colorFor(0, 0);
@@ -38,24 +45,18 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         if (plus) plus.addEventListener('click', () => {
-            const item = space.item;
-            if (!item) return;
-            if (item.estresseAtual < item.maxEstresse) {
-                item.estresseAtual++;
-                update(item);
-            }
+            const id = space.dataset.itemId;
+            if (id) adjustItemStress(id, 1);
+            updateSlotDisplay(id);
         });
 
         if (minus) minus.addEventListener('click', () => {
-            const item = space.item;
-            if (!item) return;
-            if (item.estresseAtual > 0) {
-                item.estresseAtual--;
-                update(item);
-            }
+            const id = space.dataset.itemId;
+            if (id) adjustItemStress(id, -1);
+            updateSlotDisplay(id);
         });
 
-        update(null);
+        updateSlotDisplay(space.dataset.itemId);
 
         space.addEventListener('dragover', e => {
             e.preventDefault();
@@ -85,9 +86,8 @@ window.addEventListener('DOMContentLoaded', () => {
             } else {
                 space.textContent = item.nome;
             }
-            space.item = item;
             space.dataset.itemId = item.id;
-            update(item);
+            updateSlotDisplay(item.id);
         });
     });
 });
