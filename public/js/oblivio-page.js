@@ -3,7 +3,7 @@ import { loadSession } from './login.js';
 
 const ATTRS = [
     'Força',
-    'Destresa',
+    'Destreza',
     'Vigor',
     'Carisma',
     'Aparência',
