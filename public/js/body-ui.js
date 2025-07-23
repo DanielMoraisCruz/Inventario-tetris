@@ -1,7 +1,5 @@
-import { getInventoryState } from './inventory.js';
+import { getInventoryState, removeItemFromGrid, removeItemFromPanel } from './inventory.js';
 const BODY_IMG_SRC = '/img/body.png';
-
-const MAX_STRESS = 3;
 const parts = [
     { id: 'head', name: 'Cabeça' },
     { id: 'right-arm', name: 'Braço Direito' },
@@ -11,9 +9,11 @@ const parts = [
     { id: 'left-leg', name: 'Perna Esquerda' }
 ];
 
-function colorFor(value) {
+function colorFor(current, max) {
     const colors = ['#2b8a3e', '#f1c40f', '#fd7e14', '#c92a2a'];
-    return colors[Math.min(value, colors.length - 1)];
+    if (!max) return colors[0];
+    const idx = Math.min(colors.length - 1, Math.floor((current / max) * colors.length));
+    return colors[idx];
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -26,14 +26,36 @@ window.addEventListener('DOMContentLoaded', () => {
         const plus = el.querySelector('.stress-plus');
         const minus = el.querySelector('.stress-minus');
         const space = el.querySelector('.equip-space');
-        let value = 0;
-        const update = () => {
-            span.textContent = `${value}/${MAX_STRESS}`;
-            el.style.backgroundColor = colorFor(value);
+
+        const update = (item) => {
+            if (!item) {
+                span.textContent = '0/0';
+                el.style.backgroundColor = colorFor(0, 0);
+                return;
+            }
+            span.textContent = `${item.estresseAtual}/${item.maxEstresse}`;
+            el.style.backgroundColor = colorFor(item.estresseAtual, item.maxEstresse);
         };
-        if (plus) plus.addEventListener('click', () => { if (value < MAX_STRESS) { value++; update(); } });
-        if (minus) minus.addEventListener('click', () => { if (value > 0) { value--; update(); } });
-        update();
+
+        if (plus) plus.addEventListener('click', () => {
+            const item = space.item;
+            if (!item) return;
+            if (item.estresseAtual < item.maxEstresse) {
+                item.estresseAtual++;
+                update(item);
+            }
+        });
+
+        if (minus) minus.addEventListener('click', () => {
+            const item = space.item;
+            if (!item) return;
+            if (item.estresseAtual > 0) {
+                item.estresseAtual--;
+                update(item);
+            }
+        });
+
+        update(null);
 
         space.addEventListener('dragover', e => {
             e.preventDefault();
@@ -42,8 +64,16 @@ window.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const itemId = e.dataTransfer.getData('text/plain');
             if (!itemId) return;
-            const { itemsData } = getInventoryState();
-            const item = itemsData.find(it => it.id === itemId);
+            const state = getInventoryState();
+            let item = state.itemsData.find(it => it.id === itemId);
+            if (item) {
+                removeItemFromPanel(item.id);
+            } else {
+                item = state.placedItems.find(it => it.id === itemId);
+                if (item) {
+                    removeItemFromGrid(item.id, true);
+                }
+            }
             if (!item) return;
             space.innerHTML = '';
             if (item.img) {
@@ -55,6 +85,9 @@ window.addEventListener('DOMContentLoaded', () => {
             } else {
                 space.textContent = item.nome;
             }
+            space.item = item;
+            space.dataset.itemId = item.id;
+            update(item);
         });
     });
 });
