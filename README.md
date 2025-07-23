@@ -4,7 +4,9 @@ Um sistema visual e interativo de gerenciamento de inventário inspirado em Tetr
 
 ---
 
-## 📌 Descrição (pt-BR)
+## 🇧🇷 Português
+
+### 📌 Descrição
 
 **Inventário Tetris** é um projeto pessoal criado para uso em mesas de **RPG de mesa**, permitindo ao mestre organizar visualmente os itens dos jogadores em um grid estilo Tetris. Com ele, o mestre pode:
 
@@ -18,7 +20,7 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
 
 ---
 
-## 🚀 Funcionalidades
+### 🚀 Funcionalidades
 
 * 🧱 Inventário em grade com drag & drop estilo Tetris
 * 👤 Login com modo mestre
@@ -34,10 +36,9 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
 * 🧍‍♂️ Corpo do personagem com slots equipáveis
 * 💥 Barra de estresse/durabilidade para cada item
 
-
 ---
 
-## 📈 Funcionalidades Futuras
+### 📈 Funcionalidades Futuras
 
 * 🎲 Rolagem de dados integrada
 * 🛡️ Itens consumíveis, equipáveis, com efeitos especiais
@@ -52,7 +53,7 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+### 🛠️ Tecnologias Utilizadas
 
 * HTML5
 * CSS3
@@ -62,7 +63,7 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
 
 ---
 
-## 🖥️ Como Executar Localmente
+### 🖥️ Como Executar Localmente
 
 Pré-requisitos: **Node.js 18+** e **Python 3** caso queira utilizar o script de atualização de itens.
 
@@ -80,29 +81,23 @@ Pré-requisitos: **Node.js 18+** e **Python 3** caso queira utilizar o script de
 3. Inicie o servidor:
 
    ```bash
-npm start
-```
+   npm start
+   ```
 
 Depois de configurado o projeto, execute `npm test` para rodar a suíte de testes do Jest.
 
 Isso levantará o servidor Express em `http://localhost:3000`.
 Abra `http://localhost:3000/login.html` (ou `index.html`) no navegador para acessar o front‑end.
 
-   O backend criará automaticamente o arquivo `server/users.json` se ele não existir e disponibilizará as rotas de API (`/register`, `/login`, `/reset-password`, `/security-question` etc.) para a aplicação. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo: 
-   
-   As senhas são armazenadas usando **bcryptjs** para maior segurança. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo:
+O backend criará automaticamente o arquivo `server/users.json` se ele não existir e disponibilizará as rotas de API (`/register`, `/login`, `/reset-password`, `/security-question` etc.) para a aplicação. As senhas são armazenadas usando **bcryptjs**. Toda comunicação é feita via JSON, portanto utilize o prefixo correto nas requisições, por exemplo:
 
-   ```javascript
-   fetch('http://localhost:3000/login')
-   ```
+```javascript
+fetch('http://localhost:3000/login')
+```
 
-   A rota `/master-hash` permite consultar o valor da variável de ambiente `MASTER_PASSWORD_HASH`, caso ela esteja definida. Defina essa variável antes de iniciar o servidor se precisar fornecer o hash de uma senha mestre externa.
+A rota `/master-hash` permite consultar o valor da variável de ambiente `MASTER_PASSWORD_HASH`, caso ela esteja definida. Você também pode definir `USERS_FILE_PATH` (ou o antigo `USERS_FILE`) para alterar o local do arquivo `users.json`. Defina também `EXTERNAL_ADDRESS` caso queira registrar um endereço externo ao iniciar o servidor (por exemplo, `http://seu-ip:3000`).
 
-   Você também pode definir `USERS_FILE_PATH` (ou o antigo `USERS_FILE`) para alterar o local do arquivo `users.json`. O diretório será criado automaticamente caso não exista.
-   Defina também `EXTERNAL_ADDRESS` caso queira registrar um endereço externo ao iniciar o servidor (por exemplo, `http://seu-ip:3000`).
-
-
-## 📑 users.json
+### 📑 users.json
 O arquivo `server/users.json` é gerado automaticamente na primeira execução do servidor e armazena os usuários cadastrados. Se quiser reiniciar os cadastros, exclua esse arquivo antes de iniciar o servidor.
 
 ### Atualizar itens via CSV
@@ -114,32 +109,32 @@ python3 public/data/atualizar_items.py
 
 para gerar ou atualizar a lista de itens. O CSV possui as colunas `nome`, `width`, `height`, `color`, `img`, `maxEstresse`, `tipo` e `slot`. Todos esses valores serão copiados para `items.json`.
 
+### Problemas ao carregar scripts ou imagens
+Se ao abrir a página os botões não responderem ou a imagem do personagem estiver ausente, verifique no console do navegador se `inventory-page.js` e `body-ui.js` foram carregados corretamente. Esses arquivos ficam em `public/js/` e devem ser incluídos assim:
+
+```html
+<script type="module" src="js/inventory-page.js"></script>
+<script type="module" src="js/body-ui.js"></script>
+```
+
+Se você salvou os arquivos pelo navegador e eles possuem o sufixo `.download`, renomeie-os para `.js` e recarregue a página. A imagem do personagem será definida automaticamente pelo script.
+
 ### Registro de usuários
+Quando não houver nenhum cadastro, o primeiro usuário criado será o **Mestre**. O registro solicita nome, senha e uma pergunta de segurança com a resposta correspondente. Se já existir um mestre, os próximos registros serão considerados jogadores.
 
-Quando não houver nenhum cadastro, o primeiro usuário criado será o
-**Mestre**. O registro solicita nome, senha e uma pergunta de segurança com a
-resposta correspondente. Se já existir um mestre, os próximos registros serão
-considerados jogadores.
----
-
-## 🌐 Acesse Online
-
+### 🌐 Acesse Online
 O projeto está hospedado em:
 [https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html](https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html)
 
-
 ---
 
-## 📄 Licença
-
+### 📄 Licença
 Este projeto está licenciado sob a **MIT License**.
 
 ---
 
-## ✒️ Autor
-
-Desenvolvido por **Daniel Cruz**.
-Mestre de RPG, Cientista da Computação e entusiasta de interfaces interativas para jogos de mesa.
+### ✒️ Autor
+Desenvolvido por **Daniel Cruz**. Mestre de RPG, Cientista da Computação e entusiasta de interfaces interativas para jogos de mesa.
 
 ---
 
@@ -207,10 +202,6 @@ Prerequisites: **Node.js 18+** and **Python 3** if you plan to run the item upda
 ```bash
 git clone https://github.com/your-username/inventario-tetris.git
 cd inventario-tetris
-```
-Install the server dependencies and start it:
-
-```bash
 npm install
 npm start
 ```
@@ -223,32 +214,16 @@ npm test
 
 This starts the Express backend on `http://localhost:3000`. Open `http://localhost:3000/login.html` (or `index.html`) in your browser to view the front-end.
 
-The backend automatically creates `users.json` if missing and exposes the API routes (`/register`, `/login`, `/reset-password`, `/security-question`, etc.) used by the app. All communication happens through JSON, so remember to prefix your requests, e.g.:
-
-The backend automatically creates `users.json` if missing and exposes the API routes (`/register`, `/login`, `/reset-password`, etc.) used by the app. Passwords are stored using **bcryptjs** for better security. All communication happens through JSON, so remember to prefix your requests, e.g.:
-
+The backend automatically creates `users.json` if missing and exposes the API routes (`/register`, `/login`, `/reset-password`, `/security-question`, etc.) used by the app. Passwords are stored using **bcryptjs**. All communication happens through JSON, so remember to prefix your requests, e.g.:
 
 ```javascript
 fetch('http://localhost:3000/login')
 ```
 
-The `/master-hash` endpoint returns the value of the `MASTER_PASSWORD_HASH` environment variable when it is defined. Set this variable before starting the server if you need to provide your own master password hash.
-
-You can also set `USERS_FILE_PATH` (or the legacy `USERS_FILE`) to change where the `users.json` file is stored. The folder will be created automatically if it does not exist.
-Set `EXTERNAL_ADDRESS` if you want the server to print an external URL when it starts (e.g., `http://your-ip:3000`).
+The `/master-hash` endpoint returns the value of the `MASTER_PASSWORD_HASH` environment variable when it is defined. You can also set `USERS_FILE_PATH` (or the legacy `USERS_FILE`) to change where the `users.json` file is stored. Set `EXTERNAL_ADDRESS` if you want the server to print an external URL when it starts (e.g., `http://your-ip:3000`).
 
 ### `users.json`
 The file `server/users.json` is created automatically when the server first starts and stores all registered users. Delete this file before launching the server if you wish to reset the credentials.
-
-### Problemas ao carregar scripts ou imagens
-Se ao abrir a página os botões não responderem ou a imagem do personagem estiver ausente, verifique no console do navegador se `inventory-page.js` e `body-ui.js` foram carregados corretamente. Esses arquivos ficam em `public/js/` e devem ser incluídos assim:
-
-```html
-<script type="module" src="js/inventory-page.js"></script>
-<script type="module" src="js/body-ui.js"></script>
-```
-
-Se você salvou os arquivos pelo navegador e eles possuem o sufixo `.download`, renomeie-os para `.js` e recarregue a página. A imagem do personagem será definida automaticamente pelo script.
 
 ### Update items from CSV
 Inside `public/data/` there is a script called `atualizar_items.py` that converts `CSV-itens.csv` into `items.json`. If the `openpyxl` dependency is installed the script will also accept `CSV-itens.xlsx` (not included in the repository). Run:
@@ -259,22 +234,17 @@ python3 public/data/atualizar_items.py
 
 to generate or update the item list. The CSV includes the columns `nome`, `width`, `height`, `color`, `img`, `maxEstresse`, `tipo` and `slot`. All of them are written to `items.json`.
 
----
-
 ### 🌍 Live Demo
-
 Access online:
 **[https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html](https://danielmoraiscruz.github.io/Inventario-tetris/public/login.html)**
 
 ---
 
 ### 📄 License
-
 Licensed under the **MIT License**.
 
 ---
 
 ### ✒️ Author
-
 Created by **Daniel Cruz** —
 RPG Master, Computer Scientist, and builder of immersive RPG tools.
