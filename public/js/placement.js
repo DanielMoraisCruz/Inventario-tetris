@@ -10,7 +10,7 @@ export function finalizeMouseDrop(e, params) {
         e.clientY > invRect.bottom
     );
 
-    if (outOfGrid && draggedItem) {
+    if (outOfGrid && draggedItem && draggedFromGrid) {
         returnItemToPanel(draggedItem);
     } else if (lastGhostPos.x !== null && lastGhostPos.y !== null && draggedItem) {
         if (lastGhostPos.valid) {
