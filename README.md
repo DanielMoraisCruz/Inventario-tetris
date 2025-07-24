@@ -35,6 +35,7 @@ O objetivo é tornar o gerenciamento de inventário **mais divertido, interativo
 * 🌗 Alternância de tema claro/escuro
 * 🧍‍♂️ Corpo do personagem com slots equipáveis
 * 💥 Barra de estresse/durabilidade para cada item
+* 🎯 Sistema de perícias editáveis com valores persistentes
 
 ---
 
