@@ -84,7 +84,13 @@ Pré-requisitos: **Node.js 18+** e **Python 3** caso queira utilizar o script de
    npm start
    ```
 
-Depois de configurado o projeto, execute `npm test` para rodar a suíte de testes do Jest.
+Para verificar se tudo funciona corretamente, execute:
+
+```bash
+npm test
+```
+
+Esse comando roda o Jest e realiza todos os testes automatizados.
 
 Isso levantará o servidor Express em `http://localhost:3000`.
 Abra `http://localhost:3000/login.html` (ou `index.html`) no navegador para acessar o front‑end.
@@ -206,11 +212,13 @@ npm install
 npm start
 ```
 
-After the setup you can run all Jest tests with:
+To run the automated Jest suite after setting everything up, execute:
 
 ```bash
 npm test
 ```
+
+This will invoke Jest and run all available tests.
 
 This starts the Express backend on `http://localhost:3000`. Open `http://localhost:3000/login.html` (or `index.html`) in your browser to view the front-end.
 
