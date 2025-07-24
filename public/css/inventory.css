@@ -531,3 +531,42 @@ body.dark-mode #reset-btn {
     grid-column: 2;
     grid-row: 2;
 }
+
+#skill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.skill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.skill-name {
+    flex: 1;
+    text-align: left;
+}
+
+.skill .controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 1rem;
+}
+
+.skill .value {
+    min-width: 2em;
+    text-align: center;
+    display: inline-block;
+}
+
+.skill button.remove {
+    margin-left: 0.5rem;
+}
+
+#add-skill {
+    margin-top: 10px;
+}

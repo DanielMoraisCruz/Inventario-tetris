@@ -1,10 +1,124 @@
-import { session, loadSession, clearSession } from './login.js';
+import { session, loadSession, clearSession, saveSession } from './login.js';
 import { cacheDomElements, initInventory, form, searchInput, renderItemList, updateItemList, redrawPlacedItems, createGrid, inventory, getInventoryState } from './inventory.js';
 import { handleItemSubmit } from './inventory.js';
 import { initDragDrop, registerPanelDragHandlers } from './dragdrop.js';
 import { applyLayoutSettings, calcDefaultSize, setInventorySize } from './constants.js';
 import { saveInventory } from './storage.js';
 import { setupThemeToggle } from './theme.js';
+
+const DEFAULT_SKILLS = [
+    'Acrobacia',
+    'Armas Brancas',
+    'Ataque \u00e0 Dist\u00e2ncia',
+    'Atletismo',
+    'Briga',
+    'Esquiva',
+    'Furtividade',
+    'Trabalho ()',
+    'Prestidigita\u00e7\u00e3o',
+    'Sobreviv\u00eancia',
+    'Atua\u00e7\u00e3o',
+    'Empatia com Animais',
+    'Engana\u00e7\u00e3o',
+    'Etiqueta',
+    'Intimida\u00e7\u00e3o',
+    'Lideran\u00e7a',
+    'Persuas\u00e3o',
+    'Empatia',
+    'Resist\u00eancia Mental',
+    'Hobby ()',
+    'Alquimia',
+    'Arcanismo',
+    'Educa\u00e7\u00e3o',
+    'Investiga\u00e7\u00e3o',
+    'Medicina',
+    'Natureza',
+    'Percep\u00e7\u00e3o',
+    'Crafting',
+    'Religi\u00e3o',
+    'Tecnologia'
+];
+
+function ensureDefaultSkills() {
+    if (!session.userSkills) {
+        session.userSkills = {};
+    }
+    DEFAULT_SKILLS.forEach(n => {
+        if (session.userSkills[n] === undefined) {
+            session.userSkills[n] = 0;
+        }
+    });
+}
+
+function createSkillRow(name) {
+    const list = document.getElementById('skill-list');
+    const div = document.createElement('div');
+    div.className = 'skill';
+    div.dataset.skill = name;
+
+    const label = document.createElement('span');
+    label.className = 'skill-name';
+    label.textContent = name;
+
+    const controls = document.createElement('div');
+    controls.className = 'controls';
+
+    const dec = document.createElement('button');
+    dec.className = 'btn dec';
+    dec.textContent = '-';
+
+    const val = document.createElement('span');
+    val.className = 'value';
+    val.textContent = String(session.userSkills[name] || 0);
+
+    const inc = document.createElement('button');
+    inc.className = 'btn inc';
+    inc.textContent = '+';
+
+    inc.addEventListener('click', () => {
+        let v = session.userSkills[name] || 0;
+        v++;
+        session.userSkills[name] = v;
+        val.textContent = String(v);
+        saveSession();
+    });
+
+    dec.addEventListener('click', () => {
+        let v = session.userSkills[name] || 0;
+        if (v > 0) {
+            v--;
+            session.userSkills[name] = v;
+            val.textContent = String(v);
+            saveSession();
+        }
+    });
+
+    controls.append(dec, val, inc);
+    div.append(label, controls);
+
+    if (!DEFAULT_SKILLS.includes(name) && session.isMaster) {
+        const remove = document.createElement('button');
+        remove.className = 'btn remove';
+        remove.textContent = '✕';
+        remove.addEventListener('click', () => {
+            delete session.userSkills[name];
+            saveSession();
+            div.remove();
+        });
+        div.appendChild(remove);
+    }
+
+    list.appendChild(div);
+}
+
+function renderSkills() {
+    ensureDefaultSkills();
+    const list = document.getElementById('skill-list');
+    list.innerHTML = '';
+    Object.keys(session.userSkills).forEach(name => {
+        createSkillRow(name);
+    });
+}
 
 window.addEventListener('DOMContentLoaded', async () => {
     setupThemeToggle();
@@ -68,6 +182,24 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
     initDragDrop();
+
+    renderSkills();
+    const addSkillBtn = document.getElementById('add-skill');
+    if (addSkillBtn) {
+        if (!session.isMaster) {
+            addSkillBtn.style.display = 'none';
+        } else {
+            addSkillBtn.addEventListener('click', () => {
+                const name = prompt('Nome da nova perícia:');
+                if (!name) return;
+                if (session.userSkills[name] === undefined) {
+                    session.userSkills[name] = 0;
+                    saveSession();
+                    renderSkills();
+                }
+            });
+        }
+    }
 
     if (resizeBtn) {
         resizeBtn.addEventListener('click', () => {
