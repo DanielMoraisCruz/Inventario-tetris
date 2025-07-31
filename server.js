@@ -226,11 +226,15 @@ app.get('/question/:username', async (req, res) => {
     console.error('Erro ao buscar pergunta:', err);
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 });
 
 // List all users - optional and protected
 if (process.env.ENABLE_USERS_ROUTE === 'true') {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 	const basicMasterAuth = (req, res, next) => {
 		const auth = req.headers.authorization || '';
@@ -252,6 +256,8 @@ if (process.env.ENABLE_USERS_ROUTE === 'true') {
 		res.json(users);
 	});
 =======
+=======
+>>>>>>> Stashed changes
   const basicMasterAuth = async (req, res, next) => {
     const auth = req.headers.authorization || '';
     if (!auth.startsWith('Basic ')) {

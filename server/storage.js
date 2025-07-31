@@ -13,6 +13,7 @@ let cacheTimestamp = 0;
 const CACHE_TTL = 5000; // 5 segundos
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 function ensureUsersFile() {
     if (!fs.existsSync(USERS_FILE)) {
         try {
@@ -28,6 +29,37 @@ function isCacheValid() {
 async function ensureUsersFile() {
   try {
     await fs.access(USERS_FILE);
+=======
+function isCacheValid() {
+  return usersCache !== null && (Date.now() - cacheTimestamp) < CACHE_TTL;
+}
+
+async function ensureUsersFile() {
+  try {
+    await fs.access(USERS_FILE);
+  } catch (err) {
+    try {
+      await fs.writeFile(USERS_FILE, JSON.stringify({}), 'utf-8');
+    } catch (writeErr) {
+      throw writeErr;
+    }
+  }
+}
+
+async function loadUsers() {
+  await ensureUsersFile();
+  
+  // Verificar se o cache é válido
+  if (isCacheValid()) {
+    return usersCache;
+  }
+  
+  try {
+    const data = await fs.readFile(USERS_FILE, 'utf-8');
+    usersCache = JSON.parse(data || '{}');
+    cacheTimestamp = Date.now();
+    return usersCache;
+>>>>>>> Stashed changes
   } catch (err) {
     try {
       await fs.writeFile(USERS_FILE, JSON.stringify({}), 'utf-8');
@@ -48,6 +80,7 @@ function loadUsers() {
     }
 }
 
+<<<<<<< Updated upstream
 function saveUsers(usersObj) {
     const tempFile = `${USERS_FILE}.tmp`;
     const data = JSON.stringify(usersObj, null, 2);
@@ -78,10 +111,31 @@ async function loadUsers() {
     cacheTimestamp = Date.now();
     return usersCache;
   } catch (err) {
+=======
+async function saveUsers(usersObj) {
+  const tempFile = `${USERS_FILE}.tmp`;
+  const data = JSON.stringify(usersObj, null, 2);
+  
+  try {
+    await fs.writeFile(tempFile, data, 'utf-8');
+    await fs.rename(tempFile, USERS_FILE);
+    
+    // Atualizar cache
+    usersCache = usersObj;
+    cacheTimestamp = Date.now();
+  } catch (err) {
+    try {
+      await fs.access(tempFile);
+      await fs.unlink(tempFile);
+    } catch (_) {
+      // ignore cleanup errors
+    }
+>>>>>>> Stashed changes
     throw err;
   }
 }
 
+<<<<<<< Updated upstream
 async function saveUsers(usersObj) {
   const tempFile = `${USERS_FILE}.tmp`;
   const data = JSON.stringify(usersObj, null, 2);
@@ -103,6 +157,8 @@ async function saveUsers(usersObj) {
     }
 }
 
+=======
+>>>>>>> Stashed changes
 // Função para invalidar cache (útil para testes ou quando necessário)
 function invalidateCache() {
   usersCache = null;
