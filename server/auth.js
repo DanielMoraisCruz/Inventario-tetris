@@ -8,6 +8,7 @@ function hash(text) {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 function registerUser(username, password, pergunta = '', resposta = '') {
 	const users = loadUsers();
 	if (users[username]) {
@@ -72,6 +73,8 @@ function resetPassword(username, resposta, novaSenha) {
 	}
 	return { ok: true };
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 async function registerUser(username, password, pergunta = '', resposta = '') {

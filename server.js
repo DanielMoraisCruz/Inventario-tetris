@@ -227,6 +227,9 @@ app.get('/question/:username', async (req, res) => {
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -234,6 +237,7 @@ app.get('/question/:username', async (req, res) => {
 
 // List all users - optional and protected
 if (process.env.ENABLE_USERS_ROUTE === 'true') {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 	const basicMasterAuth = (req, res, next) => {
@@ -256,6 +260,8 @@ if (process.env.ENABLE_USERS_ROUTE === 'true') {
 		res.json(users);
 	});
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
   const basicMasterAuth = async (req, res, next) => {
