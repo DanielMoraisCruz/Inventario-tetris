@@ -5,53 +5,63 @@ import { initDragDrop, registerPanelDragHandlers } from './dragdrop.js';
 import { applyLayoutSettings, calcDefaultSize, setInventorySize } from './constants.js';
 import { saveInventory } from './storage.js';
 import { setupThemeToggle } from './theme.js';
+import { initBodyUI, updateBodyUI } from './body-ui.js';
+import FieldManager from './field-manager.js';
 
 const DEFAULT_SKILLS = [
     'Acrobacia',
     'Armas Brancas',
-    'Ataque \u00e0 Dist\u00e2ncia',
+    'Ataque à Distância',
     'Atletismo',
     'Briga',
     'Esquiva',
     'Furtividade',
-    'Trabalho ()',
-    'Prestidigita\u00e7\u00e3o',
-    'Sobreviv\u00eancia',
-    'Atua\u00e7\u00e3o',
+    'Trabalho',
+    'Prestidigitação',
+    'Sobrevivência',
+    'Atuação',
     'Empatia com Animais',
-    'Engana\u00e7\u00e3o',
+    'Enganação',
     'Etiqueta',
-    'Intimida\u00e7\u00e3o',
-    'Lideran\u00e7a',
-    'Persuas\u00e3o',
+    'Intimidação',
+    'Liderança',
+    'Persuasão',
     'Empatia',
-    'Resist\u00eancia Mental',
-    'Hobby ()',
+    'Resistência Mental',
+    'Hobby',
     'Alquimia',
     'Arcanismo',
-    'Educa\u00e7\u00e3o',
-    'Investiga\u00e7\u00e3o',
+    'Educação',
+    'Investigação',
     'Medicina',
     'Natureza',
-    'Percep\u00e7\u00e3o',
+    'Percepção',
     'Crafting',
-    'Religi\u00e3o',
+    'Religião',
     'Tecnologia'
 ];
 
+/**
+ * Garante que as perícias padrão existam
+ */
 function ensureDefaultSkills() {
     if (!session.userSkills) {
         session.userSkills = {};
     }
-    DEFAULT_SKILLS.forEach(n => {
-        if (session.userSkills[n] === undefined) {
-            session.userSkills[n] = 0;
+    DEFAULT_SKILLS.forEach(skill => {
+        if (session.userSkills[skill] === undefined) {
+            session.userSkills[skill] = 0;
         }
     });
 }
 
+/**
+ * Cria uma linha de perícia na interface
+ */
 function createSkillRow(name) {
     const list = document.getElementById('skill-list');
+    if (!list) return;
+    
     const div = document.createElement('div');
     div.className = 'skill';
     div.dataset.skill = name;
@@ -96,6 +106,7 @@ function createSkillRow(name) {
     controls.append(dec, val, inc);
     div.append(label, controls);
 
+    // Permitir remoção apenas para mestres e perícias customizadas
     if (!DEFAULT_SKILLS.includes(name) && session.isMaster) {
         const remove = document.createElement('button');
         remove.className = 'btn remove';
@@ -111,31 +122,193 @@ function createSkillRow(name) {
     list.appendChild(div);
 }
 
+/**
+ * Renderiza todas as perícias
+ */
 function renderSkills() {
     ensureDefaultSkills();
     const list = document.getElementById('skill-list');
+    if (!list) return;
+    
     list.innerHTML = '';
     Object.keys(session.userSkills).forEach(name => {
         createSkillRow(name);
     });
 }
 
-window.addEventListener('DOMContentLoaded', async () => {
-    setupThemeToggle();
-    cacheDomElements();
-    const userWelcome = document.getElementById('user-welcome');
-    const logoutBtn = document.getElementById('logout-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const itemsPanel = document.getElementById('items');
-    const itemsResizer = document.getElementById('items-resizer');
-    const inventoryEl = document.getElementById('inventory');
-    const menuBtn = document.getElementById('menu-btn');
-    const resizePanel = document.getElementById('resize-panel');
+/**
+ * Inicializa o sistema de magias
+ */
+function initSpells() {
+    if (!session.userSpells) {
+        session.userSpells = [];
+    }
+    
+    const addSpellBtn = document.getElementById('add-spell');
+    if (addSpellBtn) {
+        if (!session.isMaster) {
+            addSpellBtn.style.display = 'none';
+        } else {
+            addSpellBtn.addEventListener('click', () => {
+                const name = prompt('Nome da nova magia:');
+                if (!name) return;
+                
+                const spell = {
+                    id: crypto.randomUUID(),
+                    name: name,
+                    level: 1,
+                    description: ''
+                };
+                
+                session.userSpells.push(spell);
+                saveSession();
+                renderSpells();
+            });
+        }
+    }
+    
+    renderSpells();
+}
+
+/**
+ * Renderiza as magias
+ */
+function renderSpells() {
+    const list = document.getElementById('spell-list');
+    if (!list) return;
+    
+    list.innerHTML = '';
+    
+    if (!session.userSpells || session.userSpells.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.textContent = 'Nenhuma magia conhecida';
+        emptyMsg.style.textAlign = 'center';
+        emptyMsg.style.opacity = '0.7';
+        emptyMsg.style.padding = '20px';
+        list.appendChild(emptyMsg);
+        return;
+    }
+    
+    session.userSpells.forEach(spell => {
+        const div = document.createElement('div');
+        div.className = 'spell';
+        div.dataset.spellId = spell.id;
+
+        const name = document.createElement('span');
+        name.className = 'spell-name';
+        name.textContent = `${spell.name} (Nv. ${spell.level})`;
+
+        const controls = document.createElement('div');
+        controls.className = 'controls';
+
+        const levelDec = document.createElement('button');
+        levelDec.className = 'btn';
+        levelDec.textContent = '-';
+        levelDec.addEventListener('click', () => {
+            if (spell.level > 1) {
+                spell.level--;
+                name.textContent = `${spell.name} (Nv. ${spell.level})`;
+                saveSession();
+            }
+        });
+
+        const levelInc = document.createElement('button');
+        levelInc.className = 'btn';
+        levelInc.textContent = '+';
+        levelInc.addEventListener('click', () => {
+            if (spell.level < 9) {
+                spell.level++;
+                name.textContent = `${spell.name} (Nv. ${spell.level})`;
+                saveSession();
+            }
+        });
+
+        controls.append(levelDec, levelInc);
+        div.append(name, controls);
+
+        // Permitir remoção apenas para mestres
+        if (session.isMaster) {
+            const remove = document.createElement('button');
+            remove.className = 'btn remove';
+            remove.textContent = '✕';
+            remove.addEventListener('click', () => {
+                session.userSpells = session.userSpells.filter(s => s.id !== spell.id);
+                saveSession();
+                div.remove();
+            });
+            div.appendChild(remove);
+        }
+
+        list.appendChild(div);
+    });
+}
+
+/**
+ * Inicializa o sistema de redimensionamento
+ */
+function initResizeSystem() {
     const resizeRows = document.getElementById('resize-rows');
     const resizeCols = document.getElementById('resize-cols');
     const resizeBtn = document.getElementById('resize-btn');
+    
+    if (!resizeBtn) return;
+    
+    if (session.isMaster) {
+        // Carregar tamanho salvo
+        const savedSize = localStorage.getItem('inventory-size');
+        if (savedSize) {
+            try {
+                const obj = JSON.parse(savedSize);
+                if (obj.rows && obj.cols) {
+                    setInventorySize(obj.rows, obj.cols);
+                    if (resizeRows) resizeRows.value = obj.rows;
+                    if (resizeCols) resizeCols.value = obj.cols;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar tamanho do inventário:', error);
+            }
+        }
+    } else {
+        const { rows, cols } = calcDefaultSize(session.userStats);
+        setInventorySize(rows, cols);
+    }
+
+    if (resizeBtn) {
+        resizeBtn.addEventListener('click', () => {
+            const r = parseInt(resizeRows?.value || 6);
+            const c = parseInt(resizeCols?.value || 10);
+            
+            if (!Number.isFinite(r) || !Number.isFinite(c)) return;
+            if (r < 3 || r > 20 || c < 3 || c > 20) {
+                alert('Valores fora do limite (3-20).');
+                return;
+            }
+            
+            setInventorySize(r, c);
+            if (inventory) {
+                inventory.innerHTML = '';
+                createGrid();
+                redrawPlacedItems();
+            }
+            
+            const state = getInventoryState();
+            saveInventory(state.itemsData, state.placedItems);
+            localStorage.setItem('inventory-size', JSON.stringify({ rows: r, cols: c }));
+        });
+    }
+}
+
+/**
+ * Inicializa o sistema de itens
+ */
+function initItemsSystem() {
+    const itemsPanel = document.getElementById('items');
+    const itemsResizer = document.getElementById('items-resizer');
+    const menuBtn = document.getElementById('menu-btn');
     const root = document.documentElement;
     const DEFAULT_WIDTH = 260;
+    
+    // Carregar largura salva
     const savedWidth = localStorage.getItem('items-width');
     if (savedWidth) {
         const w = parseInt(savedWidth, 10);
@@ -143,100 +316,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         root.style.setProperty('--preview-scale', (w / DEFAULT_WIDTH).toString());
     }
 
-    if (!loadSession()) {
-        window.location.href = 'login.html';
-        return;
-    }
-
-    userWelcome.textContent = session.isMaster ? `Olá, ${session.userName} (Mestre)` : `Olá, ${session.userName}`;
-    userWelcome.style.display = '';
-    logoutBtn.style.display = 'inline-block';
-    resetBtn.style.display = 'inline-block';
-    itemsPanel.style.display = '';
-    inventoryEl.style.display = '';
-    form.style.display = session.isMaster ? 'block' : 'none';
-
-    if (session.isMaster) {
-        resizePanel.style.display = 'block';
-        const savedSize = localStorage.getItem('inventory-size');
-        if (savedSize) {
-            try {
-                const obj = JSON.parse(savedSize);
-                if (obj.rows && obj.cols) {
-                    setInventorySize(obj.rows, obj.cols);
-                    resizeRows.value = obj.rows;
-                    resizeCols.value = obj.cols;
-                }
-            } catch {}
-        }
-    } else {
-        const { rows, cols } = calcDefaultSize(session.userStats);
-        setInventorySize(rows, cols);
-    }
-
-    applyLayoutSettings();
-    await initInventory();
-    if (searchInput) {
-        searchInput.addEventListener('input', () => {
-            renderItemList();
-        });
-    }
-    initDragDrop();
-
-    renderSkills();
-    const addSkillBtn = document.getElementById('add-skill');
-    if (addSkillBtn) {
-        if (!session.isMaster) {
-            addSkillBtn.style.display = 'none';
-        } else {
-            addSkillBtn.addEventListener('click', () => {
-                const name = prompt('Nome da nova perícia:');
-                if (!name) return;
-                if (session.userSkills[name] === undefined) {
-                    session.userSkills[name] = 0;
-                    saveSession();
-                    renderSkills();
-                }
-            });
-        }
-    }
-
-    if (resizeBtn) {
-        resizeBtn.addEventListener('click', () => {
-            const r = parseInt(resizeRows.value);
-            const c = parseInt(resizeCols.value);
-            if (!Number.isFinite(r) || !Number.isFinite(c)) return;
-            if (r < 3 || r > 20 || c < 3 || c > 20) {
-                alert('Valores fora do limite.');
-                return;
-            }
-            setInventorySize(r, c);
-            inventory.innerHTML = '';
-            createGrid();
-            redrawPlacedItems();
-            const state = getInventoryState();
-            saveInventory(state.itemsData, state.placedItems);
-            localStorage.setItem('inventory-size', JSON.stringify({ rows: r, cols: c }));
-        });
-    }
-
-    form.addEventListener('submit', async (e) => {
-        await handleItemSubmit(e);
-    });
-
-    logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('tetris-inventory');
-        clearSession();
-        window.location.href = 'login.html';
-    });
-
-    resetBtn.addEventListener('click', () => {
-        if (!confirm('Resetar dados e sair?')) return;
-        localStorage.removeItem('tetris-inventory');
-        clearSession();
-        window.location.href = 'login.html';
-    });
-
+    // Sistema de redimensionamento do painel
     if (itemsResizer) {
         let startX = 0;
         let startWidth = 0;
@@ -265,10 +345,183 @@ window.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Botão do menu
     if (menuBtn) {
         menuBtn.addEventListener('click', () => {
             itemsPanel.classList.toggle('open');
             menuBtn.classList.toggle('open');
         });
     }
+
+    // Busca de itens
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            renderItemList();
+        });
+    }
+}
+
+/**
+ * Inicializa os controles de ação
+ */
+function initActionControls() {
+    const logoutBtn = document.getElementById('logout-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const addSkillBtn = document.getElementById('add-skill');
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('Tem certeza que deseja sair?')) {
+                clearSession();
+                window.location.href = 'login.html';
+            }
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Tem certeza que deseja resetar todos os dados? Esta ação não pode ser desfeita.')) {
+                localStorage.removeItem('tetris-inventory');
+                localStorage.removeItem('field-positions');
+                clearSession();
+                window.location.href = 'login.html';
+            }
+        });
+    }
+
+    if (addSkillBtn) {
+        if (!session.isMaster) {
+            addSkillBtn.style.display = 'none';
+        } else {
+            addSkillBtn.addEventListener('click', () => {
+                const name = prompt('Nome da nova perícia:');
+                if (!name || name.trim() === '') return;
+                
+                const skillName = name.trim();
+                if (session.userSkills[skillName] === undefined) {
+                    session.userSkills[skillName] = 0;
+                    saveSession();
+                    renderSkills();
+                } else {
+                    alert('Esta perícia já existe!');
+                }
+            });
+        }
+    }
+}
+
+/**
+ * Adiciona controles de organização dos campos
+ */
+function addFieldOrganizationControls() {
+    // Criar painel de controles flutuante
+    const controlPanel = document.createElement('div');
+    controlPanel.style.cssText = `
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--panel-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 8px;
+        display: flex;
+        gap: 8px;
+        z-index: 200;
+        font-size: 0.8rem;
+    `;
+    
+    const autoArrangeBtn = document.createElement('button');
+    autoArrangeBtn.className = 'btn';
+    autoArrangeBtn.textContent = 'Organizar';
+    autoArrangeBtn.title = 'Organizar campos automaticamente';
+    autoArrangeBtn.addEventListener('click', () => {
+        if (window.fieldManager) {
+            window.fieldManager.autoArrange();
+        }
+    });
+    
+    const restoreBtn = document.createElement('button');
+    restoreBtn.className = 'btn';
+    restoreBtn.textContent = 'Restaurar';
+    restoreBtn.title = 'Restaurar todos os campos';
+    restoreBtn.addEventListener('click', () => {
+        if (window.fieldManager) {
+            window.fieldManager.restoreAllFields();
+        }
+    });
+    
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'btn';
+    resetBtn.textContent = 'Resetar';
+    resetBtn.title = 'Resetar posições dos campos';
+    resetBtn.addEventListener('click', () => {
+        if (confirm('Resetar posições dos campos?')) {
+            if (window.fieldManager) {
+                window.fieldManager.resetFieldPositions();
+            }
+        }
+    });
+    
+    controlPanel.append(autoArrangeBtn, restoreBtn, resetBtn);
+    document.body.appendChild(controlPanel);
+}
+
+/**
+ * Inicialização principal
+ */
+window.addEventListener('DOMContentLoaded', async () => {
+    // Configurar tema
+    setupThemeToggle();
+    
+    // Cache de elementos DOM
+    cacheDomElements();
+    
+    // Verificar sessão
+    if (!loadSession()) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Configurar interface do usuário
+    const userWelcome = document.getElementById('user-welcome');
+    if (userWelcome) {
+        userWelcome.textContent = session.isMaster ? 
+            `Olá, ${session.userName} (Mestre)` : 
+            `Olá, ${session.userName}`;
+    }
+
+    // Aplicar configurações de layout
+    applyLayoutSettings();
+    
+    // Inicializar sistemas
+    await initInventory();
+    initDragDrop();
+    initBodyUI();
+    initResizeSystem();
+    initActionControls();
+    
+    // Renderizar dados
+    renderSkills();
+    initSpells();
+    
+    // Configurar formulário de itens
+    if (form) {
+        form.style.display = session.isMaster ? 'block' : 'none';
+        form.addEventListener('submit', async (e) => {
+            await handleItemSubmit(e);
+        });
+    }
+    
+    // Busca de itens
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            renderItemList();
+        });
+    }
+    
+    // Adicionar controles de organização dos campos
+    addFieldOrganizationControls();
+    
+    console.log('Sistema de inventário com campos customizáveis inicializado com sucesso!');
 });

@@ -14,7 +14,7 @@ function cleanupOldAttempts() {
 
 function getClientKey(req) {
   // Usar IP do cliente ou username para identificação
-  return req.ip || req.connection.remoteAddress || 'unknown';
+  return req.ip || (req.connection && req.connection.remoteAddress) || 'unknown';
 }
 
 function isRateLimited(req) {
@@ -55,7 +55,7 @@ function rateLimitMiddleware(req, res, next) {
 
 // Middleware específico para rotas de autenticação
 function authRateLimit(req, res, next) {
-  const key = `${getClientKey(req)}:${req.body.username || 'unknown'}`;
+  const key = `${getClientKey(req)}:${req.body?.username || 'unknown'}`;
   const now = Date.now();
   
   if (!attempts.has(key)) {

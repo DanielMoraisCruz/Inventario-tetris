@@ -1,120 +1,305 @@
 import { ROWS, COLS } from './constants.js';
+
+/**
+ * Versão dos dados para controle de compatibilidade
+ */
 const DATA_VERSION = 2;
 
+/**
+ * Gera um ID único para itens
+ * @returns {string} ID único
+ */
 function generateId() {
     return crypto.randomUUID();
 }
 
+/**
+ * Busca itens padrão do arquivo JSON
+ * @returns {Promise<Array>} Array de itens padrão
+ */
 async function fetchDefaultItems() {
     try {
-        const res = await fetch('data/items.json');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        return data.map(it => ({
+        const response = await fetch('data/items.json');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        return data.map(item => ({
             id: generateId(),
-            nome: it.nome,
-            width: it.width,
-            height: it.height,
-            img: typeof it.img === 'string' && it.img.length ? it.img : null,
-            color: typeof it.color === 'string' ? it.color : '#2b8a3e',
-            maxEstresse: Number.isFinite(it.maxEstresse) ? it.maxEstresse : 3,
-            estresseAtual: Number.isFinite(it.estresseAtual) ? it.estresseAtual : 0
+            nome: item.nome || 'Item sem nome',
+            width: Math.max(1, Math.min(10, item.width || 1)),
+            height: Math.max(1, Math.min(6, item.height || 1)),
+            img: typeof item.img === 'string' && item.img.length > 0 ? item.img : null,
+            color: typeof item.color === 'string' ? item.color : '#2b8a3e',
+            maxEstresse: Number.isFinite(item.maxEstresse) ? Math.max(0, item.maxEstresse) : 3,
+            estresseAtual: Number.isFinite(item.estresseAtual) ? Math.max(0, item.estresseAtual) : 0
         }));
-    } catch (e) {
-        console.warn('Could not load items.json, falling back to defaults.', e);
-        return defaultItems();
+    } catch (error) {
+        console.warn('Não foi possível carregar items.json, usando padrões:', error);
+        return getDefaultItems();
     }
 }
 
-function defaultItems() {
+/**
+ * Retorna itens padrão caso o arquivo não seja encontrado
+ * @returns {Array} Array de itens padrão
+ */
+function getDefaultItems() {
     return [
-        { id: generateId(), nome: 'Espada', width: 2, height: 1, img: null, color: '#2b8a3e', maxEstresse: 3, estresseAtual: 0 },
-        { id: generateId(), nome: 'Lan\u00e7a', width: 1, height: 3, img: null, color: '#2b8a3e', maxEstresse: 3, estresseAtual: 0 },
-        { id: generateId(), nome: 'Escudo', width: 2, height: 2, img: null, color: '#2b8a3e', maxEstresse: 3, estresseAtual: 0 }
+        { 
+            id: generateId(), 
+            nome: 'Espada', 
+            width: 2, 
+            height: 1, 
+            img: null, 
+            color: '#2b8a3e', 
+            maxEstresse: 3, 
+            estresseAtual: 0 
+        },
+        { 
+            id: generateId(), 
+            nome: 'Lança', 
+            width: 1, 
+            height: 3, 
+            img: null, 
+            color: '#2b8a3e', 
+            maxEstresse: 3, 
+            estresseAtual: 0 
+        },
+        { 
+            id: generateId(), 
+            nome: 'Escudo', 
+            width: 2, 
+            height: 2, 
+            img: null, 
+            color: '#2b8a3e', 
+            maxEstresse: 3, 
+            estresseAtual: 0 
+        }
     ];
 }
 
+/**
+ * Valida e sanitiza itens do inventário
+ * @param {Array} items - Array de itens para validar
+ * @returns {Array} Array de itens válidos
+ */
 function sanitizeItems(items) {
-    if (!Array.isArray(items)) return [];
-    const valid = [];
-    for (const it of items) {
-        const width = parseInt(it.width);
-        const height = parseInt(it.height);
-        if (typeof it.nome !== 'string') continue;
-        if (!Number.isFinite(width) || width <= 0 || width > COLS) continue;
-        if (!Number.isFinite(height) || height <= 0 || height > ROWS) continue;
-        valid.push({
-            id: typeof it.id === 'string' ? it.id : generateId(),
-            nome: it.nome,
+    if (!Array.isArray(items)) {
+        console.warn('Items não é um array válido, retornando array vazio');
+        return [];
+    }
+    
+    const validItems = [];
+    
+    for (const item of items) {
+        // Validar propriedades obrigatórias
+        if (typeof item.nome !== 'string' || item.nome.trim().length === 0) {
+            console.warn('Item sem nome válido, ignorando:', item);
+            continue;
+        }
+        
+        const width = parseInt(item.width);
+        const height = parseInt(item.height);
+        
+        // Validar dimensões
+        if (!Number.isFinite(width) || width <= 0 || width > COLS) {
+            console.warn(`Item "${item.nome}" com largura inválida: ${width}`, item);
+            continue;
+        }
+        
+        if (!Number.isFinite(height) || height <= 0 || height > ROWS) {
+            console.warn(`Item "${item.nome}" com altura inválida: ${height}`, item);
+            continue;
+        }
+        
+        // Criar item sanitizado
+        validItems.push({
+            id: typeof item.id === 'string' ? item.id : generateId(),
+            nome: item.nome.trim(),
             width,
             height,
-            img: it.img || null,
-            color: typeof it.color === 'string' ? it.color : '#2b8a3e',
-            maxEstresse: Number.isFinite(parseInt(it.maxEstresse)) ? parseInt(it.maxEstresse) : 3,
-            estresseAtual: Number.isFinite(parseInt(it.estresseAtual)) ? parseInt(it.estresseAtual) : 0
+            img: item.img || null,
+            color: typeof item.color === 'string' ? item.color : '#2b8a3e',
+            maxEstresse: Number.isFinite(parseInt(item.maxEstresse)) ? Math.max(0, parseInt(item.maxEstresse)) : 3,
+            estresseAtual: Number.isFinite(parseInt(item.estresseAtual)) ? Math.max(0, parseInt(item.estresseAtual)) : 0
         });
     }
-    return valid;
+    
+    return validItems;
 }
 
-function sanitizePlaced(items) {
-    if (!Array.isArray(items)) return [];
-    const valid = [];
-    for (const it of items) {
-        const width = parseInt(it.width);
-        const height = parseInt(it.height);
-        const x = parseInt(it.x);
-        const y = parseInt(it.y);
-        if (!Number.isFinite(width) || width <= 0 || width > COLS) continue;
-        if (!Number.isFinite(height) || height <= 0 || height > ROWS) continue;
-        if (!Number.isFinite(x) || x < 0 || x + width > COLS) continue;
-        if (!Number.isFinite(y) || y < 0 || y + height > ROWS) continue;
-        valid.push({
-            id: typeof it.id === 'string' ? it.id : generateId(),
-            nome: typeof it.nome === 'string' ? it.nome : '',
+/**
+ * Valida e sanitiza itens posicionados no inventário
+ * @param {Array} items - Array de itens posicionados
+ * @returns {Array} Array de itens válidos
+ */
+function sanitizePlacedItems(items) {
+    if (!Array.isArray(items)) {
+        console.warn('Items posicionados não é um array válido, retornando array vazio');
+        return [];
+    }
+    
+    const validItems = [];
+    
+    for (const item of items) {
+        const width = parseInt(item.width);
+        const height = parseInt(item.height);
+        const x = parseInt(item.x);
+        const y = parseInt(item.y);
+        
+        // Validar dimensões
+        if (!Number.isFinite(width) || width <= 0 || width > COLS) {
+            console.warn(`Item posicionado com largura inválida: ${width}`, item);
+            continue;
+        }
+        
+        if (!Number.isFinite(height) || height <= 0 || height > ROWS) {
+            console.warn(`Item posicionado com altura inválida: ${height}`, item);
+            continue;
+        }
+        
+        // Validar posição
+        if (!Number.isFinite(x) || x < 0 || x + width > COLS) {
+            console.warn(`Item posicionado com posição X inválida: ${x}`, item);
+            continue;
+        }
+        
+        if (!Number.isFinite(y) || y < 0 || y + height > ROWS) {
+            console.warn(`Item posicionado com posição Y inválida: ${y}`, item);
+            continue;
+        }
+        
+        // Criar item sanitizado
+        validItems.push({
+            id: typeof item.id === 'string' ? item.id : generateId(),
+            nome: typeof item.nome === 'string' ? item.nome.trim() : 'Item sem nome',
             x,
             y,
             width,
             height,
-            rotacionado: !!it.rotacionado,
-            img: it.img || null,
-            color: typeof it.color === 'string' ? it.color : '#2b8a3e',
-            originalWidth: it.originalWidth ?? width,
-            originalHeight: it.originalHeight ?? height,
-            maxEstresse: Number.isFinite(parseInt(it.maxEstresse)) ? parseInt(it.maxEstresse) : 3,
-            estresseAtual: Number.isFinite(parseInt(it.estresseAtual)) ? parseInt(it.estresseAtual) : 0
+            rotacionado: Boolean(item.rotacionado),
+            img: item.img || null,
+            color: typeof item.color === 'string' ? item.color : '#2b8a3e',
+            originalWidth: item.originalWidth ?? width,
+            originalHeight: item.originalHeight ?? height,
+            maxEstresse: Number.isFinite(parseInt(item.maxEstresse)) ? Math.max(0, parseInt(item.maxEstresse)) : 3,
+            estresseAtual: Number.isFinite(parseInt(item.estresseAtual)) ? Math.max(0, parseInt(item.estresseAtual)) : 0
         });
     }
-    return valid;
+    
+    return validItems;
 }
 
+/**
+ * Salva dados do inventário no localStorage
+ * @param {Array} itemsData - Dados dos itens
+ * @param {Array} placedItems - Itens posicionados
+ */
 export function saveInventory(itemsData, placedItems) {
-    const data = { version: DATA_VERSION, itemsData, placedItems, rows: ROWS, cols: COLS };
-    localStorage.setItem('tetris-inventory', JSON.stringify(data));
+    try {
+        const data = {
+            version: DATA_VERSION,
+            itemsData,
+            placedItems,
+            rows: ROWS,
+            cols: COLS,
+            timestamp: Date.now()
+        };
+        
+        localStorage.setItem('tetris-inventory', JSON.stringify(data));
+        console.log('Inventário salvo com sucesso');
+    } catch (error) {
+        console.error('Erro ao salvar inventário:', error);
+        throw new Error('Falha ao salvar dados do inventário');
+    }
 }
 
+/**
+ * Carrega dados do inventário do localStorage
+ * @returns {Promise<Object>} Dados do inventário
+ */
 export async function loadInventory() {
-    const raw = localStorage.getItem('tetris-inventory');
-    if (!raw) {
-        const itemsData = await fetchDefaultItems();
-        return { itemsData, placedItems: [] };
-    }
     try {
-        const obj = JSON.parse(raw);
-        if (obj.version !== DATA_VERSION) throw new Error('version mismatch');
-        let itemsData = sanitizeItems(obj.itemsData);
-        if (!itemsData.length) itemsData = await fetchDefaultItems();
-        const placedItems = sanitizePlaced(obj.placedItems);
-        const rows = Number.isFinite(parseInt(obj.rows)) ? parseInt(obj.rows) : undefined;
-        const cols = Number.isFinite(parseInt(obj.cols)) ? parseInt(obj.cols) : undefined;
-        return { itemsData, placedItems, rows, cols };
-    } catch (e) {
-        console.warn('Dados do invent\u00e1rio corrompidos, restaurando padr\u00e3o.');
-        localStorage.removeItem('tetris-inventory');
-        if (typeof alert === 'function') {
-            alert('Dados do invent\u00e1rio estavam corrompidos e foram reiniciados.');
+        const raw = localStorage.getItem('tetris-inventory');
+        
+        if (!raw) {
+            console.log('Nenhum dado encontrado, carregando padrões');
+            const itemsData = await fetchDefaultItems();
+            return { itemsData, placedItems: [] };
         }
+        
+        const data = JSON.parse(raw);
+        
+        // Verificar versão
+        if (data.version !== DATA_VERSION) {
+            console.warn('Versão dos dados incompatível, restaurando padrões');
+            localStorage.removeItem('tetris-inventory');
+            const itemsData = await fetchDefaultItems();
+            return { itemsData, placedItems: [] };
+        }
+        
+        // Sanitizar dados
+        let itemsData = sanitizeItems(data.itemsData);
+        if (itemsData.length === 0) {
+            console.warn('Nenhum item válido encontrado, carregando padrões');
+            itemsData = await fetchDefaultItems();
+        }
+        
+        const placedItems = sanitizePlacedItems(data.placedItems);
+        
+        // Validar dimensões
+        const rows = Number.isFinite(parseInt(data.rows)) ? parseInt(data.rows) : undefined;
+        const cols = Number.isFinite(parseInt(data.cols)) ? parseInt(data.cols) : undefined;
+        
+        console.log('Inventário carregado com sucesso');
+        return { itemsData, placedItems, rows, cols };
+        
+    } catch (error) {
+        console.error('Erro ao carregar inventário:', error);
+        
+        // Limpar dados corrompidos
+        localStorage.removeItem('tetris-inventory');
+        
+        // Notificar usuário
+        if (typeof alert === 'function') {
+            alert('Dados do inventário estavam corrompidos e foram reiniciados.');
+        }
+        
+        // Retornar dados padrão
         const itemsData = await fetchDefaultItems();
         return { itemsData, placedItems: [], rows: ROWS, cols: COLS };
+    }
+}
+
+/**
+ * Limpa todos os dados do inventário
+ */
+export function clearInventory() {
+    try {
+        localStorage.removeItem('tetris-inventory');
+        console.log('Inventário limpo com sucesso');
+    } catch (error) {
+        console.error('Erro ao limpar inventário:', error);
+    }
+}
+
+/**
+ * Verifica se há dados salvos
+ * @returns {boolean} True se há dados salvos
+ */
+export function hasSavedData() {
+    try {
+        const raw = localStorage.getItem('tetris-inventory');
+        if (!raw) return false;
+        
+        const data = JSON.parse(raw);
+        return data.version === DATA_VERSION;
+    } catch (error) {
+        console.error('Erro ao verificar dados salvos:', error);
+        return false;
     }
 }

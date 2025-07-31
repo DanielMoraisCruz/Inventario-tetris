@@ -10,121 +10,197 @@
         rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/inventory.css">
-    <link rel="stylesheet" href="css/character-body.css">
-    <link rel="stylesheet" href="css/oblivio.css">
 </head>
 
 <body>
     <div id="user-welcome"></div>
-    <button id="menu-btn" class="btn">&#9776;</button>
     <button id="toggle-theme" class="btn">🌙</button>
 
     <div id="drag-ghost"></div>
-    <h1>Ficha de Magia &amp; Mágica</h1>
+    <h1 style="position: fixed; top: 50px; left: 50%; transform: translateX(-50%); z-index: 50; margin: 0;">Ficha de Magia &amp; Mágica</h1>
 
     <div class="ficha-container">
-        <div id="attributes" class="panel">
-            <h2 style="margin-top: 0px;">Atributos</h2>
-            <div id="attr-list" class="attr-list"></div>
+        <!-- Campo de Atributos -->
+        <div class="field field-attributes" data-field="attributes">
+            <div class="field-header">
+                <div class="field-title">Atributos</div>
+                <div class="field-controls">
+                    <button class="field-control-btn" title="Minimizar">−</button>
+                    <button class="field-control-btn" title="Fechar">×</button>
+                </div>
+            </div>
+            <div class="field-content">
+                <div id="attr-list" class="attr-list"></div>
+            </div>
+            <div class="field-resizer"></div>
         </div>
 
-        <div id="main-grid">
-            <grid id="inventory-grid" class="panel">
-                <div id="inventory"></div>
-                <div id="resize-panel" class="panel">
-                    <label for="resize-rows">Linhas</label>
-                    <input type="number" id="resize-rows" min="3" max="20" value="6">
-                    <label for="resize-cols">Colunas</label>
-                    <input type="number" id="resize-cols" min="3" max="20" value="10">
-                    <button id="resize-btn" class="btn">Redimensionar Grid</button>
+        <!-- Campo de Inventário -->
+        <div class="field field-inventory" data-field="inventory">
+            <div class="field-header">
+                <div class="field-title">Inventário</div>
+                <div class="field-controls">
+                    <button class="field-control-btn" title="Minimizar">−</button>
+                    <button class="field-control-btn" title="Fechar">×</button>
                 </div>
-            </grid>
-            <div id="body" class="panel">
+            </div>
+            <div class="field-content">
+                <div id="inventory"></div>
+                <div class="grid-controls">
+                    <label for="resize-rows">Linhas:</label>
+                    <input type="number" id="resize-rows" min="3" max="20" value="6">
+                    <label for="resize-cols">Colunas:</label>
+                    <input type="number" id="resize-cols" min="3" max="20" value="10">
+                    <button id="resize-btn" class="btn">Redimensionar</button>
+                </div>
+            </div>
+            <div class="field-resizer"></div>
+        </div>
+
+        <!-- Campo do Corpo -->
+        <div class="field field-body" data-field="body">
+            <div class="field-header">
+                <div class="field-title">Corpo</div>
+                <div class="field-controls">
+                    <button class="field-control-btn" title="Minimizar">−</button>
+                    <button class="field-control-btn" title="Fechar">×</button>
+                </div>
+            </div>
+            <div class="field-content">
                 <div id="body-diagram">
-                    <div class="body-part panel" id="head">
+                    <div class="body-part" id="head">
                         <label class="zone-name">Cabeça</label>
-                        <div class="stress-indicator"><button class="stress-minus btn">-</button><span
-                                class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                        <div class="stress-indicator">
+                            <button class="stress-minus btn">-</button>
+                            <span class="stress-val">0/3</span>
+                            <button class="stress-plus btn">+</button>
+                        </div>
                         <div class="equip-space" data-part="head">Espaço para item</div>
                     </div>
-                    <div class="body-part panel" id="left-arm">
+                    <div class="body-part" id="left-arm">
                         <label class="zone-name">Braço Esquerdo</label>
-                        <div class="stress-indicator"><button class="stress-minus btn">-</button><span
-                                class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                        <div class="stress-indicator">
+                            <button class="stress-minus btn">-</button>
+                            <span class="stress-val">0/3</span>
+                            <button class="stress-plus btn">+</button>
+                        </div>
                         <div class="equip-space" data-part="left-arm">Espaço para item</div>
                     </div>
-                    <div class="body-part panel" id="torso">
+                    <div class="body-part" id="torso">
                         <label class="zone-name">Torso</label>
-                        <div class="stress-indicator"><button class="stress-minus btn">-</button><span
-                                class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                        <div class="stress-indicator">
+                            <button class="stress-minus btn">-</button>
+                            <span class="stress-val">0/3</span>
+                            <button class="stress-plus btn">+</button>
+                        </div>
                         <div class="equip-space" data-part="torso">Espaço para item</div>
                     </div>
-                    <div class="body-part panel" id="right-arm">
+                    <div class="body-part" id="right-arm">
                         <label class="zone-name">Braço Direito</label>
-                        <div class="stress-indicator"><button class="stress-minus btn">-</button><span
-                                class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                        <div class="stress-indicator">
+                            <button class="stress-minus btn">-</button>
+                            <span class="stress-val">0/3</span>
+                            <button class="stress-plus btn">+</button>
+                        </div>
                         <div class="equip-space" data-part="right-arm">Espaço para item</div>
                     </div>
-                    <div class="body-part panel" id="left-leg">
+                    <div class="body-part" id="left-leg">
                         <label class="zone-name">Perna Esquerda</label>
-                        <div class="stress-indicator"><button class="stress-minus btn">-</button><span
-                                class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                        <div class="stress-indicator">
+                            <button class="stress-minus btn">-</button>
+                            <span class="stress-val">0/3</span>
+                            <button class="stress-plus btn">+</button>
+                        </div>
                         <div class="equip-space" data-part="left-leg">Espaço para item</div>
                     </div>
-                    <div class="body-part panel" id="right-leg">
+                    <div class="body-part" id="right-leg">
                         <label class="zone-name">Perna Direita</label>
-                        <div class="stress-indicator"><button class="stress-minus btn">-</button><span
-                                class="stress-val">0/3</span><button class="stress-plus btn">+</button></div>
+                        <div class="stress-indicator">
+                            <button class="stress-minus btn">-</button>
+                            <span class="stress-val">0/3</span>
+                            <button class="stress-plus btn">+</button>
+                        </div>
                         <div class="equip-space" data-part="right-leg">Espaço para item</div>
                     </div>
                 </div>
-                <button id="roll-body" class="btn">Rolar Corpo</button>
+                <button id="roll-body" class="btn" style="margin-top: 10px; width: 100%;">Rolar Corpo</button>
             </div>
-            <div id="skills" class="panel habilidades">
-                <h2>Perícias</h2>
+            <div class="field-resizer"></div>
+        </div>
+
+        <!-- Campo de Perícias -->
+        <div class="field field-skills" data-field="skills">
+            <div class="field-header">
+                <div class="field-title">Perícias</div>
+                <div class="field-controls">
+                    <button class="field-control-btn" title="Minimizar">−</button>
+                    <button class="field-control-btn" title="Fechar">×</button>
+                </div>
+            </div>
+            <div class="field-content">
                 <div id="skill-list"></div>
-                <button id="add-skill" class="btn">Nova perícia</button>
+                <button id="add-skill" class="btn" style="margin-top: 10px; width: 100%;">Nova perícia</button>
             </div>
-            <div id="spells" class="panel magias">
-                <h2>Magias Conhecidas</h2>
+            <div class="field-resizer"></div>
+        </div>
+
+        <!-- Campo de Magias -->
+        <div class="field field-spells" data-field="spells">
+            <div class="field-header">
+                <div class="field-title">Magias Conhecidas</div>
+                <div class="field-controls">
+                    <button class="field-control-btn" title="Minimizar">−</button>
+                    <button class="field-control-btn" title="Fechar">×</button>
+                </div>
+            </div>
+            <div class="field-content">
                 <div id="spell-list"></div>
-                <button id="add-spell" class="btn">Nova magia</button>
+                <button id="add-spell" class="btn" style="margin-top: 10px; width: 100%;">Nova magia</button>
             </div>
+            <div class="field-resizer"></div>
         </div>
-        <div style="height: 3rem;"></div>
-    </div>
 
-    <div id="items" class="panel">
-        <div id="side-actions">
-            <button id="logout-btn" class="btn">Sair</button>
-            <button id="reset-btn" class="btn">Resetar Dados</button>
+        <!-- Campo de Itens -->
+        <div class="field field-items" data-field="items">
+            <div class="field-header">
+                <div class="field-title">Itens</div>
+                <div class="field-controls">
+                    <button class="field-control-btn" title="Minimizar">−</button>
+                    <button class="field-control-btn" title="Fechar">×</button>
+                </div>
+            </div>
+            <div class="field-content">
+                <div class="action-buttons">
+                    <button id="logout-btn" class="btn">Sair</button>
+                    <button id="reset-btn" class="btn">Resetar</button>
+                </div>
+                <input id="item-search" type="text" placeholder="Buscar itens...">
+                <div id="item-list"></div>
+                <form id="item-form">
+                    <h3>Criar Novo Item</h3>
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" placeholder="Nome do item" required>
+                    <label for="largura">Largura:</label>
+                    <input type="number" id="largura" placeholder="Largura" min="1" required>
+                    <label for="altura">Altura:</label>
+                    <input type="number" id="altura" placeholder="Altura" min="1" required>
+                    <label for="imagem">Imagem:</label>
+                    <input type="file" id="imagem" accept="image/*">
+                    <label for="cor">Cor:</label>
+                    <input type="color" id="cor" value="#2b8a3e">
+                    <button type="submit" class="btn">Adicionar</button>
+                    <div id="item-msg"></div>
+                </form>
+            </div>
+            <div class="field-resizer"></div>
         </div>
-        <h2>Itens</h2>
-        <input id="item-search" type="text" placeholder="Buscar">
-        <div id="item-list"></div>
-        <form id="item-form">
-            <h3>Criar Novo Item</h3>
-            <label for="nome">Nome do item</label>
-            <input type="text" id="nome" placeholder="Nome do item" required>
-            <label for="largura">Largura</label>
-            <input type="number" id="largura" placeholder="Largura" min="1" required>
-            <label for="altura">Altura</label>
-            <input type="number" id="altura" placeholder="Altura" min="1" required>
-            <label for="imagem">Imagem</label>
-            <input type="file" id="imagem" accept="image/*">
-            <label for="cor">Cor do item</label>
-            <input type="color" id="cor" value="#2b8a3e">
-            <button type="submit" class="btn">Adicionar</button>
-            <div id="item-msg"></div>
-        </form>
-        <div id="items-resizer"></div>
     </div>
-
 
     <script type="module" src="js/inventory.js"></script>
     <script type="module" src="js/inventory-page.js"></script>
     <script type="module" src="js/body-ui.js"></script>
-    <script type="module" src="js/oblivio-page.js"></script>
+    <script type="module" src="js/dragdrop.js"></script>
+    <script type="module" src="js/field-manager.js"></script>
 </body>
 
 </html>

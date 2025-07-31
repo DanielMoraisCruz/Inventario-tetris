@@ -1,0 +1,448 @@
+/**
+ * Sistema de Gerenciamento de Campos Customizáveis
+ * Permite arrastar, redimensionar e organizar campos como páginas em uma mesa
+ */
+
+class FieldManager {
+    constructor() {
+        this.fields = new Map();
+        this.draggedField = null;
+        this.resizingField = null;
+        this.startPos = { x: 0, y: 0 };
+        this.startSize = { width: 0, height: 0 };
+        this.startMouse = { x: 0, y: 0 };
+        this.isDragging = false;
+        this.isResizing = false;
+        
+        this.init();
+    }
+
+    /**
+     * Inicializa o sistema
+     */
+    init() {
+        this.loadFieldPositions();
+        this.setupEventListeners();
+        this.setupFieldControls();
+        this.preventOverlap();
+    }
+
+    /**
+     * Configura os event listeners
+     */
+    setupEventListeners() {
+        document.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        document.addEventListener('mouseup', this.handleMouseUp.bind(this));
+        
+        // Prevenir seleção de texto durante drag
+        document.addEventListener('selectstart', (e) => {
+            if (this.isDragging || this.isResizing) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    /**
+     * Configura os controles de cada campo
+     */
+    setupFieldControls() {
+        const fields = document.querySelectorAll('.field');
+        
+        fields.forEach(field => {
+            const fieldId = field.dataset.field;
+            this.fields.set(fieldId, field);
+            
+            // Configurar drag do cabeçalho
+            const header = field.querySelector('.field-header');
+            if (header) {
+                header.addEventListener('mousedown', (e) => {
+                    this.startDrag(field, e);
+                });
+            }
+            
+            // Configurar redimensionamento
+            const resizer = field.querySelector('.field-resizer');
+            if (resizer) {
+                resizer.addEventListener('mousedown', (e) => {
+                    this.startResize(field, e);
+                });
+            }
+            
+            // Configurar controles do cabeçalho
+            const controls = field.querySelectorAll('.field-control-btn');
+            controls.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.handleFieldControl(field, btn);
+                });
+            });
+        });
+    }
+
+    /**
+     * Inicia o arrastar de um campo
+     */
+    startDrag(field, event) {
+        if (this.isResizing) return;
+        
+        this.isDragging = true;
+        this.draggedField = field;
+        this.startPos = {
+            x: parseInt(field.style.left) || 0,
+            y: parseInt(field.style.top) || 0
+        };
+        this.startMouse = {
+            x: event.clientX,
+            y: event.clientY
+        };
+        
+        field.classList.add('dragging');
+        document.body.style.cursor = 'grabbing';
+    }
+
+    /**
+     * Inicia o redimensionamento de um campo
+     */
+    startResize(field, event) {
+        if (this.isDragging) return;
+        
+        this.isResizing = true;
+        this.resizingField = field;
+        this.startSize = {
+            width: field.offsetWidth,
+            height: field.offsetHeight
+        };
+        this.startMouse = {
+            x: event.clientX,
+            y: event.clientY
+        };
+        
+        field.classList.add('resizing');
+        document.body.style.cursor = 'se-resize';
+    }
+
+    /**
+     * Manipula o movimento do mouse
+     */
+    handleMouseMove(event) {
+        if (this.isDragging && this.draggedField) {
+            this.handleDrag(event);
+        } else if (this.isResizing && this.resizingField) {
+            this.handleResize(event);
+        }
+    }
+
+    /**
+     * Manipula o arrastar
+     */
+    handleDrag(event) {
+        const deltaX = event.clientX - this.startMouse.x;
+        const deltaY = event.clientY - this.startMouse.y;
+        
+        const newX = this.startPos.x + deltaX;
+        const newY = this.startPos.y + deltaY;
+        
+        // Limitar ao container
+        const container = document.querySelector('.ficha-container');
+        const containerRect = container.getBoundingClientRect();
+        const fieldRect = this.draggedField.getBoundingClientRect();
+        
+        const maxX = containerRect.width - fieldRect.width;
+        const maxY = containerRect.height - fieldRect.height;
+        
+        const clampedX = Math.max(0, Math.min(newX, maxX));
+        const clampedY = Math.max(0, Math.min(newY, maxY));
+        
+        this.draggedField.style.left = `${clampedX}px`;
+        this.draggedField.style.top = `${clampedY}px`;
+    }
+
+    /**
+     * Manipula o redimensionamento
+     */
+    handleResize(event) {
+        const deltaX = event.clientX - this.startMouse.x;
+        const deltaY = event.clientY - this.startMouse.y;
+        
+        const newWidth = this.startSize.width + deltaX;
+        const newHeight = this.startSize.height + deltaY;
+        
+        // Limites mínimos e máximos
+        const minWidth = 200;
+        const minHeight = 150;
+        const maxWidth = window.innerWidth - 100;
+        const maxHeight = window.innerHeight - 100;
+        
+        const clampedWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+        const clampedHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+        
+        this.resizingField.style.width = `${clampedWidth}px`;
+        this.resizingField.style.height = `${clampedHeight}px`;
+    }
+
+    /**
+     * Manipula o fim do mouse
+     */
+    handleMouseUp() {
+        if (this.isDragging && this.draggedField) {
+            this.endDrag();
+        } else if (this.isResizing && this.resizingField) {
+            this.endResize();
+        }
+    }
+
+    /**
+     * Finaliza o arrastar
+     */
+    endDrag() {
+        this.draggedField.classList.remove('dragging');
+        this.draggedField = null;
+        this.isDragging = false;
+        document.body.style.cursor = '';
+        
+        this.saveFieldPositions();
+        this.preventOverlap();
+    }
+
+    /**
+     * Finaliza o redimensionamento
+     */
+    endResize() {
+        this.resizingField.classList.remove('resizing');
+        this.resizingField = null;
+        this.isResizing = false;
+        document.body.style.cursor = '';
+        
+        this.saveFieldPositions();
+        this.preventOverlap();
+    }
+
+    /**
+     * Manipula os controles do campo
+     */
+    handleFieldControl(field, button) {
+        const title = button.title;
+        
+        if (title === 'Minimizar') {
+            this.toggleMinimize(field);
+        } else if (title === 'Fechar') {
+            this.closeField(field);
+        }
+    }
+
+    /**
+     * Minimiza/maximiza um campo
+     */
+    toggleMinimize(field) {
+        const content = field.querySelector('.field-content');
+        const resizer = field.querySelector('.field-resizer');
+        const isMinimized = field.classList.contains('minimized');
+        
+        if (isMinimized) {
+            // Restaurar
+            field.classList.remove('minimized');
+            content.style.display = '';
+            resizer.style.display = '';
+            field.style.height = field.dataset.originalHeight || 'auto';
+        } else {
+            // Minimizar
+            field.classList.add('minimized');
+            field.dataset.originalHeight = field.style.height || field.offsetHeight + 'px';
+            content.style.display = 'none';
+            resizer.style.display = 'none';
+            field.style.height = '40px'; // Altura do cabeçalho
+        }
+        
+        this.saveFieldPositions();
+    }
+
+    /**
+     * Fecha um campo
+     */
+    closeField(field) {
+        field.style.display = 'none';
+        this.saveFieldPositions();
+    }
+
+    /**
+     * Previne sobreposição de campos
+     */
+    preventOverlap() {
+        const fields = Array.from(this.fields.values()).filter(f => f.style.display !== 'none');
+        
+        for (let i = 0; i < fields.length; i++) {
+            for (let j = i + 1; j < fields.length; j++) {
+                const field1 = fields[i];
+                const field2 = fields[j];
+                
+                if (this.isOverlapping(field1, field2)) {
+                    this.resolveOverlap(field1, field2);
+                }
+            }
+        }
+    }
+
+    /**
+     * Verifica se dois campos estão sobrepostos
+     */
+    isOverlapping(field1, field2) {
+        const rect1 = field1.getBoundingClientRect();
+        const rect2 = field2.getBoundingClientRect();
+        
+        return !(rect1.right < rect2.left || 
+                rect1.left > rect2.right || 
+                rect1.bottom < rect2.top || 
+                rect1.top > rect2.bottom);
+    }
+
+    /**
+     * Resolve sobreposição entre dois campos
+     */
+    resolveOverlap(field1, field2) {
+        const rect1 = field1.getBoundingClientRect();
+        const rect2 = field2.getBoundingClientRect();
+        
+        // Calcular a sobreposição
+        const overlapX = Math.min(rect1.right, rect2.right) - Math.max(rect1.left, rect2.left);
+        const overlapY = Math.min(rect1.bottom, rect2.bottom) - Math.max(rect1.top, rect2.top);
+        
+        // Mover o segundo campo para resolver a sobreposição
+        if (overlapX > 0 && overlapY > 0) {
+            const currentLeft = parseInt(field2.style.left) || 0;
+            const currentTop = parseInt(field2.style.top) || 0;
+            
+            // Mover para a direita
+            field2.style.left = `${currentLeft + overlapX + 10}px`;
+            
+            // Se ainda houver sobreposição, mover para baixo
+            if (this.isOverlapping(field1, field2)) {
+                field2.style.top = `${currentTop + overlapY + 10}px`;
+            }
+        }
+    }
+
+    /**
+     * Salva as posições dos campos
+     */
+    saveFieldPositions() {
+        const positions = {};
+        
+        this.fields.forEach((field, id) => {
+            const rect = field.getBoundingClientRect();
+            const container = document.querySelector('.ficha-container');
+            const containerRect = container.getBoundingClientRect();
+            
+            positions[id] = {
+                left: rect.left - containerRect.left,
+                top: rect.top - containerRect.top,
+                width: field.offsetWidth,
+                height: field.offsetHeight,
+                minimized: field.classList.contains('minimized'),
+                visible: field.style.display !== 'none'
+            };
+        });
+        
+        localStorage.setItem('field-positions', JSON.stringify(positions));
+    }
+
+    /**
+     * Carrega as posições dos campos
+     */
+    loadFieldPositions() {
+        const saved = localStorage.getItem('field-positions');
+        if (!saved) return;
+        
+        try {
+            const positions = JSON.parse(saved);
+            
+            Object.entries(positions).forEach(([id, pos]) => {
+                const field = document.querySelector(`[data-field="${id}"]`);
+                if (field) {
+                    field.style.left = `${pos.left}px`;
+                    field.style.top = `${pos.top}px`;
+                    field.style.width = `${pos.width}px`;
+                    field.style.height = `${pos.height}px`;
+                    
+                    if (pos.minimized) {
+                        this.toggleMinimize(field);
+                    }
+                    
+                    if (!pos.visible) {
+                        field.style.display = 'none';
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Erro ao carregar posições dos campos:', error);
+        }
+    }
+
+    /**
+     * Restaura todos os campos
+     */
+    restoreAllFields() {
+        this.fields.forEach(field => {
+            field.style.display = '';
+            field.classList.remove('minimized');
+            const content = field.querySelector('.field-content');
+            const resizer = field.querySelector('.field-resizer');
+            if (content) content.style.display = '';
+            if (resizer) resizer.style.display = '';
+        });
+        
+        this.saveFieldPositions();
+    }
+
+    /**
+     * Reseta as posições dos campos para o padrão
+     */
+    resetFieldPositions() {
+        this.fields.forEach(field => {
+            field.style.left = '';
+            field.style.top = '';
+            field.style.width = '';
+            field.style.height = '';
+            field.style.display = '';
+            field.classList.remove('minimized');
+        });
+        
+        localStorage.removeItem('field-positions');
+        this.preventOverlap();
+    }
+
+    /**
+     * Organiza os campos automaticamente
+     */
+    autoArrange() {
+        const fields = Array.from(this.fields.values()).filter(f => f.style.display !== 'none');
+        const container = document.querySelector('.ficha-container');
+        const containerRect = container.getBoundingClientRect();
+        
+        const cols = 3;
+        const rows = Math.ceil(fields.length / cols);
+        const fieldWidth = (containerRect.width - 60) / cols;
+        const fieldHeight = (containerRect.height - 60) / rows;
+        
+        fields.forEach((field, index) => {
+            const col = index % cols;
+            const row = Math.floor(index / cols);
+            
+            const left = 20 + col * (fieldWidth + 10);
+            const top = 20 + row * (fieldHeight + 10);
+            
+            field.style.left = `${left}px`;
+            field.style.top = `${top}px`;
+            field.style.width = `${fieldWidth}px`;
+            field.style.height = `${fieldHeight}px`;
+        });
+        
+        this.saveFieldPositions();
+    }
+}
+
+// Inicializar o sistema quando o DOM estiver pronto
+window.addEventListener('DOMContentLoaded', () => {
+    window.fieldManager = new FieldManager();
+});
+
+export default FieldManager; 

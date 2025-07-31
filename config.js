@@ -102,7 +102,7 @@ const config = {
 };
 
 // Funções helper para acessar configurações
-export const getConfig = (path) => {
+const getConfig = (path) => {
   const keys = path.split('.');
   let value = config;
   
@@ -117,7 +117,7 @@ export const getConfig = (path) => {
   return value;
 };
 
-export const setConfig = (path, value) => {
+const setConfig = (path, value) => {
   const keys = path.split('.');
   const lastKey = keys.pop();
   let current = config;
@@ -133,7 +133,7 @@ export const setConfig = (path, value) => {
 };
 
 // Configurações específicas para diferentes ambientes
-export const environmentConfigs = {
+const environmentConfigs = {
   development: {
     ...config,
     development: {
@@ -174,7 +174,7 @@ export const environmentConfigs = {
 };
 
 // Função para carregar configuração baseada no ambiente
-export const loadEnvironmentConfig = (env = process.env.NODE_ENV || 'development') => {
+const loadEnvironmentConfig = (env = process.env.NODE_ENV || 'development') => {
   const envConfig = environmentConfigs[env];
   if (envConfig) {
     Object.assign(config, envConfig);
@@ -183,4 +183,10 @@ export const loadEnvironmentConfig = (env = process.env.NODE_ENV || 'development
 };
 
 // Exportar configuração padrão
-export default config; 
+module.exports = {
+  config,
+  getConfig,
+  setConfig,
+  environmentConfigs,
+  loadEnvironmentConfig
+}; 

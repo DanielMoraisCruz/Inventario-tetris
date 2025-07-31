@@ -1,173 +1,316 @@
-import {
-    getInventoryState,
-    removeItemFromGrid,
-    removeItemFromPanel,
-    adjustItemStress,
-    returnItemToPanel,
-    placeItem,
-    inventory,
-    itemList
-} from './inventory.js';
-const BODY_IMG_SRC = '/img/body.png';
-const parts = [
-    { id: 'head', name: 'Cabeça' },
-    { id: 'right-arm', name: 'Braço Direito' },
-    { id: 'left-arm', name: 'Braço Esquerdo' },
-    { id: 'torso', name: 'Torso' },
-    { id: 'right-leg', name: 'Perna Direita' },
-    { id: 'left-leg', name: 'Perna Esquerda' }
+import { session, saveSession } from './login.js';
+
+/**
+ * Atributos padrão do personagem
+ */
+const DEFAULT_ATTRIBUTES = [
+    { name: 'Força', key: 'forca' },
+    { name: 'Destreza', key: 'destreza' },
+    { name: 'Vigor', key: 'vigor' },
+    { name: 'Carisma', key: 'carisma' },
+    { name: 'Aparência', key: 'aparencia' },
+    { name: 'Autocontrole', key: 'autocontrole' },
+    { name: 'Inteligência', key: 'inteligencia' },
+    { name: 'Raciocínio', key: 'raciocinio' },
+    { name: 'Determinação', key: 'determinacao' }
 ];
 
-let draggedSlot = null;
-
-function colorFor(current, max) {
-    const colors = ['#2b8a3e', '#f1c40f', '#fd7e14', '#c92a2a'];
-    if (!max) return colors[0];
-    const ratio = current / max;
-    if (ratio < 0.25) return colors[0];
-    if (ratio < 0.5) return colors[1];
-    if (ratio < 0.75) return colors[2];
-    return colors[3];
+/**
+ * Inicializa os atributos do personagem
+ */
+function initAttributes() {
+    // Garantir que todos os atributos existam
+    DEFAULT_ATTRIBUTES.forEach(attr => {
+        if (session.userStats[attr.key] === undefined) {
+            session.userStats[attr.key] = 0;
+        }
+    });
+    
+    renderAttributes();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const bodyImg = document.getElementById('body-img');
-    if (bodyImg) bodyImg.src = BODY_IMG_SRC;
-    const rollBtn = document.getElementById('roll-body');
-    parts.forEach(p => {
-        const el = document.getElementById(p.id);
-        if (!el) return;
-        const span = el.querySelector('.stress-val');
-        const plus = el.querySelector('.stress-plus');
-        const minus = el.querySelector('.stress-minus');
-        const space = el.querySelector('.equip-space');
-
-        const updateSlotDisplay = (id) => {
-            if (!id) {
-                span.textContent = '0/0';
-                el.style.backgroundColor = colorFor(0, 0);
-                space.draggable = false;
-                return;
+/**
+ * Renderiza os atributos na interface
+ */
+function renderAttributes() {
+    const attrList = document.getElementById('attr-list');
+    if (!attrList) return;
+    
+    attrList.innerHTML = '';
+    
+    DEFAULT_ATTRIBUTES.forEach(attr => {
+        const attrItem = document.createElement('div');
+        attrItem.className = 'attr-item';
+        
+        const attrName = document.createElement('span');
+        attrName.className = 'attr-name';
+        attrName.textContent = attr.name;
+        
+        const attrControls = document.createElement('div');
+        attrControls.className = 'attr-controls';
+        
+        const decBtn = document.createElement('button');
+        decBtn.className = 'btn';
+        decBtn.textContent = '-';
+        decBtn.addEventListener('click', () => {
+            if (session.userStats[attr.key] > 0) {
+                session.userStats[attr.key]--;
+                attrValue.textContent = session.userStats[attr.key];
+                saveSession();
             }
-            const state = getInventoryState();
-            const item = state.itemsData.find(it => it.id === id) ||
-                state.placedItems.find(it => it.id === id) ||
-                space._itemData;
-            if (!item) {
-                span.textContent = '0/0';
-                el.style.backgroundColor = colorFor(0, 0);
-                space.draggable = false;
-                return;
-            }
-            span.textContent = `${item.estresseAtual}/${item.maxEstresse}`;
-            el.style.backgroundColor = colorFor(item.estresseAtual, item.maxEstresse);
-            space.draggable = true;
-        };
+        });
+        
+        const attrValue = document.createElement('span');
+        attrValue.className = 'attr-value';
+        attrValue.textContent = session.userStats[attr.key];
+        
+        const incBtn = document.createElement('button');
+        incBtn.className = 'btn';
+        incBtn.textContent = '+';
+        incBtn.addEventListener('click', () => {
+            session.userStats[attr.key]++;
+            attrValue.textContent = session.userStats[attr.key];
+            saveSession();
+        });
+        
+        attrControls.append(decBtn, attrValue, incBtn);
+        attrItem.append(attrName, attrControls);
+        attrList.appendChild(attrItem);
+    });
+}
 
-        if (plus) plus.addEventListener('click', () => {
-            const id = space.dataset.itemId;
-            if (id) adjustItemStress(id, 1);
-            updateSlotDisplay(id);
-        });
-
-        if (minus) minus.addEventListener('click', () => {
-            const id = space.dataset.itemId;
-            if (id) adjustItemStress(id, -1);
-            updateSlotDisplay(id);
-        });
-
-        updateSlotDisplay(space.dataset.itemId);
-
-        space.addEventListener('dragover', e => {
-            e.preventDefault();
-        });
-        space.addEventListener('dragstart', e => {
-            if (!space.dataset.itemId) {
-                e.preventDefault();
-                return;
+/**
+ * Inicializa o sistema de stress das partes do corpo
+ */
+function initBodyStress() {
+    const bodyParts = document.querySelectorAll('.body-part');
+    
+    bodyParts.forEach(part => {
+        const stressMinus = part.querySelector('.stress-minus');
+        const stressPlus = part.querySelector('.stress-plus');
+        const stressVal = part.querySelector('.stress-val');
+        const partId = part.id;
+        
+        // Inicializar stress se não existir
+        if (!session.bodyStress) {
+            session.bodyStress = {};
+        }
+        if (session.bodyStress[partId] === undefined) {
+            session.bodyStress[partId] = { current: 0, max: 3 };
+        }
+        
+        // Atualizar display
+        stressVal.textContent = `${session.bodyStress[partId].current}/${session.bodyStress[partId].max}`;
+        
+        // Event listeners
+        stressMinus.addEventListener('click', () => {
+            if (session.bodyStress[partId].current > 0) {
+                session.bodyStress[partId].current--;
+                stressVal.textContent = `${session.bodyStress[partId].current}/${session.bodyStress[partId].max}`;
+                saveSession();
             }
-            draggedSlot = { el: space, update: updateSlotDisplay, span };
-            try { e.dataTransfer.setData('text/plain', space.dataset.itemId); } catch {}
         });
-        space.addEventListener('dragend', () => {
-            draggedSlot = null;
-        });
-        space.addEventListener('drop', e => {
-            e.preventDefault();
-            const itemId = e.dataTransfer.getData('text/plain');
-            if (!itemId) return;
-            const state = getInventoryState();
-            let item = state.itemsData.find(it => it.id === itemId);
-            if (item) {
-                removeItemFromPanel(item.id);
-            } else {
-                item = state.placedItems.find(it => it.id === itemId);
-                if (item) {
-                    removeItemFromGrid(item.id, true);
-                }
+        
+        stressPlus.addEventListener('click', () => {
+            if (session.bodyStress[partId].current < session.bodyStress[partId].max) {
+                session.bodyStress[partId].current++;
+                stressVal.textContent = `${session.bodyStress[partId].current}/${session.bodyStress[partId].max}`;
+                saveSession();
             }
-            if (!item) return;
-            space.innerHTML = '';
-            if (item.img) {
-                const img = document.createElement('img');
-                img.src = item.img;
-                img.alt = item.nome;
-                img.className = 'equipped-img';
-                space.appendChild(img);
-            } else {
-                space.textContent = item.nome;
-            }
-            space.dataset.itemId = item.id;
-            space._itemData = { ...item };
-            updateSlotDisplay(item.id);
         });
     });
+}
 
-    if (inventory) {
-        inventory.addEventListener('dragover', e => {
-            if (draggedSlot) e.preventDefault();
-        });
-        inventory.addEventListener('drop', e => {
-            if (!draggedSlot) return;
+/**
+ * Inicializa o sistema de equipamento
+ */
+function initEquipment() {
+    const equipSpaces = document.querySelectorAll('.equip-space');
+    
+    equipSpaces.forEach(space => {
+        const partId = space.dataset.part;
+        
+        // Inicializar equipamento se não existir
+        if (!session.equipment) {
+            session.equipment = {};
+        }
+        if (!session.equipment[partId]) {
+            session.equipment[partId] = null;
+        }
+        
+        // Renderizar item equipado se existir
+        if (session.equipment[partId]) {
+            renderEquippedItem(space, session.equipment[partId]);
+        }
+        
+        // Permitir drop de itens
+        space.addEventListener('dragover', (e) => {
             e.preventDefault();
-            const cell = e.target.closest('.cell');
-            if (!cell) return;
-            const x = parseInt(cell.dataset.x, 10);
-            const y = parseInt(cell.dataset.y, 10);
-            const item = draggedSlot.el._itemData;
-            if (!item) return;
-            placeItem(x, y, item.width, item.height, item);
-            draggedSlot.el.innerHTML = 'Espaço para item';
-            delete draggedSlot.el.dataset.itemId;
-            delete draggedSlot.el._itemData;
-            draggedSlot.update(null);
-            draggedSlot = null;
+            space.style.borderColor = '#4CAF50';
+            space.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
         });
-    }
-
-    if (itemList) {
-        itemList.addEventListener('dragover', e => {
-            if (draggedSlot) e.preventDefault();
-        });
-        itemList.addEventListener('drop', e => {
-            if (!draggedSlot) return;
+        
+        space.addEventListener('dragleave', (e) => {
             e.preventDefault();
-            const item = draggedSlot.el._itemData;
-            if (!item) return;
-            returnItemToPanel(item);
-            draggedSlot.el.innerHTML = 'Espaço para item';
-            delete draggedSlot.el.dataset.itemId;
-            delete draggedSlot.el._itemData;
-            draggedSlot.update(null);
-            draggedSlot = null;
+            space.style.borderColor = '';
+            space.style.backgroundColor = '';
         });
-    }
+        
+        space.addEventListener('drop', (e) => {
+            e.preventDefault();
+            space.style.borderColor = '';
+            space.style.backgroundColor = '';
+            
+            const itemData = e.dataTransfer.getData('application/json');
+            if (itemData) {
+                try {
+                    const item = JSON.parse(itemData);
+                    equipItem(partId, item);
+                    renderEquippedItem(space, item);
+                } catch (error) {
+                    console.error('Erro ao equipar item:', error);
+                }
+            }
+        });
+    });
+}
 
-    if (rollBtn) {
-        rollBtn.addEventListener('click', () => {
-            const choice = parts[Math.floor(Math.random() * parts.length)];
-            alert(`Parte sorteada: ${choice.name}`);
-        });
+/**
+ * Equipa um item em uma parte do corpo
+ */
+function equipItem(partId, item) {
+    if (!session.equipment) {
+        session.equipment = {};
     }
-});
+    session.equipment[partId] = item;
+    saveSession();
+}
+
+/**
+ * Renderiza um item equipado
+ */
+function renderEquippedItem(space, item) {
+    space.innerHTML = '';
+    
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'equipped-item';
+    itemDiv.style.cssText = `
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--button-bg);
+        border-radius: 4px;
+        padding: 4px;
+        position: relative;
+    `;
+    
+    if (item.img) {
+        const img = document.createElement('img');
+        img.src = item.img;
+        img.style.cssText = `
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            margin-bottom: 2px;
+        `;
+        itemDiv.appendChild(img);
+    }
+    
+    const name = document.createElement('div');
+    name.textContent = item.nome;
+    name.style.cssText = `
+        font-size: 0.7rem;
+        text-align: center;
+        font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    `;
+    itemDiv.appendChild(name);
+    
+    // Botão de remover
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = '×';
+    removeBtn.style.cssText = `
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 16px;
+        height: 16px;
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        line-height: 1;
+    `;
+    removeBtn.addEventListener('click', () => {
+        unequipItem(space.dataset.part);
+    });
+    itemDiv.appendChild(removeBtn);
+    
+    space.appendChild(itemDiv);
+}
+
+/**
+ * Remove um item equipado
+ */
+function unequipItem(partId) {
+    if (session.equipment && session.equipment[partId]) {
+        session.equipment[partId] = null;
+        saveSession();
+        
+        const space = document.querySelector(`[data-part="${partId}"]`);
+        if (space) {
+            space.innerHTML = 'Espaço para item';
+        }
+    }
+}
+
+/**
+ * Inicializa o botão de rolar corpo
+ */
+function initRollBody() {
+    const rollBtn = document.getElementById('roll-body');
+    if (!rollBtn) return;
+    
+    rollBtn.addEventListener('click', () => {
+        const result = rollBodyDice();
+        alert(`Resultado do teste de corpo: ${result}`);
+    });
+}
+
+/**
+ * Simula um teste de corpo
+ */
+function rollBodyDice() {
+    // Simulação simples de dados
+    const dice = Math.floor(Math.random() * 6) + 1;
+    const modifier = Math.floor((session.userStats.vigor + session.userStats.destreza) / 2);
+    const total = dice + modifier;
+    
+    return `${dice} + ${modifier} = ${total}`;
+}
+
+/**
+ * Inicializa toda a interface do corpo
+ */
+export function initBodyUI() {
+    initAttributes();
+    initBodyStress();
+    initEquipment();
+    initRollBody();
+}
+
+/**
+ * Atualiza a interface do corpo
+ */
+export function updateBodyUI() {
+    renderAttributes();
+}
 
