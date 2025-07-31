@@ -252,7 +252,7 @@ function initResizeSystem() {
     const resizeBtn = document.getElementById('resize-btn');
     
     if (!resizeBtn) return;
-    
+
     if (session.isMaster) {
         // Carregar tamanho salvo
         const savedSize = localStorage.getItem('inventory-size');
@@ -286,9 +286,9 @@ function initResizeSystem() {
             
             setInventorySize(r, c);
             if (inventory) {
-                inventory.innerHTML = '';
-                createGrid();
-                redrawPlacedItems();
+            inventory.innerHTML = '';
+            createGrid();
+            redrawPlacedItems();
             }
             
             const state = getInventoryState();

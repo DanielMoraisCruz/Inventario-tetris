@@ -151,7 +151,7 @@ function initEquipment() {
         });
         
         space.addEventListener('dragleave', (e) => {
-            e.preventDefault();
+                e.preventDefault();
             space.style.borderColor = '';
             space.style.backgroundColor = '';
         });
@@ -279,7 +279,7 @@ function initRollBody() {
     const rollBtn = document.getElementById('roll-body');
     if (!rollBtn) return;
     
-    rollBtn.addEventListener('click', () => {
+        rollBtn.addEventListener('click', () => {
         const result = rollBodyDice();
         alert(`Resultado do teste de corpo: ${result}`);
     });

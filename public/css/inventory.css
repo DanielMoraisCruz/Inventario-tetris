@@ -4,14 +4,26 @@
     width: 100vw;
     height: 100vh;
     background: var(--primary-bg);
-    overflow: hidden;
+    overflow: visible; /* Mudança importante: permitir overflow */
     padding: 20px;
     box-sizing: border-box;
+    transform-origin: top left;
+    transition: transform 0.1s ease;
+}
+
+/* Sistema de zoom */
+body.zoomed {
+    overflow: auto;
+}
+
+body.zoomed .ficha-container {
+    min-width: 100%;
+    min-height: 100%;
 }
 
 /* Campos customizáveis */
 .field {
-    position: absolute;
+    position: fixed; /* Mudança importante: usar fixed em vez de absolute */
     background: var(--panel-bg);
     border: 2px solid var(--border-color);
     border-radius: 8px;
@@ -22,6 +34,9 @@
     min-height: 150px;
     z-index: 10;
     transition: box-shadow 0.2s, transform 0.1s;
+    /* Garantir que os campos sempre sejam visíveis */
+    max-width: none;
+    max-height: none;
 }
 
 .field:hover {
@@ -30,12 +45,14 @@
 
 .field.dragging {
     z-index: 1000;
-    transform: rotate(2deg);
+    transform: rotate(1deg);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    cursor: grabbing;
 }
 
 .field.resizing {
     z-index: 1000;
+    cursor: se-resize;
 }
 
 /* Cabeçalho do campo */
@@ -47,9 +64,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    cursor: move;
+    cursor: grab;
     font-weight: bold;
     font-size: 0.9rem;
+    user-select: none;
+}
+
+.field-header:active {
+    cursor: grabbing;
 }
 
 .field-title {
@@ -75,6 +97,7 @@
     justify-content: center;
     font-size: 0.7rem;
     transition: background 0.2s;
+    user-select: none;
 }
 
 .field-control-btn:hover {
@@ -102,6 +125,7 @@
     border-radius: 0 0 6px 0;
     opacity: 0.5;
     transition: opacity 0.2s;
+    user-select: none;
 }
 
 .field-resizer:hover {
@@ -801,4 +825,23 @@
     padding: 8px 12px;
     border-radius: 6px;
     border: 1px solid var(--border-color);
+}
+
+/* Indicador de zoom */
+.zoom-indicator {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.zoom-indicator.show {
+    opacity: 1;
 }
