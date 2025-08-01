@@ -13,15 +13,15 @@
 </head>
 
 <body>
-    <!-- Demarcação da área da tela -->
-    <div class="screen-boundary"></div>
-    <div class="screen-limits">ÁREA DA TELA</div>
+    <!-- Demarcação da área da tela - DESATIVADA -->
+    <!-- <div class="screen-boundary"></div> -->
+    <!-- <div class="screen-limits">ÁREA DA TELA</div> -->
     
-    <!-- Indicadores de canto -->
-    <div class="screen-corner top-left"></div>
-    <div class="screen-corner top-right"></div>
-    <div class="screen-corner bottom-left"></div>
-    <div class="screen-corner bottom-right"></div>
+    <!-- Indicadores de canto - DESATIVADOS -->
+    <!-- <div class="screen-corner top-left"></div> -->
+    <!-- <div class="screen-corner top-right"></div> -->
+    <!-- <div class="screen-corner bottom-left"></div> -->
+    <!-- <div class="screen-corner bottom-right"></div> -->
     
     <div id="user-welcome"></div>
     <button id="toggle-theme" class="btn">🌙</button>
@@ -29,6 +29,50 @@
     <div class="pan-indicator" id="pan-indicator">Arrastar tela: Clique com o scroll do mouse</div>
 
     <div id="drag-ghost"></div>
+
+    <!-- Aba lateral ESQUERDA para itens -->
+    <div class="sidebar-left" id="sidebar-left">
+        <div class="sidebar-left-header">
+            <span>Itens</span>
+            <button class="sidebar-left-toggle" id="sidebar-left-toggle">−</button>
+        </div>
+        <div class="sidebar-left-content" id="sidebar-left-content">
+            <div class="action-buttons">
+                <button id="logout-btn" class="btn">Sair</button>
+                <button id="reset-btn" class="btn">Resetar</button>
+            </div>
+            <input id="item-search" type="text" placeholder="Buscar itens...">
+            <div id="item-list"></div>
+            <form id="item-form">
+                <h3>Criar Novo Item</h3>
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" placeholder="Nome do item" required>
+                <label for="largura">Largura:</label>
+                <input type="number" id="largura" placeholder="Largura" min="1" required>
+                <label for="altura">Altura:</label>
+                <input type="number" id="altura" placeholder="Altura" min="1" required>
+                <label for="imagem">Imagem:</label>
+                <input type="file" id="imagem" accept="image/*">
+                <label for="cor">Cor:</label>
+                <input type="color" id="cor" value="#2b8a3e">
+                <button type="submit" class="btn">Adicionar</button>
+                <div id="item-msg"></div>
+            </form>
+        </div>
+        <div class="sidebar-left-resizer" id="sidebar-left-resizer"></div>
+    </div>
+
+    <!-- Aba lateral DIREITA para telas fechadas -->
+    <div class="sidebar-right" id="sidebar-right">
+        <div class="sidebar-right-header">
+            <span>Telas Fechadas</span>
+            <button class="sidebar-right-toggle" id="sidebar-right-toggle">−</button>
+        </div>
+        <div class="sidebar-right-content" id="sidebar-right-content">
+            <!-- Telas fechadas serão adicionadas aqui dinamicamente -->
+        </div>
+        <div class="sidebar-right-resizer" id="sidebar-right-resizer"></div>
+    </div>
 
     <div class="ficha-container">
         <!-- Campo de Atributos -->
@@ -170,41 +214,6 @@
             </div>
             <div class="field-resizer"></div>
         </div>
-
-        <!-- Campo de Itens -->
-        <div class="field field-items" data-field="items">
-            <div class="field-header">
-                <div class="field-title">Itens</div>
-                <div class="field-controls">
-                    <button class="field-control-btn" title="Minimizar">−</button>
-                    <button class="field-control-btn" title="Fechar">×</button>
-                </div>
-            </div>
-            <div class="field-content">
-                <div class="action-buttons">
-                    <button id="logout-btn" class="btn">Sair</button>
-                    <button id="reset-btn" class="btn">Resetar</button>
-                </div>
-                <input id="item-search" type="text" placeholder="Buscar itens...">
-                <div id="item-list"></div>
-                <form id="item-form">
-                    <h3>Criar Novo Item</h3>
-                    <label for="nome">Nome:</label>
-                    <input type="text" id="nome" placeholder="Nome do item" required>
-                    <label for="largura">Largura:</label>
-                    <input type="number" id="largura" placeholder="Largura" min="1" required>
-                    <label for="altura">Altura:</label>
-                    <input type="number" id="altura" placeholder="Altura" min="1" required>
-                    <label for="imagem">Imagem:</label>
-                    <input type="file" id="imagem" accept="image/*">
-                    <label for="cor">Cor:</label>
-                    <input type="color" id="cor" value="#2b8a3e">
-                    <button type="submit" class="btn">Adicionar</button>
-                    <div id="item-msg"></div>
-                </form>
-            </div>
-            <div class="field-resizer"></div>
-        </div>
     </div>
 
     <script type="module" src="js/inventory.js"></script>
@@ -213,6 +222,7 @@
     <script type="module" src="js/dragdrop.js"></script>
     <script type="module" src="js/field-manager.js"></script>
     <script type="module" src="js/zoom-manager.js"></script>
+    <script type="module" src="js/sidebar-manager.js"></script>
     <script type="module" src="js/debug.js"></script>
 </body>
 

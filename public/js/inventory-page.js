@@ -479,12 +479,58 @@ function addFieldOrganizationControls() {
     checkBoundsBtn.title = 'Verificar se campos estão dentro dos limites';
     checkBoundsBtn.addEventListener('click', () => {
         if (window.fieldManager) {
-            window.fieldManager.checkAllFieldBounds();
-            alert('Limites verificados! Campos fora dos limites terão borda vermelha.');
+            // Verificação de limites desativada
+            // window.fieldManager.checkAllFieldBounds();
+            alert('Verificação de limites desativada!');
         }
     });
-    
-    controlPanel.append(autoArrangeBtn, restoreBtn, resetBtn, resetPanBtn, checkBoundsBtn);
+
+    const applyMinSizeBtn = document.createElement('button');
+    applyMinSizeBtn.className = 'btn';
+    applyMinSizeBtn.textContent = 'Ajustar Tamanhos';
+    applyMinSizeBtn.title = 'Aplicar tamanhos mínimos baseados no conteúdo';
+    applyMinSizeBtn.addEventListener('click', () => {
+        if (window.fieldManager) {
+            window.fieldManager.applyMinSizeToAll();
+            alert('Tamanhos ajustados com base no conteúdo!');
+        }
+    });
+
+    const testSidebarBtn = document.createElement('button');
+    testSidebarBtn.className = 'btn';
+    testSidebarBtn.textContent = 'Testar Aba';
+    testSidebarBtn.title = 'Testar sistema de aba lateral direita';
+    testSidebarBtn.addEventListener('click', () => {
+        if (window.sidebarManager) {
+            // Criar um campo de teste para enviar para a aba
+            const testField = document.createElement('div');
+            testField.className = 'field';
+            testField.dataset.field = 'test';
+            testField.innerHTML = `
+                <div class="field-header">
+                    <div class="field-title">Campo de Teste</div>
+                    <div class="field-controls">
+                        <button class="field-control-btn" title="Minimizar">−</button>
+                        <button class="field-control-btn" title="Fechar">×</button>
+                    </div>
+                </div>
+                <div class="field-content">
+                    <p>Este é um campo de teste para a aba lateral.</p>
+                </div>
+                <div class="field-resizer"></div>
+            `;
+            testField.style.position = 'absolute';
+            testField.style.left = '50px';
+            testField.style.top = '50px';
+            testField.style.width = '200px';
+            testField.style.height = '150px';
+            
+            window.sidebarManager.addClosedField(testField);
+            alert('Campo de teste enviado para a aba lateral direita!');
+        }
+    });
+
+    controlPanel.append(autoArrangeBtn, restoreBtn, resetBtn, resetPanBtn, checkBoundsBtn, applyMinSizeBtn, testSidebarBtn);
     document.body.appendChild(controlPanel);
 }
 

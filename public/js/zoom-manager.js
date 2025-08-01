@@ -207,6 +207,28 @@ class ZoomManager {
     getPanOffset() {
         return { ...this.panOffset };
     }
+
+    /**
+     * Converte coordenadas do viewport para coordenadas do container
+     * Útil para elementos com position: absolute dentro do container transformado
+     */
+    getContainerCoordinates(mouseX, mouseY) {
+        if (!this.container) return { x: 0, y: 0 };
+        
+        const rect = this.container.getBoundingClientRect();
+        
+        // Posição do mouse relativa ao container transformado
+        const mouseXRelativeToContainer = mouseX - rect.left;
+        const mouseYRelativeToContainer = mouseY - rect.top;
+        
+        // Inverter a transformação para obter coordenadas no espaço original do container
+        // A transformação é: translate(panX, panY) scale(zoom)
+        // Então, para inverter: (val / zoom) - pan / zoom
+        const containerX = (mouseXRelativeToContainer / this.currentZoom) - (this.panOffset.x / this.currentZoom);
+        const containerY = (mouseYRelativeToContainer / this.currentZoom) - (this.panOffset.y / this.currentZoom);
+        
+        return { x: containerX, y: containerY };
+    }
 }
 
 // Inicializar quando o DOM estiver pronto

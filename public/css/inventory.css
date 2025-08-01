@@ -1,7 +1,7 @@
 /* Layout principal - sistema de mesa */
 .ficha-container {
     position: relative;
-    width: 100vw;
+    width: calc(100vw - 590px); /* 100vw - (300px left sidebar + 270px right sidebar + 20px padding) */
     height: 100vh;
     background: var(--primary-bg);
     overflow: visible;
@@ -12,13 +12,16 @@
     /* Container expansível para zoom */
     min-width: 200vw;
     min-height: 200vh;
-    /* Demarcação visual da tela */
-    border: 3px solid #ff6b6b;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    /* Posicionamento para não sobrepor as abas laterais */
+    left: 300px; /* Posicionado após a aba esquerda */
+    /* Demarcação visual da tela - DESATIVADA */
+    /* border: 3px solid #ff6b6b; */
+    /* border-radius: 8px; */
+    /* box-shadow: 0 0 20px rgba(255, 107, 107, 0.3); */
 }
 
-/* Demarcação da área da tela */
+/* Demarcação da área da tela - DESATIVADA */
+/*
 .screen-boundary {
     position: fixed;
     top: 0;
@@ -33,8 +36,10 @@
     background: linear-gradient(45deg, transparent 49%, rgba(255, 146, 43, 0.1) 50%, transparent 51%);
     background-size: 20px 20px;
 }
+*/
 
-/* Indicador de limites da tela */
+/* Indicador de limites da tela - DESATIVADO */
+/*
 .screen-limits {
     position: fixed;
     top: 10px;
@@ -52,8 +57,10 @@
     box-shadow: 0 4px 12px rgba(255, 146, 43, 0.4);
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
+*/
 
-/* Indicadores de canto */
+/* Indicadores de canto - DESATIVADOS */
+/*
 .screen-corner {
     position: fixed;
     width: 30px;
@@ -94,6 +101,7 @@
     border-top: none;
     border-radius: 0 0 8px 0;
 }
+*/
 
 /* Sistema de zoom */
 body.zoomed {
@@ -116,7 +124,7 @@ body.panning * {
 
 /* Campos customizáveis */
 .field {
-    position: fixed;
+    position: absolute;
     background: var(--panel-bg);
     border: 2px solid var(--border-color);
     border-radius: 8px;
@@ -234,73 +242,315 @@ body.panning * {
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 15px;
-    height: 15px;
+    width: 20px;
+    height: 20px;
     cursor: se-resize;
     background: var(--border-color);
     border-radius: 0 0 6px 0;
-    opacity: 0.5;
-    transition: opacity 0.2s;
+    opacity: 0.3;
+    transition: opacity 0.2s, background 0.2s;
     user-select: none;
+    z-index: 100;
 }
 
 .field-resizer:hover {
     opacity: 1;
+    background: var(--button-hover-bg);
 }
 
 .field-resizer::before {
     content: '';
     position: absolute;
-    top: 4px;
-    left: 4px;
-    width: 7px;
-    height: 7px;
+    top: 6px;
+    left: 6px;
+    width: 8px;
+    height: 8px;
     border-right: 2px solid var(--text-color);
     border-bottom: 2px solid var(--text-color);
 }
 
-/* Campos específicos - posições iniciais */
+/* Aba lateral ESQUERDA para itens */
+.sidebar-left {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 100vh;
+    background: var(--panel-bg);
+    border-right: 2px solid var(--border-color);
+    z-index: 50;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.sidebar-left.minimized {
+    transform: translateX(calc(-100% + 40px));
+}
+
+.sidebar-left-header {
+    background: var(--button-bg);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: -10px -10px 10px -10px;
+}
+
+.sidebar-left-toggle {
+    width: 20px;
+    height: 20px;
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    transition: background 0.2s;
+}
+
+.sidebar-left-toggle:hover {
+    background: var(--button-hover-bg);
+}
+
+.sidebar-left-content {
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
+/* Redimensionador para aba lateral ESQUERDA */
+.sidebar-left-resizer {
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    width: 20px;
+    height: 60px;
+    cursor: ew-resize;
+    background: var(--border-color);
+    border-radius: 0 10px 10px 0;
+    opacity: 0.3;
+    transform: translateY(-50%);
+    transition: opacity 0.2s;
+}
+
+.sidebar-left-resizer:hover {
+    opacity: 1;
+    background: var(--button-hover-bg);
+}
+
+.sidebar-left-resizer::before {
+    content: '◄►';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    color: var(--text-color);
+}
+
+/* Aba lateral DIREITA para telas fechadas */
+.sidebar-right {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 100vh;
+    background: var(--panel-bg);
+    border-left: 2px solid var(--border-color);
+    z-index: 40;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.sidebar-right.minimized {
+    transform: translateX(calc(100% - 40px));
+}
+
+.sidebar-right-header {
+    background: var(--button-bg);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: -10px -10px 10px -10px;
+}
+
+.sidebar-right-toggle {
+    width: 20px;
+    height: 20px;
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    transition: background 0.2s;
+}
+
+.sidebar-right-toggle:hover {
+    background: var(--button-hover-bg);
+}
+
+.closed-field {
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.closed-field:hover {
+    background: var(--button-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.closed-field.dragging {
+    cursor: grabbing;
+    opacity: 0.8;
+    transform: rotate(2deg);
+}
+
+.closed-field-title {
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+}
+
+.closed-field-info {
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+/* Redimensionador para aba lateral DIREITA */
+.sidebar-right-resizer {
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    width: 20px;
+    height: 60px;
+    cursor: ew-resize;
+    background: var(--border-color);
+    border-radius: 10px 0 0 10px;
+    opacity: 0.3;
+    transform: translateY(-50%);
+    transition: opacity 0.2s;
+}
+
+.sidebar-right-resizer:hover {
+    opacity: 1;
+    background: var(--button-hover-bg);
+}
+
+.sidebar-right-resizer::before {
+    content: '◄►';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    color: var(--text-color);
+}
+
+/* Ajustar posições dos outros campos para não sobrepor as abas */
 .field-attributes {
     top: 20px;
-    left: 20px;
+    left: 20px; /* Posicionado dentro do ficha-container */
     width: 400px;
     height: 300px;
+    min-width: 300px;
+    min-height: 200px;
 }
 
 .field-inventory {
     top: 20px;
-    left: 440px;
+    left: 440px; /* Posicionado dentro do ficha-container */
     width: 500px;
     height: 400px;
+    min-width: 350px;
+    min-height: 250px;
 }
 
 .field-body {
     top: 20px;
-    right: 20px;
+    right: 20px; /* Posicionado dentro do ficha-container */
     width: 300px;
     height: 350px;
+    min-width: 250px;
+    min-height: 300px;
 }
 
 .field-skills {
     bottom: 20px;
-    left: 20px;
+    left: 20px; /* Posicionado dentro do ficha-container */
     width: 350px;
     height: 250px;
+    min-width: 250px;
+    min-height: 150px;
 }
 
 .field-spells {
     bottom: 20px;
-    left: 390px;
+    left: 390px; /* Posicionado dentro do ficha-container */
     width: 300px;
     height: 250px;
+    min-width: 200px;
+    min-height: 150px;
 }
 
-.field-items {
-    bottom: 20px;
-    right: 20px;
-    width: 350px;
-    height: 250px;
+/* Melhorar redimensionamento do campo de corpo */
+.field-body .field-resizer {
+    background: var(--button-bg);
+    border: 1px solid var(--border-color);
 }
+
+.field-body .field-resizer:hover {
+    background: var(--button-hover-bg);
+    transform: scale(1.1);
+}
+
+/* Melhorar responsividade do diagrama do corpo */
+#body-diagram {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 8px;
+    height: calc(100% - 40px);
+    min-height: 200px;
+}
+
+.body-part {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--primary-bg);
+    text-align: center;
+    position: relative;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Outros campos - removido duplicação */
 
 /* Atributos */
 .attr-list {
@@ -403,24 +653,6 @@ body.panning * {
     background: var(--panel-bg);
     color: var(--text-color);
     text-align: center;
-}
-
-/* Corpo do personagem */
-#body-diagram {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
-    gap: 8px;
-    height: calc(100% - 40px);
-}
-
-.body-part {
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: var(--primary-bg);
-    text-align: center;
-    position: relative;
 }
 
 .body-part#head {
@@ -748,6 +980,11 @@ body.panning * {
 
 /* Responsividade */
 @media (max-width: 1200px) {
+    .ficha-container {
+        width: calc(100vw - 470px); /* Ajustado para telas menores */
+        left: 250px;
+    }
+    
     .field-attributes {
         width: 350px;
         height: 250px;
@@ -762,10 +999,21 @@ body.panning * {
         width: 250px;
         height: 300px;
     }
+    
+    /* Ajustar abas laterais em telas menores */
+    .sidebar-left {
+        width: 250px;
+    }
+    
+    .sidebar-right {
+        width: 200px;
+    }
 }
 
 @media (max-width: 768px) {
     .ficha-container {
+        width: calc(100vw - 370px); /* Ajustado para telas muito pequenas */
+        left: 200px;
         padding: 10px;
     }
     
@@ -787,6 +1035,23 @@ body.panning * {
     .field-body {
         width: 200px;
         height: 250px;
+    }
+    
+    /* Em telas muito pequenas, minimizar abas laterais */
+    .sidebar-left {
+        width: 200px;
+    }
+    
+    .sidebar-left.minimized {
+        transform: translateX(calc(-100% + 30px));
+    }
+    
+    .sidebar-right {
+        width: 150px;
+    }
+    
+    .sidebar-right.minimized {
+        transform: translateX(calc(100% - 30px));
     }
     
     .attr-list {
@@ -920,7 +1185,7 @@ body.panning * {
     padding: 6px 10px;
     cursor: pointer;
     font-size: 1.2rem;
-    z-index: 100;
+    z-index: 30;
     transition: background 0.2s, color 0.2s;
 }
 
