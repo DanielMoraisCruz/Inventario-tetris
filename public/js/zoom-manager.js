@@ -1,144 +1,161 @@
 /**
- * Sistema de Gerenciamento de Zoom
- * Permite zoom in/out com Ctrl + Scroll
+ * Sistema de Gerenciamento de Zoom e Pan
+ * Versão simplificada e robusta
  */
 
 class ZoomManager {
     constructor() {
         this.currentZoom = 1;
-        this.minZoom = 0.5;
+        this.minZoom = 0.25;
         this.maxZoom = 3;
         this.zoomStep = 0.1;
         this.container = document.querySelector('.ficha-container');
         this.indicator = document.getElementById('zoom-indicator');
+        this.panIndicator = document.getElementById('pan-indicator');
+        
+        // Sistema de pan simplificado
+        this.isPanning = false;
+        this.panStart = { x: 0, y: 0 };
+        this.panOffset = { x: 0, y: 0 };
         
         this.init();
     }
 
-    /**
-     * Inicializa o sistema de zoom
-     */
     init() {
         this.setupEventListeners();
         this.loadSavedZoom();
-        this.updateZoom();
+        this.updateTransform();
     }
 
-    /**
-     * Configura os event listeners
-     */
     setupEventListeners() {
         // Zoom com Ctrl + Scroll
         document.addEventListener('wheel', (e) => {
             if (e.ctrlKey) {
                 e.preventDefault();
-                this.handleZoom(e);
+                const delta = e.deltaY > 0 ? -1 : 1;
+                const newZoom = this.currentZoom + (delta * this.zoomStep);
+                this.setZoom(newZoom);
             }
         }, { passive: false });
 
-        // Zoom com Ctrl + +/- (teclado)
+        // Zoom com teclado
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey) {
                 if (e.key === '+' || e.key === '=') {
                     e.preventDefault();
-                    this.zoomIn();
+                    this.setZoom(this.currentZoom + this.zoomStep);
                 } else if (e.key === '-') {
                     e.preventDefault();
-                    this.zoomOut();
+                    this.setZoom(this.currentZoom - this.zoomStep);
                 } else if (e.key === '0') {
                     e.preventDefault();
-                    this.resetZoom();
+                    this.resetAll();
                 }
             }
         });
 
+        // Pan com botão do meio
+        document.addEventListener('mousedown', (e) => {
+            if (e.button === 1) {
+                e.preventDefault();
+                this.startPan(e);
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (this.isPanning) {
+                e.preventDefault();
+                this.handlePan(e);
+            }
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            if (e.button === 1 && this.isPanning) {
+                e.preventDefault();
+                this.endPan();
+            }
+        });
+
         // Prevenir zoom do navegador
-        document.addEventListener('gesturestart', (e) => {
-            e.preventDefault();
-        });
-
-        document.addEventListener('gesturechange', (e) => {
-            e.preventDefault();
-        });
-
-        document.addEventListener('gestureend', (e) => {
-            e.preventDefault();
-        });
+        document.addEventListener('gesturestart', e => e.preventDefault());
+        document.addEventListener('gesturechange', e => e.preventDefault());
+        document.addEventListener('gestureend', e => e.preventDefault());
     }
 
-    /**
-     * Manipula o zoom com scroll
-     */
-    handleZoom(event) {
-        const delta = event.deltaY > 0 ? -1 : 1;
-        const newZoom = this.currentZoom + (delta * this.zoomStep);
-        this.setZoom(newZoom);
+    startPan(event) {
+        this.isPanning = true;
+        this.panStart = { x: event.clientX, y: event.clientY };
+        document.body.classList.add('panning');
+        this.showPanIndicator();
     }
 
-    /**
-     * Aumenta o zoom
-     */
-    zoomIn() {
-        const newZoom = Math.min(this.currentZoom + this.zoomStep, this.maxZoom);
-        this.setZoom(newZoom);
+    handlePan(event) {
+        if (!this.isPanning) return;
+
+        const deltaX = event.clientX - this.panStart.x;
+        const deltaY = event.clientY - this.panStart.y;
+
+        this.panOffset.x += deltaX;
+        this.panOffset.y += deltaY;
+
+        this.panStart = { x: event.clientX, y: event.clientY };
+        this.updateTransform();
     }
 
-    /**
-     * Diminui o zoom
-     */
-    zoomOut() {
-        const newZoom = Math.max(this.currentZoom - this.zoomStep, this.minZoom);
-        this.setZoom(newZoom);
+    endPan() {
+        this.isPanning = false;
+        document.body.classList.remove('panning');
+        this.hidePanIndicator();
     }
 
-    /**
-     * Reseta o zoom para 100%
-     */
-    resetZoom() {
-        this.setZoom(1);
-    }
-
-    /**
-     * Define o zoom
-     */
     setZoom(zoom) {
         this.currentZoom = Math.max(this.minZoom, Math.min(this.maxZoom, zoom));
-        this.updateZoom();
+        this.updateTransform();
         this.saveZoom();
         this.showIndicator();
     }
 
-    /**
-     * Atualiza a interface com o zoom atual
-     */
-    updateZoom() {
-        if (this.container) {
-            this.container.style.transform = `scale(${this.currentZoom})`;
-            
-            // Ajustar overflow baseado no zoom
-            if (this.currentZoom > 1) {
-                document.body.classList.add('zoomed');
-            } else {
-                document.body.classList.remove('zoomed');
-            }
+    resetAll() {
+        this.currentZoom = 1;
+        this.panOffset = { x: 0, y: 0 };
+        this.updateTransform();
+        this.saveZoom();
+        this.showIndicator();
+    }
+
+    resetPan() {
+        this.panOffset = { x: 0, y: 0 };
+        this.updateTransform();
+    }
+
+    updateTransform() {
+        if (!this.container) return;
+
+        // Aplicar transformação combinada
+        const transform = `translate(${this.panOffset.x}px, ${this.panOffset.y}px) scale(${this.currentZoom})`;
+        this.container.style.transform = transform;
+
+        // Ajustar overflow baseado no zoom
+        if (this.currentZoom < 1) {
+            document.body.classList.add('zoomed');
+        } else {
+            document.body.classList.remove('zoomed');
         }
 
+        // Atualizar indicador
         if (this.indicator) {
             this.indicator.textContent = `Zoom: ${Math.round(this.currentZoom * 100)}%`;
         }
-        
-        // Disparar evento de mudança de zoom
-        window.dispatchEvent(new CustomEvent('zoomChanged', { detail: { zoom: this.currentZoom } }));
+
+        // Disparar evento
+        window.dispatchEvent(new CustomEvent('zoomChanged', { 
+            detail: { zoom: this.currentZoom, pan: this.panOffset } 
+        }));
     }
 
-    /**
-     * Mostra o indicador de zoom
-     */
     showIndicator() {
         if (this.indicator) {
             this.indicator.classList.add('show');
-            
-            // Esconder após 2 segundos
             clearTimeout(this.indicatorTimeout);
             this.indicatorTimeout = setTimeout(() => {
                 this.indicator.classList.remove('show');
@@ -146,57 +163,53 @@ class ZoomManager {
         }
     }
 
-    /**
-     * Salva o zoom no localStorage
-     */
-    saveZoom() {
-        localStorage.setItem('zoom-level', this.currentZoom.toString());
+    showPanIndicator() {
+        if (this.panIndicator) {
+            this.panIndicator.classList.add('show');
+        }
     }
 
-    /**
-     * Carrega o zoom salvo
-     */
+    hidePanIndicator() {
+        if (this.panIndicator) {
+            this.panIndicator.classList.remove('show');
+        }
+    }
+
+    saveZoom() {
+        localStorage.setItem('zoom-level', this.currentZoom.toString());
+        localStorage.setItem('pan-offset', JSON.stringify(this.panOffset));
+    }
+
     loadSavedZoom() {
-        const saved = localStorage.getItem('zoom-level');
-        if (saved) {
-            const zoom = parseFloat(saved);
+        const savedZoom = localStorage.getItem('zoom-level');
+        const savedPan = localStorage.getItem('pan-offset');
+        
+        if (savedZoom) {
+            const zoom = parseFloat(savedZoom);
             if (!isNaN(zoom) && zoom >= this.minZoom && zoom <= this.maxZoom) {
                 this.currentZoom = zoom;
             }
         }
+        
+        if (savedPan) {
+            try {
+                this.panOffset = JSON.parse(savedPan);
+            } catch (e) {
+                this.panOffset = { x: 0, y: 0 };
+            }
+        }
     }
 
-    /**
-     * Obtém o zoom atual
-     */
     getCurrentZoom() {
         return this.currentZoom;
     }
 
-    /**
-     * Converte coordenadas do mouse para coordenadas do container
-     */
-    getContainerCoordinates(mouseX, mouseY) {
-        const rect = this.container.getBoundingClientRect();
-        return {
-            x: (mouseX - rect.left) / this.currentZoom,
-            y: (mouseY - rect.top) / this.currentZoom
-        };
-    }
-
-    /**
-     * Converte coordenadas do container para coordenadas da tela
-     */
-    getScreenCoordinates(containerX, containerY) {
-        const rect = this.container.getBoundingClientRect();
-        return {
-            x: containerX * this.currentZoom + rect.left,
-            y: containerY * this.currentZoom + rect.top
-        };
+    getPanOffset() {
+        return { ...this.panOffset };
     }
 }
 
-// Inicializar o sistema quando o DOM estiver pronto
+// Inicializar quando o DOM estiver pronto
 window.addEventListener('DOMContentLoaded', () => {
     window.zoomManager = new ZoomManager();
 });

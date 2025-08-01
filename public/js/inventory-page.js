@@ -463,7 +463,28 @@ function addFieldOrganizationControls() {
         }
     });
     
-    controlPanel.append(autoArrangeBtn, restoreBtn, resetBtn);
+    const resetPanBtn = document.createElement('button');
+    resetPanBtn.className = 'btn';
+    resetPanBtn.textContent = 'Resetar Vista';
+    resetPanBtn.title = 'Resetar posição da tela e zoom';
+    resetPanBtn.addEventListener('click', () => {
+        if (window.zoomManager) {
+            window.zoomManager.resetAll();
+        }
+    });
+    
+    const checkBoundsBtn = document.createElement('button');
+    checkBoundsBtn.className = 'btn';
+    checkBoundsBtn.textContent = 'Verificar Limites';
+    checkBoundsBtn.title = 'Verificar se campos estão dentro dos limites';
+    checkBoundsBtn.addEventListener('click', () => {
+        if (window.fieldManager) {
+            window.fieldManager.checkAllFieldBounds();
+            alert('Limites verificados! Campos fora dos limites terão borda vermelha.');
+        }
+    });
+    
+    controlPanel.append(autoArrangeBtn, restoreBtn, resetBtn, resetPanBtn, checkBoundsBtn);
     document.body.appendChild(controlPanel);
 }
 
@@ -471,6 +492,8 @@ function addFieldOrganizationControls() {
  * Inicialização principal
  */
 window.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 Iniciando sistema de inventário...');
+    
     // Configurar tema
     setupThemeToggle();
     
@@ -493,6 +516,22 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Aplicar configurações de layout
     applyLayoutSettings();
+    
+    // Aguardar um pouco para garantir que os managers sejam inicializados
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Verificar se os managers foram carregados
+    if (!window.fieldManager) {
+        console.error('❌ Field Manager não foi carregado!');
+    } else {
+        console.log('✅ Field Manager carregado com sucesso');
+    }
+    
+    if (!window.zoomManager) {
+        console.error('❌ Zoom Manager não foi carregado!');
+    } else {
+        console.log('✅ Zoom Manager carregado com sucesso');
+    }
     
     // Inicializar sistemas
     await initInventory();
@@ -523,5 +562,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Adicionar controles de organização dos campos
     addFieldOrganizationControls();
     
-    console.log('Sistema de inventário com campos customizáveis inicializado com sucesso!');
+    // Verificar campos após inicialização
+    setTimeout(() => {
+        const fields = document.querySelectorAll('.field');
+        console.log(`🎯 Sistema inicializado! ${fields.length} campos encontrados`);
+        
+        fields.forEach((field, index) => {
+            const rect = field.getBoundingClientRect();
+            console.log(`Campo ${index + 1}: ${field.dataset.field} em (${rect.left}, ${rect.top})`);
+        });
+    }, 500);
+    
+    console.log('✅ Sistema de inventário com campos customizáveis inicializado com sucesso!');
 });

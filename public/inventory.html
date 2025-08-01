@@ -13,9 +13,20 @@
 </head>
 
 <body>
+    <!-- Demarcação da área da tela -->
+    <div class="screen-boundary"></div>
+    <div class="screen-limits">ÁREA DA TELA</div>
+    
+    <!-- Indicadores de canto -->
+    <div class="screen-corner top-left"></div>
+    <div class="screen-corner top-right"></div>
+    <div class="screen-corner bottom-left"></div>
+    <div class="screen-corner bottom-right"></div>
+    
     <div id="user-welcome"></div>
     <button id="toggle-theme" class="btn">🌙</button>
     <div class="zoom-indicator" id="zoom-indicator">Zoom: 100%</div>
+    <div class="pan-indicator" id="pan-indicator">Arrastar tela: Clique com o scroll do mouse</div>
 
     <div id="drag-ghost"></div>
 
@@ -202,6 +213,7 @@
     <script type="module" src="js/dragdrop.js"></script>
     <script type="module" src="js/field-manager.js"></script>
     <script type="module" src="js/zoom-manager.js"></script>
+    <script type="module" src="js/debug.js"></script>
 </body>
 
 </html>

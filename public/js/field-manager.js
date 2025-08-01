@@ -1,6 +1,6 @@
 /**
- * Sistema de Gerenciamento de Campos Customizáveis
- * Permite arrastar, redimensionar e organizar campos como páginas em uma mesa
+ * Sistema de Gerenciamento de Campos
+ * Versão simplificada e robusta
  */
 
 class FieldManager {
@@ -17,19 +17,12 @@ class FieldManager {
         this.init();
     }
 
-    /**
-     * Inicializa o sistema
-     */
     init() {
-        this.loadFieldPositions();
         this.setupEventListeners();
         this.setupFieldControls();
-        this.preventOverlap();
+        this.loadFieldPositions();
     }
 
-    /**
-     * Configura os event listeners
-     */
     setupEventListeners() {
         document.addEventListener('mousemove', this.handleMouseMove.bind(this));
         document.addEventListener('mouseup', this.handleMouseUp.bind(this));
@@ -40,22 +33,8 @@ class FieldManager {
                 e.preventDefault();
             }
         });
-        
-        // Listener para mudanças de zoom
-        window.addEventListener('zoomChanged', this.handleZoomChange.bind(this));
     }
 
-    /**
-     * Manipula mudanças de zoom
-     */
-    handleZoomChange() {
-        // Recarregar posições quando o zoom mudar
-        this.loadFieldPositions();
-    }
-
-    /**
-     * Configura os controles de cada campo
-     */
     setupFieldControls() {
         const fields = document.querySelectorAll('.field');
         
@@ -67,7 +46,9 @@ class FieldManager {
             const header = field.querySelector('.field-header');
             if (header) {
                 header.addEventListener('mousedown', (e) => {
-                    this.startDrag(field, e);
+                    if (e.button === 0) { // Apenas botão esquerdo
+                        this.startDrag(field, e);
+                    }
                 });
             }
             
@@ -75,7 +56,9 @@ class FieldManager {
             const resizer = field.querySelector('.field-resizer');
             if (resizer) {
                 resizer.addEventListener('mousedown', (e) => {
-                    this.startResize(field, e);
+                    if (e.button === 0) { // Apenas botão esquerdo
+                        this.startResize(field, e);
+                    }
                 });
             }
             
@@ -90,19 +73,13 @@ class FieldManager {
         });
     }
 
-    /**
-     * Inicia o arrastar de um campo
-     */
     startDrag(field, event) {
         if (this.isResizing) return;
         
         this.isDragging = true;
         this.draggedField = field;
         
-        // Obter posição atual do campo
         const rect = field.getBoundingClientRect();
-        
-        // Calcular offset do mouse dentro do campo
         const offsetX = event.clientX - rect.left;
         const offsetY = event.clientY - rect.top;
         
@@ -121,13 +98,9 @@ class FieldManager {
         field.classList.add('dragging');
         document.body.style.cursor = 'grabbing';
         
-        // Prevenir eventos de zoom durante drag
         event.stopPropagation();
     }
 
-    /**
-     * Inicia o redimensionamento de um campo
-     */
     startResize(field, event) {
         if (this.isDragging) return;
         
@@ -145,13 +118,9 @@ class FieldManager {
         field.classList.add('resizing');
         document.body.style.cursor = 'se-resize';
         
-        // Prevenir eventos de zoom durante resize
         event.stopPropagation();
     }
 
-    /**
-     * Manipula o movimento do mouse
-     */
     handleMouseMove(event) {
         if (this.isDragging && this.draggedField) {
             this.handleDrag(event);
@@ -160,39 +129,60 @@ class FieldManager {
         }
     }
 
-    /**
-     * Manipula o arrastar
-     */
     handleDrag(event) {
-        // Obter zoom atual
-        const zoom = window.zoomManager ? window.zoomManager.getCurrentZoom() : 1;
-        
-        // Calcular nova posição considerando o zoom
         const newX = event.clientX - this.startPos.offsetX;
         const newY = event.clientY - this.startPos.offsetY;
         
-        // Permitir arrastar para qualquer lugar da tela
-        // Sem limites rígidos, apenas limites suaves para manter o campo visível
+        // Limites baseados na área da tela (com margem para a demarcação)
         const fieldWidth = this.draggedField.offsetWidth;
         const fieldHeight = this.draggedField.offsetHeight;
         
-        // Limites suaves baseados no tamanho da janela
-        const maxX = window.innerWidth - fieldWidth - 50;
-        const maxY = window.innerHeight - fieldHeight - 50;
-        const minX = -fieldWidth + 100; // Deixar pelo menos 100px visível
-        const minY = -fieldHeight + 100; // Deixar pelo menos 100px visível
+        // Limites da tela com margem para a demarcação
+        const screenMargin = 20; // Margem para a demarcação
+        const maxX = window.innerWidth - fieldWidth - screenMargin;
+        const maxY = window.innerHeight - fieldHeight - screenMargin;
+        const minX = screenMargin; // Respeitar a margem da demarcação
+        const minY = screenMargin; // Respeitar a margem da demarcação
         
         const clampedX = Math.max(minX, Math.min(newX, maxX));
         const clampedY = Math.max(minY, Math.min(newY, maxY));
         
-        // Aplicar posição absoluta
         this.draggedField.style.left = `${clampedX}px`;
         this.draggedField.style.top = `${clampedY}px`;
+        
+        // Verificar se está fora dos limites
+        this.checkFieldBounds(this.draggedField);
     }
 
     /**
-     * Manipula o redimensionamento
+     * Verifica se um campo está dentro dos limites da tela
      */
+    checkFieldBounds(field) {
+        const rect = field.getBoundingClientRect();
+        const screenMargin = 20;
+        
+        const isOutOfBounds = 
+            rect.left < screenMargin ||
+            rect.top < screenMargin ||
+            rect.right > window.innerWidth - screenMargin ||
+            rect.bottom > window.innerHeight - screenMargin;
+        
+        if (isOutOfBounds) {
+            field.classList.add('out-of-bounds');
+        } else {
+            field.classList.remove('out-of-bounds');
+        }
+    }
+
+    /**
+     * Verifica todos os campos para limites
+     */
+    checkAllFieldBounds() {
+        this.fields.forEach(field => {
+            this.checkFieldBounds(field);
+        });
+    }
+
     handleResize(event) {
         const deltaX = event.clientX - this.startMouse.x;
         const deltaY = event.clientY - this.startMouse.y;
@@ -200,22 +190,16 @@ class FieldManager {
         const newWidth = this.startSize.width + deltaX;
         const newHeight = this.startSize.height + deltaY;
         
-        // Limites mínimos e máximos
-        const minWidth = 200;
-        const minHeight = 150;
-        const maxWidth = window.innerWidth - 50;
-        const maxHeight = window.innerHeight - 50;
+        const minWidth = 150;
+        const minHeight = 100;
         
-        const clampedWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
-        const clampedHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+        const clampedWidth = Math.max(minWidth, newWidth);
+        const clampedHeight = Math.max(minHeight, newHeight);
         
         this.resizingField.style.width = `${clampedWidth}px`;
         this.resizingField.style.height = `${clampedHeight}px`;
     }
 
-    /**
-     * Manipula o fim do mouse
-     */
     handleMouseUp() {
         if (this.isDragging && this.draggedField) {
             this.endDrag();
@@ -224,9 +208,6 @@ class FieldManager {
         }
     }
 
-    /**
-     * Finaliza o arrastar
-     */
     endDrag() {
         this.draggedField.classList.remove('dragging');
         this.draggedField = null;
@@ -234,13 +215,9 @@ class FieldManager {
         document.body.style.cursor = '';
         
         this.saveFieldPositions();
-        // Não forçar prevenção de sobreposição para permitir campos em áreas vazias
-        // this.preventOverlap();
+        this.checkAllFieldBounds();
     }
 
-    /**
-     * Finaliza o redimensionamento
-     */
     endResize() {
         this.resizingField.classList.remove('resizing');
         this.resizingField = null;
@@ -248,12 +225,9 @@ class FieldManager {
         document.body.style.cursor = '';
         
         this.saveFieldPositions();
-        this.preventOverlap();
+        this.checkAllFieldBounds();
     }
 
-    /**
-     * Manipula os controles do campo
-     */
     handleFieldControl(field, button) {
         const title = button.title;
         
@@ -264,111 +238,41 @@ class FieldManager {
         }
     }
 
-    /**
-     * Minimiza/maximiza um campo
-     */
     toggleMinimize(field) {
         const content = field.querySelector('.field-content');
         const resizer = field.querySelector('.field-resizer');
         const isMinimized = field.classList.contains('minimized');
         
         if (isMinimized) {
-            // Restaurar
             field.classList.remove('minimized');
             content.style.display = '';
             resizer.style.display = '';
             field.style.height = field.dataset.originalHeight || 'auto';
         } else {
-            // Minimizar
             field.classList.add('minimized');
             field.dataset.originalHeight = field.style.height || field.offsetHeight + 'px';
             content.style.display = 'none';
             resizer.style.display = 'none';
-            field.style.height = '40px'; // Altura do cabeçalho
+            field.style.height = '40px';
         }
         
         this.saveFieldPositions();
     }
 
-    /**
-     * Fecha um campo
-     */
     closeField(field) {
         field.style.display = 'none';
         this.saveFieldPositions();
     }
 
-    /**
-     * Previne sobreposição de campos (apenas quando necessário)
-     */
-    preventOverlap() {
-        const fields = Array.from(this.fields.values()).filter(f => f.style.display !== 'none');
-        
-        for (let i = 0; i < fields.length; i++) {
-            for (let j = i + 1; j < fields.length; j++) {
-                const field1 = fields[i];
-                const field2 = fields[j];
-                
-                if (this.isOverlapping(field1, field2)) {
-                    this.resolveOverlap(field1, field2);
-                }
-            }
-        }
-    }
-
-    /**
-     * Verifica se dois campos estão sobrepostos
-     */
-    isOverlapping(field1, field2) {
-        const rect1 = field1.getBoundingClientRect();
-        const rect2 = field2.getBoundingClientRect();
-        
-        return !(rect1.right < rect2.left || 
-                rect1.left > rect2.right || 
-                rect1.bottom < rect2.top || 
-                rect1.top > rect2.bottom);
-    }
-
-    /**
-     * Resolve sobreposição entre dois campos
-     */
-    resolveOverlap(field1, field2) {
-        const rect1 = field1.getBoundingClientRect();
-        const rect2 = field2.getBoundingClientRect();
-        
-        // Calcular a sobreposição
-        const overlapX = Math.min(rect1.right, rect2.right) - Math.max(rect1.left, rect2.left);
-        const overlapY = Math.min(rect1.bottom, rect2.bottom) - Math.max(rect1.top, rect2.top);
-        
-        // Mover o segundo campo para resolver a sobreposição
-        if (overlapX > 0 && overlapY > 0) {
-            const currentLeft = parseInt(field2.style.left) || 0;
-            const currentTop = parseInt(field2.style.top) || 0;
-            
-            // Mover para a direita
-            field2.style.left = `${currentLeft + overlapX + 10}px`;
-            
-            // Se ainda houver sobreposição, mover para baixo
-            if (this.isOverlapping(field1, field2)) {
-                field2.style.top = `${currentTop + overlapY + 10}px`;
-            }
-        }
-    }
-
-    /**
-     * Salva as posições dos campos
-     */
     saveFieldPositions() {
         const positions = {};
-        const zoom = window.zoomManager ? window.zoomManager.getCurrentZoom() : 1;
         
         this.fields.forEach((field, id) => {
             const rect = field.getBoundingClientRect();
             
-            // Salvar posições considerando o zoom
             positions[id] = {
-                left: rect.left / zoom,
-                top: rect.top / zoom,
+                left: rect.left,
+                top: rect.top,
                 width: field.offsetWidth,
                 height: field.offsetHeight,
                 minimized: field.classList.contains('minimized'),
@@ -379,23 +283,18 @@ class FieldManager {
         localStorage.setItem('field-positions', JSON.stringify(positions));
     }
 
-    /**
-     * Carrega as posições dos campos
-     */
     loadFieldPositions() {
         const saved = localStorage.getItem('field-positions');
         if (!saved) return;
         
         try {
             const positions = JSON.parse(saved);
-            const zoom = window.zoomManager ? window.zoomManager.getCurrentZoom() : 1;
             
             Object.entries(positions).forEach(([id, pos]) => {
                 const field = document.querySelector(`[data-field="${id}"]`);
                 if (field) {
-                    // Aplicar posições considerando o zoom
-                    field.style.left = `${pos.left * zoom}px`;
-                    field.style.top = `${pos.top * zoom}px`;
+                    field.style.left = `${pos.left}px`;
+                    field.style.top = `${pos.top}px`;
                     field.style.width = `${pos.width}px`;
                     field.style.height = `${pos.height}px`;
                     
@@ -408,14 +307,16 @@ class FieldManager {
                     }
                 }
             });
+            
+            // Verificar limites após carregar posições
+            setTimeout(() => {
+                this.checkAllFieldBounds();
+            }, 100);
         } catch (error) {
             console.error('Erro ao carregar posições dos campos:', error);
         }
     }
 
-    /**
-     * Restaura todos os campos
-     */
     restoreAllFields() {
         this.fields.forEach(field => {
             field.style.display = '';
@@ -429,9 +330,6 @@ class FieldManager {
         this.saveFieldPositions();
     }
 
-    /**
-     * Reseta as posições dos campos para o padrão
-     */
     resetFieldPositions() {
         this.fields.forEach(field => {
             field.style.left = '';
@@ -443,31 +341,44 @@ class FieldManager {
         });
         
         localStorage.removeItem('field-positions');
-        this.preventOverlap();
     }
 
-    /**
-     * Organiza os campos automaticamente
-     */
     autoArrange() {
         const fields = Array.from(this.fields.values()).filter(f => f.style.display !== 'none');
-        const zoom = window.zoomManager ? window.zoomManager.getCurrentZoom() : 1;
         
-        // Usar dimensões da janela
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
         
-        const cols = 3;
-        const rows = Math.ceil(fields.length / cols);
-        const fieldWidth = (windowWidth - 100) / cols;
-        const fieldHeight = (windowHeight - 100) / rows;
+        // Layout adaptativo
+        let cols, rows;
+        if (fields.length <= 3) {
+            cols = 3;
+            rows = 1;
+        } else if (fields.length <= 6) {
+            cols = 3;
+            rows = 2;
+        } else {
+            cols = 4;
+            rows = Math.ceil(fields.length / 4);
+        }
+        
+        // Calcular espaçamento respeitando os limites da tela
+        const screenMargin = 40; // Margem para a demarcação
+        const availableWidth = windowWidth - (screenMargin * 2);
+        const availableHeight = windowHeight - (screenMargin * 2);
+        
+        const fieldWidth = Math.min(400, (availableWidth - (cols - 1) * 100) / cols);
+        const fieldHeight = Math.min(300, (availableHeight - (rows - 1) * 80) / rows);
+        const spacingX = 100;
+        const spacingY = 80;
         
         fields.forEach((field, index) => {
             const col = index % cols;
             const row = Math.floor(index / cols);
             
-            const left = (50 + col * (fieldWidth + 20)) * zoom;
-            const top = (50 + row * (fieldHeight + 20)) * zoom;
+            // Calcular posições respeitando os limites da tela
+            const left = screenMargin + col * (fieldWidth + spacingX);
+            const top = screenMargin + row * (fieldHeight + spacingY);
             
             field.style.left = `${left}px`;
             field.style.top = `${top}px`;
@@ -479,7 +390,7 @@ class FieldManager {
     }
 }
 
-// Inicializar o sistema quando o DOM estiver pronto
+// Inicializar quando o DOM estiver pronto
 window.addEventListener('DOMContentLoaded', () => {
     window.fieldManager = new FieldManager();
 });
