@@ -1,6 +1,6 @@
 /**
- * Sistema de Gerenciamento de Campos
- * Versão simplificada e robusta
+ * Gerenciador de Campos - Versão Híbrida
+ * Tenta usar Interact.js, mas tem fallback para sistema customizado
  */
 
 class FieldManager {
@@ -13,35 +13,93 @@ class FieldManager {
         this.startMouse = { x: 0, y: 0 };
         this.isDragging = false;
         this.isResizing = false;
-        
+        this.interactAvailable = false;
         this.init();
     }
 
-    init() {
-        this.setupEventListeners();
-        this.setupFieldControls();
-        this.loadFieldPositions();
+    async init() {
+        console.log('🔧 FieldManager: Iniciando...');
         
-        // Se não há posições salvas ou campos estão na posição padrão, fazer auto-arrange
-        const saved = localStorage.getItem('field-positions');
-        if (!saved) {
-            setTimeout(() => {
-                this.autoArrange();
-            }, 100);
-        } else {
-            // Verificar se algum campo está na posição (0,0) - indicando posição padrão
-            const hasDefaultPosition = Array.from(this.fields.values()).some(field => {
-                const left = parseInt(field.style.left) || 0;
-                const top = parseInt(field.style.top) || 0;
-                return left === 0 && top === 0;
-            });
-            
-            if (hasDefaultPosition) {
-                setTimeout(() => {
-                    this.autoArrange();
-                }, 100);
-            }
+        // Verificar se o container existe
+        const container = document.querySelector('.ficha-container');
+        if (!container) {
+            console.error('🔧 FieldManager: Container .ficha-container não encontrado!');
+            return;
         }
+        console.log('🔧 FieldManager: Container encontrado:', container);
+        
+        // Tentar carregar Interact.js
+        await this.tryLoadInteract();
+        
+        if (this.interactAvailable) {
+            console.log('🔧 FieldManager: Usando Interact.js');
+            this.initInteract();
+        } else {
+            console.log('🔧 FieldManager: Usando sistema customizado');
+            this.initCustomSystem();
+        }
+        
+        this.loadFieldPositions();
+        this.setupFieldControls();
+        
+        console.log('🔧 FieldManager: Inicialização completa');
+        console.log('🔧 FieldManager: Campos encontrados:', this.fields.size);
+    }
+
+    async tryLoadInteract() {
+        try {
+            // Tentar importar Interact.js
+            const interactModule = await import('interactjs');
+            this.interact = interactModule.default;
+            this.interactAvailable = true;
+            console.log('✅ Interact.js carregado com sucesso');
+        } catch (error) {
+            console.warn('⚠️ Interact.js não disponível, usando sistema customizado');
+            this.interactAvailable = false;
+        }
+    }
+
+    initInteract() {
+        if (!this.interact) return;
+        
+        // Configurar drag para todos os campos
+        this.interact('.field')
+            .draggable({
+                inertia: true,
+                modifiers: [
+                    this.interact.modifiers.restrictRect({
+                        restriction: 'parent',
+                        endOnly: true
+                    })
+                ],
+                autoScroll: true,
+                listeners: {
+                    start: this.dragStartListener.bind(this),
+                    move: this.dragMoveListener.bind(this),
+                    end: this.dragEndListener.bind(this)
+                }
+            })
+            .resizable({
+                edges: { right: true, bottom: true, left: true, top: true },
+                margin: 10,
+                modifiers: [
+                    this.interact.modifiers.restrictEdges({
+                        outer: 'parent',
+                        endOnly: true
+                    }),
+                    this.interact.modifiers.restrictSize({
+                        min: { width: 200, height: 150 }
+                    })
+                ],
+                listeners: {
+                    move: this.resizeMoveListener.bind(this)
+                }
+            });
+    }
+
+    initCustomSystem() {
+        this.setupEventListeners();
+        this.setupFieldDrag();
     }
 
     setupEventListeners() {
@@ -50,23 +108,46 @@ class FieldManager {
         
         // Prevenir seleção de texto durante drag
         document.addEventListener('selectstart', (e) => {
+            // Não interferir com drag de itens
+            if (e.target.closest('.item') || e.target.closest('#item-list') || 
+                e.target.closest('#drag-ghost') || e.target.closest('#inventory') ||
+                (window.draggedItem && window.draggedItem !== null)) { // Verificar se há um item sendo arrastado globalmente
+                return;
+            }
+            
             if (this.isDragging || this.isResizing) {
                 e.preventDefault();
             }
         });
     }
 
-    setupFieldControls() {
+    setupFieldDrag() {
         const fields = document.querySelectorAll('.field');
+        console.log('🔧 FieldManager: Encontrados', fields.length, 'campos');
         
         fields.forEach(field => {
             const fieldId = field.dataset.field;
+            console.log('🔧 FieldManager: Configurando campo:', fieldId);
             this.fields.set(fieldId, field);
             
             // Configurar drag do cabeçalho
             const header = field.querySelector('.field-header');
             if (header) {
                 header.addEventListener('mousedown', (e) => {
+                    // Verificar se não está arrastando um item
+                    if (e.target.closest('.item') || e.target.closest('#item-list') ||
+                        (window.draggedItem && window.draggedItem !== null)) { // Verificar se há um item sendo arrastado globalmente
+                        return; // Não interferir com drag de itens
+                    }
+                    
+                    // Verificação especial para o campo de inventário
+                    if (field.classList.contains('field-inventory')) {
+                        // Permitir drag apenas no cabeçalho, não no conteúdo
+                        if (!e.target.closest('.field-header')) {
+                            return;
+                        }
+                    }
+                    
                     if (e.button === 0) { // Apenas botão esquerdo
                         this.startDrag(field, e);
                     }
@@ -77,41 +158,68 @@ class FieldManager {
             const resizer = field.querySelector('.field-resizer');
             if (resizer) {
                 resizer.addEventListener('mousedown', (e) => {
+                    // Verificar se não está arrastando um item
+                    if (e.target.closest('.item') || e.target.closest('#item-list') ||
+                        (window.draggedItem && window.draggedItem !== null)) { // Verificar se há um item sendo arrastado globalmente
+                        return; // Não interferir com drag de itens
+                    }
+                    
                     if (e.button === 0) { // Apenas botão esquerdo
                         this.startResize(field, e);
                     }
                 });
             }
-            
-            // Configurar controles do cabeçalho
-            const controls = field.querySelectorAll('.field-control-btn');
-            controls.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.handleFieldControl(field, btn);
-                });
-            });
         });
     }
 
     startDrag(field, event) {
         if (this.isResizing) return;
         
+        // Verificar se não está arrastando um item
+        if (event.target.closest('.item') || event.target.closest('#item-list') || 
+            event.target.closest('#drag-ghost') || event.target.closest('#inventory') ||
+            (window.draggedItem && window.draggedItem !== null)) { // Verificar se há um item sendo arrastado globalmente
+            return; // Não interferir com drag de itens
+        }
+        
         this.isDragging = true;
         this.draggedField = field;
         
-        // Calcular offset simples baseado na posição do mouse
+        // Obter coordenadas do mouse no espaço do container (considerando zoom e pan)
+        const containerCoords = window.zoomManager ? 
+            window.zoomManager.getContainerCoordinates(event.clientX, event.clientY) : 
+            { x: event.clientX, y: event.clientY };
+        
+        // Obter a posição atual do campo no espaço do container
         const rect = field.getBoundingClientRect();
-        this.offsetX = event.clientX - rect.left;
-        this.offsetY = event.clientY - rect.top;
+        const fieldContainerCoords = window.zoomManager ? 
+            window.zoomManager.getContainerCoordinates(rect.left, rect.top) : 
+            { x: rect.left, y: rect.top };
+        
+        this.startFieldLeft = fieldContainerCoords.x;
+        this.startFieldTop = fieldContainerCoords.y;
+        this.startMouseX = containerCoords.x;
+        this.startMouseY = containerCoords.y;
+        
+        // Garantir que o campo tenha posição absoluta
+        if (field.style.position !== 'absolute') {
+            field.style.position = 'absolute';
+        }
         
         field.classList.add('dragging');
         document.body.style.cursor = 'grabbing';
         event.stopPropagation();
+        event.preventDefault();
     }
 
     startResize(field, event) {
         if (this.isDragging) return;
+        
+        // Verificar se não está arrastando um item
+        if (event.target.closest('.item') || event.target.closest('#item-list') ||
+            (window.draggedItem && window.draggedItem !== null)) { // Verificar se há um item sendo arrastado globalmente
+            return; // Não interferir com drag de itens
+        }
         
         this.isResizing = true;
         this.resizingField = field;
@@ -124,16 +232,20 @@ class FieldManager {
             y: event.clientY
         };
         
-        // Determinar tipo de redimensionamento
-        this.resizeType = field.classList.contains('field-items') ? 'horizontal' : 'both';
-        
         field.classList.add('resizing');
-        document.body.style.cursor = this.resizeType === 'horizontal' ? 'ew-resize' : 'se-resize';
+        document.body.style.cursor = 'se-resize';
         
         event.stopPropagation();
     }
 
     handleMouseMove(event) {
+        // Verificar se não está arrastando um item
+        if (event.target.closest('.item') || event.target.closest('#item-list') || 
+            event.target.closest('#drag-ghost') || event.target.closest('#inventory') ||
+            (window.draggedItem && window.draggedItem !== null)) { // Verificar se há um item sendo arrastado globalmente
+            return; // Não interferir com drag de itens
+        }
+        
         if (this.isDragging && this.draggedField) {
             this.handleDrag(event);
         } else if (this.isResizing && this.resizingField) {
@@ -144,46 +256,47 @@ class FieldManager {
     handleDrag(event) {
         if (!this.isDragging || !this.draggedField) return;
         
-        // Calcular nova posição baseada no mouse
-        const newLeft = event.clientX - this.offsetX;
-        const newTop = event.clientY - this.offsetY;
+        // Verificar se não está arrastando um item
+        if (event.target.closest('.item') || event.target.closest('#item-list') || 
+            event.target.closest('#drag-ghost') || event.target.closest('#inventory') ||
+            (window.draggedItem && window.draggedItem !== null)) { // Verificar se há um item sendo arrastado globalmente
+            return; // Não interferir com drag de itens
+        }
+        
+        // Obter coordenadas do mouse no espaço do container (considerando zoom e pan)
+        const containerCoords = window.zoomManager ? 
+            window.zoomManager.getContainerCoordinates(event.clientX, event.clientY) : 
+            { x: event.clientX, y: event.clientY };
+        
+        // Calcular o delta de movimento do mouse no espaço do container
+        const deltaX = containerCoords.x - this.startMouseX;
+        const deltaY = containerCoords.y - this.startMouseY;
+        
+        // Aplicar o delta à posição inicial do campo
+        const newLeft = this.startFieldLeft + deltaX;
+        const newTop = this.startFieldTop + deltaY;
+        
+        // Garantir que o campo tenha posição absoluta
+        if (this.draggedField.style.position !== 'absolute') {
+            this.draggedField.style.position = 'absolute';
+        }
         
         // Aplicar nova posição diretamente
         this.draggedField.style.left = `${newLeft}px`;
         this.draggedField.style.top = `${newTop}px`;
-    }
-
-    /**
-     * Verifica se um campo está dentro dos limites da tela
-     */
-    checkFieldBounds(field) {
-        const rect = field.getBoundingClientRect();
-        const screenMargin = 20;
         
-        const isOutOfBounds = 
-            rect.left < screenMargin ||
-            rect.top < screenMargin ||
-            rect.right > window.innerWidth - screenMargin ||
-            rect.bottom > window.innerHeight - screenMargin;
-        
-        if (isOutOfBounds) {
-            field.classList.add('out-of-bounds');
-        } else {
-            field.classList.remove('out-of-bounds');
-        }
-    }
-
-    /**
-     * Verifica todos os campos para limites
-     */
-    checkAllFieldBounds() {
-        this.fields.forEach(field => {
-            this.checkFieldBounds(field);
-        });
+        // Prevenir seleção de texto durante o drag
+        event.preventDefault();
     }
 
     handleResize(event) {
         if (!this.isResizing || !this.resizingField) return;
+        
+        // Verificar se não está arrastando um item
+        if (event.target.closest('.item') || event.target.closest('#item-list') ||
+            (window.draggedItem && window.draggedItem !== null)) { // Verificar se há um item sendo arrastado globalmente
+            return; // Não interferir com drag de itens
+        }
         
         const deltaX = event.clientX - this.startMouse.x;
         const deltaY = event.clientY - this.startMouse.y;
@@ -220,8 +333,6 @@ class FieldManager {
         document.body.style.cursor = '';
         
         this.saveFieldPositions();
-        // Verificação de limites desativada
-        // this.checkAllFieldBounds();
     }
 
     endResize() {
@@ -231,57 +342,103 @@ class FieldManager {
         document.body.style.cursor = '';
         
         this.saveFieldPositions();
-        // Verificação de limites desativada
-        // this.checkAllFieldBounds();
     }
 
-    handleFieldControl(field, button) {
-        const title = button.title;
+    // Métodos do Interact.js
+    dragStartListener(event) {
+        event.target.classList.add('dragging');
+        event.target.style.zIndex = '1000';
+    }
+
+    dragMoveListener(event) {
+        const target = event.target;
         
-        if (title === 'Minimizar') {
-            this.toggleMinimize(field);
-        } else if (title === 'Fechar') {
-            this.closeField(field);
-        }
+        // Interact.js já lida com zoom automaticamente!
+        const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+        const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+        target.style.transform = `translate(${x}px, ${y}px)`;
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
     }
 
-    toggleMinimize(field) {
+    dragEndListener(event) {
+        const target = event.target;
+        target.classList.remove('dragging');
+        target.style.zIndex = '';
+        
+        // Salvar posição
+        this.saveFieldPosition(target);
+    }
+
+    resizeMoveListener(event) {
+        const target = event.target;
+        
+        // Atualizar tamanho
+        target.style.width = event.rect.width + 'px';
+        target.style.height = event.rect.height + 'px';
+
+        // Atualizar posição se necessário
+        const x = (parseFloat(target.getAttribute('data-x')) || 0);
+        const y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+        target.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    setupFieldControls() {
+        // Configurar botões de minimizar e fechar
+        document.querySelectorAll('.field-control-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevenir início do drag
+                
+                const field = btn.closest('.field');
+                const title = btn.getAttribute('title');
+                
+                if (title === 'Minimizar') {
+                    this.toggleMinimize(field, btn);
+                } else if (title === 'Fechar') {
+                    this.closeField(field);
+                }
+            });
+        });
+    }
+
+    toggleMinimize(field, btn) {
         const content = field.querySelector('.field-content');
-        const resizer = field.querySelector('.field-resizer');
-        const isMinimized = field.classList.contains('minimized');
+        const isMinimized = content.style.display === 'none';
         
         if (isMinimized) {
-            field.classList.remove('minimized');
-            content.style.display = '';
-            resizer.style.display = '';
-            if (field.classList.contains('field-items')) {
-                field.style.width = field.dataset.originalWidth || '300px';
-            } else {
-                field.style.height = field.dataset.originalHeight || 'auto';
-            }
+            content.style.display = 'block';
+            btn.textContent = '−';
+            btn.title = 'Minimizar';
         } else {
-            field.classList.add('minimized');
-            if (field.classList.contains('field-items')) {
-                field.dataset.originalWidth = field.style.width || field.offsetWidth + 'px';
-                field.style.width = '40px';
-            } else {
-                field.dataset.originalHeight = field.style.height || field.offsetHeight + 'px';
-                content.style.display = 'none';
-                resizer.style.display = 'none';
-                field.style.height = '40px';
-            }
+            content.style.display = 'none';
+            btn.textContent = '+';
+            btn.title = 'Expandir';
         }
-        
-        this.saveFieldPositions();
     }
 
     closeField(field) {
-        // Em vez de apenas esconder, enviar para a aba lateral direita
+        const fieldId = field.dataset.field;
+        
+        // Adicionar à lista de campos fechados
         if (window.sidebarManager) {
-            window.sidebarManager.addClosedField(field);
+            window.sidebarManager.addClosedField(fieldId, field);
         }
+        
+        // Ocultar o campo
         field.style.display = 'none';
-        this.saveFieldPositions();
+    }
+
+    saveFieldPosition(field) {
+        const fieldId = field.dataset.field;
+        const x = parseFloat(field.getAttribute('data-x')) || 0;
+        const y = parseFloat(field.getAttribute('data-y')) || 0;
+        const width = field.style.width;
+        const height = field.style.height;
+
+        const position = { x, y, width, height };
+        localStorage.setItem(`field-${fieldId}`, JSON.stringify(position));
     }
 
     saveFieldPositions() {
@@ -304,182 +461,174 @@ class FieldManager {
     }
 
     loadFieldPositions() {
-        const saved = localStorage.getItem('field-positions');
-        if (!saved) return;
+        console.log('🔧 FieldManager: Carregando posições dos campos...');
         
-        try {
-            const positions = JSON.parse(saved);
-            
-            Object.entries(positions).forEach(([id, pos]) => {
-                const field = document.querySelector(`[data-field="${id}"]`);
-                if (field) {
-                    field.style.left = `${pos.left}px`;
-                    field.style.top = `${pos.top}px`;
-                    field.style.width = `${pos.width}px`;
-                    field.style.height = `${pos.height}px`;
+        if (this.interactAvailable) {
+            // Carregar posições para Interact.js
+            document.querySelectorAll('.field').forEach(field => {
+                const fieldId = field.dataset.field;
+                const saved = localStorage.getItem(`field-${fieldId}`);
+                
+                if (saved) {
+                    const position = JSON.parse(saved);
+                    field.setAttribute('data-x', position.x);
+                    field.setAttribute('data-y', position.y);
+                    field.style.transform = `translate(${position.x}px, ${position.y}px)`;
                     
-                    if (pos.minimized) {
-                        this.toggleMinimize(field);
-                    }
-                    
-                    if (!pos.visible) {
-                        field.style.display = 'none';
-                    }
+                    if (position.width) field.style.width = position.width;
+                    if (position.height) field.style.height = position.height;
                 }
             });
-            
-            // Verificar limites após carregar posições
-            setTimeout(() => {
-                // Verificação de limites desativada
-                // this.checkAllFieldBounds();
-            }, 100);
-        } catch (error) {
-            console.error('Erro ao carregar posições dos campos:', error);
-        }
-    }
-
-    restoreAllFields() {
-        this.fields.forEach(field => {
-            field.style.display = '';
-            field.classList.remove('minimized');
-            const content = field.querySelector('.field-content');
-            const resizer = field.querySelector('.field-resizer');
-            if (content) content.style.display = '';
-            if (resizer) resizer.style.display = '';
-        });
-        
-        this.saveFieldPositions();
-    }
-
-    resetFieldPositions() {
-        this.fields.forEach(field => {
-            field.style.left = '';
-            field.style.top = '';
-            field.style.width = '';
-            field.style.height = '';
-            field.style.display = '';
-            field.classList.remove('minimized');
-        });
-        
-        localStorage.removeItem('field-positions');
-    }
-
-    autoArrange() {
-        const fields = Array.from(this.fields.values()).filter(f => f.style.display !== 'none');
-        
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        
-        // Considerar as abas laterais
-        const leftSidebarWidth = 300; // Aba esquerda (itens)
-        const rightSidebarWidth = 270; // Aba direita (telas fechadas)
-        
-        // Área disponível para os campos (dentro do ficha-container)
-        const availableWidth = windowWidth - leftSidebarWidth - rightSidebarWidth - 40; // -40px para padding
-        const availableHeight = windowHeight - 40; // -40px para padding
-        
-        // Layout adaptativo
-        let cols, rows;
-        if (fields.length <= 3) {
-            cols = 3;
-            rows = 1;
-        } else if (fields.length <= 6) {
-            cols = 3;
-            rows = 2;
         } else {
-            cols = 4;
-            rows = Math.ceil(fields.length / 4);
+            // Carregar posições para sistema customizado
+            const saved = localStorage.getItem('field-positions');
+            if (!saved) {
+                console.log('🔧 FieldManager: Nenhuma posição salva encontrada, usando posições padrão');
+                // Definir posições padrão se não houver posições salvas
+                this.setDefaultPositions();
+                return;
+            }
+            
+            try {
+                const positions = JSON.parse(saved);
+                console.log('🔧 FieldManager: Posições carregadas:', positions);
+                
+                Object.entries(positions).forEach(([id, pos]) => {
+                    const field = document.querySelector(`[data-field="${id}"]`);
+                    if (field) {
+                        field.style.left = `${pos.left}px`;
+                        field.style.top = `${pos.top}px`;
+                        field.style.width = `${pos.width}px`;
+                        field.style.height = `${pos.height}px`;
+                        
+                        if (pos.minimized) {
+                            this.toggleMinimize(field, field.querySelector('.field-control-btn[title="Minimizar"]'));
+                        }
+                        
+                        if (!pos.visible) {
+                            field.style.display = 'none';
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Erro ao carregar posições dos campos:', error);
+                // Em caso de erro, usar posições padrão
+                this.setDefaultPositions();
+            }
         }
+    }
+    
+    setDefaultPositions() {
+        console.log('🔧 FieldManager: Definindo posições padrão...');
         
-        // Calcular espaçamento respeitando as abas laterais
-        const screenMargin = 20;
-        const fieldWidth = Math.min(400, (availableWidth - (cols - 1) * 100) / cols);
-        const fieldHeight = Math.min(300, (availableHeight - (rows - 1) * 80) / rows);
-        const spacingX = 100;
-        const spacingY = 80;
+        const fields = document.querySelectorAll('.field');
+        const positions = {
+            'attributes': { left: 50, top: 50, width: 300, height: 200, visible: true },
+            'inventory': { left: 370, top: 50, width: 400, height: 300, visible: true },
+            'body': { left: 50, top: 270, width: 300, height: 250, visible: true },
+            'skills': { left: 370, top: 370, width: 300, height: 200, visible: true },
+            'spells': { left: 690, top: 370, width: 300, height: 200, visible: true }
+        };
         
-        fields.forEach((field, index) => {
-            const col = index % cols;
-            const row = Math.floor(index / cols);
-            
-            // Calcular posições dentro do ficha-container (sem considerar as abas)
-            const left = screenMargin + col * (fieldWidth + spacingX);
-            const top = screenMargin + row * (fieldHeight + spacingY);
-            
-            field.style.left = `${left}px`;
-            field.style.top = `${top}px`;
-            field.style.width = `${fieldWidth}px`;
-            field.style.height = `${fieldHeight}px`;
+        Object.entries(positions).forEach(([id, pos]) => {
+            const field = document.querySelector(`[data-field="${id}"]`);
+            if (field) {
+                console.log('🔧 FieldManager: Posicionando campo', id, 'em', pos.left, pos.top);
+                field.style.left = `${pos.left}px`;
+                field.style.top = `${pos.top}px`;
+                field.style.width = `${pos.width}px`;
+                field.style.height = `${pos.height}px`;
+                field.style.display = 'block';
+                field.style.position = 'absolute';
+                field.style.visibility = 'visible';
+                field.style.opacity = '1';
+                field.style.zIndex = '10';
+            } else {
+                console.error('🔧 FieldManager: Campo não encontrado:', id);
+            }
         });
         
-        this.saveFieldPositions();
+        // Verificar se todos os campos estão visíveis
+        setTimeout(() => {
+            const allFields = document.querySelectorAll('.field');
+            console.log('🔧 FieldManager: Verificação final - campos encontrados:', allFields.length);
+            allFields.forEach(field => {
+                const rect = field.getBoundingClientRect();
+                console.log('🔧 FieldManager: Campo', field.dataset.field, '- visível:', rect.width > 0 && rect.height > 0, '- posição:', rect.left, rect.top);
+            });
+        }, 100);
     }
 
-    /**
-     * Calcula o tamanho mínimo necessário para um campo baseado no seu conteúdo
-     */
-    calculateMinSize(field) {
-        const content = field.querySelector('.field-content');
-        if (!content) return { width: 200, height: 150 };
-
-        // Obter dimensões do conteúdo
-        const contentRect = content.getBoundingClientRect();
-        const scrollWidth = content.scrollWidth;
-        const scrollHeight = content.scrollHeight;
+    // Método para adicionar novo campo dinamicamente
+    addField(fieldElement) {
+        const fieldId = fieldElement.dataset.field;
+        this.fields.set(fieldId, fieldElement);
         
-        // Calcular tamanho mínimo baseado no conteúdo
-        let minWidth = Math.max(200, scrollWidth + 40); // 40px para padding e bordas
-        let minHeight = Math.max(150, scrollHeight + 60); // 60px para header e padding
-        
-        // Aplicar limites máximos
-        minWidth = Math.min(minWidth, window.innerWidth * 0.8);
-        minHeight = Math.min(minHeight, window.innerHeight * 0.8);
-        
-        return { width: minWidth, height: minHeight };
+        if (this.interactAvailable && this.interact) {
+            // Configurar Interact.js para o novo campo
+            this.interact(fieldElement)
+                .draggable({
+                    inertia: true,
+                    modifiers: [
+                        this.interact.modifiers.restrictRect({
+                            restriction: 'parent',
+                            endOnly: true
+                        })
+                    ],
+                    autoScroll: true,
+                    listeners: {
+                        start: this.dragStartListener.bind(this),
+                        move: this.dragMoveListener.bind(this),
+                        end: this.dragEndListener.bind(this)
+                    }
+                })
+                .resizable({
+                    edges: { right: true, bottom: true, left: true, top: true },
+                    margin: 10,
+                    modifiers: [
+                        this.interact.modifiers.restrictEdges({
+                            outer: 'parent',
+                            endOnly: true
+                        }),
+                        this.interact.modifiers.restrictSize({
+                            min: { width: 200, height: 150 }
+                        })
+                    ],
+                    listeners: {
+                        move: this.resizeMoveListener.bind(this)
+                    }
+                });
+        } else {
+            // Configurar sistema customizado para o novo campo
+            const header = fieldElement.querySelector('.field-header');
+            if (header) {
+                header.addEventListener('mousedown', (e) => {
+                    if (e.button === 0) {
+                        this.startDrag(fieldElement, e);
+                    }
+                });
+            }
+        }
     }
 
-    /**
-     * Aplica tamanho mínimo se necessário
-     */
-    applyMinSize(field) {
-        const currentWidth = field.offsetWidth;
-        const currentHeight = field.offsetHeight;
-        const minSize = this.calculateMinSize(field);
-        
-        let needsResize = false;
-        let newWidth = currentWidth;
-        let newHeight = currentHeight;
-        
-        if (currentWidth < minSize.width) {
-            newWidth = minSize.width;
-            needsResize = true;
+    // Método para remover campo
+    removeField(fieldId) {
+        const field = this.fields.get(fieldId);
+        if (field) {
+            if (this.interactAvailable && this.interact) {
+                this.interact(field).unset();
+            }
+            this.fields.delete(fieldId);
         }
-        
-        if (currentHeight < minSize.height) {
-            newHeight = minSize.height;
-            needsResize = true;
-        }
-        
-        if (needsResize) {
-            field.style.width = `${newWidth}px`;
-            field.style.height = `${newHeight}px`;
-            this.saveFieldPositions();
-        }
-    }
-
-    /**
-     * Aplica tamanho mínimo para todos os campos
-     */
-    applyMinSizeToAll() {
-        this.fields.forEach(field => {
-            this.applyMinSize(field);
-        });
     }
 }
 
 // Inicializar quando o DOM estiver pronto
 window.addEventListener('DOMContentLoaded', () => {
-    window.fieldManager = new FieldManager();
+    console.log('🔧 FieldManager: DOM carregado, criando instância...');
+    if (!window.fieldManager) {
+        window.fieldManager = new FieldManager();
+    }
 });
 
 export default FieldManager; 

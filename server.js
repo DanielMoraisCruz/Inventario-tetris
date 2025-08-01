@@ -1,26 +1,29 @@
 const express = require('express');
 const path = require('path');
-let helmet;
-try {
-	helmet = require('helmet');
-} catch (e) {
-	console.warn('Helmet module not found. Continuing without it.');
-}
-const { body, validationResult } = require('express-validator');
-const { ensureUsersFile, loadUsers } = require('./server/storage');
+const { 
+  compressionMiddleware, 
+  securityMiddleware, 
+  optimizedLogger, 
+  optimizedValidation, 
+  validators,
+  authCacheMiddleware
+} = require('./server/middleware/optimization');
+const { ensureUsersFile, loadUsers } = require('./server/storage-optimized');
 const {
 	registerUser,
 	authenticateUser,
 	resetPassword
-} = require('./server/auth');
+} = require('./server/auth-optimized');
 const { authRateLimit } = require('./server/rate-limiter');
 
 const app = express();
 
+// Middlewares de otimização
+app.use(compressionMiddleware());
+app.use(securityMiddleware());
+app.use(optimizedLogger);
 app.use(express.json());
-if (helmet) {
-	app.use(helmet());
-}
+app.use(authCacheMiddleware()); // Cache específico para autenticação
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Inicializar arquivo de usuários de forma assíncrona
@@ -35,17 +38,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post(
   '/register',
   authRateLimit,
-  [
-    body('username').trim().notEmpty().withMessage('Nome de usuário é obrigatório.'),
-    body('password').notEmpty().withMessage('Senha é obrigatória.'),
-    body('pergunta').optional().isString(),
-    body('resposta').optional().isString()
-  ],
+  optimizedValidation({
+    username: [validators.required, validators.minLength(3), validators.maxLength(20)],
+    password: [validators.required, validators.minLength(6)],
+    pergunta: [validators.maxLength(200)],
+    resposta: [validators.maxLength(200)]
+  }),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
     const { username, password, pergunta, resposta } = req.body;
     try {
       const result = await registerUser(username, password, pergunta, resposta);
@@ -65,15 +64,11 @@ app.post(
 app.post(
   '/login',
   authRateLimit,
-  [
-    body('username').trim().notEmpty().withMessage('Nome de usuário é obrigatório.'),
-    body('password').notEmpty().withMessage('Senha é obrigatória.')
-  ],
+  optimizedValidation({
+    username: [validators.required],
+    password: [validators.required]
+  }),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
     const { username, password } = req.body;
     try {
       const result = await authenticateUser(username, password);
@@ -97,16 +92,12 @@ app.post(
 app.post(
   '/reset-password',
   authRateLimit,
-  [
-    body('username').trim().notEmpty().withMessage('Nome de usuário é obrigatório.'),
-    body('resposta').notEmpty().withMessage('Resposta é obrigatória.'),
-    body('novaSenha').notEmpty().withMessage('Nova senha é obrigatória.')
-  ],
+  optimizedValidation({
+    username: [validators.required],
+    resposta: [validators.required],
+    novaSenha: [validators.required, validators.minLength(6)]
+  }),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
     const { username, resposta, novaSenha } = req.body;
     try {
       const result = await resetPassword(username, resposta, novaSenha);

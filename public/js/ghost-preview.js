@@ -32,8 +32,25 @@ export function getLastGhostPos() {
 
 export function computeGridPosition(pageX, pageY) {
     const invRect = inventory.getBoundingClientRect();
-    const relX = pageX - window.scrollX - invRect.left;
-    const relY = pageY - window.scrollY - invRect.top;
+    
+    // Considerar zoom e pan se o ZoomManager estiver disponível
+    let relX, relY;
+    
+    if (window.zoomManager) {
+        // Converter coordenadas da página para coordenadas do container
+        const containerCoords = window.zoomManager.getContainerCoordinates(pageX, pageY);
+        
+        // Obter posição do inventário no espaço do container
+        const invContainerCoords = window.zoomManager.getContainerCoordinates(invRect.left, invRect.top);
+        
+        relX = containerCoords.x - invContainerCoords.x;
+        relY = containerCoords.y - invContainerCoords.y;
+    } else {
+        // Fallback para quando não há zoom/pan
+        relX = pageX - window.scrollX - invRect.left;
+        relY = pageY - window.scrollY - invRect.top;
+    }
+    
     const total = getCellSize() + CELL_GAP;
     let gridX = Math.floor(relX / total);
     let gridY = Math.floor(relY / total);
@@ -71,9 +88,33 @@ export function showGhostOnGrid(gridX, gridY, draggedItem) {
         dragGhost.appendChild(img);
     }
 
+    // Posicionar o ghost considerando zoom e pan
     const invRect = inventory.getBoundingClientRect();
-    dragGhost.style.left = (invRect.left + gridX * total) + 'px';
-    dragGhost.style.top = (invRect.top + gridY * total) + 'px';
+    
+    if (window.zoomManager) {
+        // Calcular posição no espaço da página considerando zoom e pan
+        const zoom = window.zoomManager.getCurrentZoom();
+        const panOffset = window.zoomManager.getPanOffset();
+        
+        // Posição base do inventário no espaço da página
+        const baseLeft = invRect.left;
+        const baseTop = invRect.top;
+        
+        // Aplicar transformação do zoom e pan
+        const ghostLeft = baseLeft + (gridX * total * zoom) + panOffset.x;
+        const ghostTop = baseTop + (gridY * total * zoom) + panOffset.y;
+        
+        dragGhost.style.left = ghostLeft + 'px';
+        dragGhost.style.top = ghostTop + 'px';
+        
+        // Ajustar tamanho do ghost para o zoom
+        dragGhost.style.width = (currentPreviewSize.width * total * zoom - CELL_GAP - 2) + 'px';
+        dragGhost.style.height = (currentPreviewSize.height * total * zoom - CELL_GAP - 2) + 'px';
+    } else {
+        // Fallback para quando não há zoom/pan
+        dragGhost.style.left = (invRect.left + gridX * total) + 'px';
+        dragGhost.style.top = (invRect.top + gridY * total) + 'px';
+    }
 
     removePreview();
     if (valid) {

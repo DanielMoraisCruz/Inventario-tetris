@@ -144,7 +144,7 @@ class SidebarManager {
         // Criar clone para drag
         const dragClone = fieldData.originalField.cloneNode(true);
         dragClone.style.position = 'fixed';
-        dragClone.style.zIndex = '10000';
+        dragClone.style.zIndex = '5000';
         dragClone.style.opacity = '0.8';
         dragClone.style.pointerEvents = 'none';
         document.body.appendChild(dragClone);

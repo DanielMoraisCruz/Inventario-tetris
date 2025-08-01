@@ -496,6 +496,16 @@ function addFieldOrganizationControls() {
         }
     });
 
+    const centerItemsBtn = document.createElement('button');
+    centerItemsBtn.className = 'btn';
+    centerItemsBtn.textContent = 'Centralizar Itens';
+    centerItemsBtn.title = 'Centralizar a tela para mostrar todos os itens';
+    centerItemsBtn.addEventListener('click', () => {
+        if (window.zoomManager) {
+            window.zoomManager.centerOnItems();
+        }
+    });
+
     const testSidebarBtn = document.createElement('button');
     testSidebarBtn.className = 'btn';
     testSidebarBtn.textContent = 'Testar Aba';
@@ -530,7 +540,7 @@ function addFieldOrganizationControls() {
         }
     });
 
-    controlPanel.append(autoArrangeBtn, restoreBtn, resetBtn, resetPanBtn, checkBoundsBtn, applyMinSizeBtn, testSidebarBtn);
+    controlPanel.append(autoArrangeBtn, restoreBtn, resetBtn, resetPanBtn, checkBoundsBtn, applyMinSizeBtn, centerItemsBtn, testSidebarBtn);
     document.body.appendChild(controlPanel);
 }
 
@@ -607,6 +617,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     // Adicionar controles de organização dos campos
     addFieldOrganizationControls();
+    
+    // Centralizar automaticamente na tela para mostrar os itens
+    setTimeout(() => {
+        if (window.zoomManager) {
+            window.zoomManager.centerOnItems();
+        }
+    }, 300);
     
     // Verificar campos após inicialização
     setTimeout(() => {

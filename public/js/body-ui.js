@@ -4,15 +4,15 @@ import { session, saveSession } from './login.js';
  * Atributos padrão do personagem
  */
 const DEFAULT_ATTRIBUTES = [
-    { name: 'Força', key: 'forca' },
-    { name: 'Destreza', key: 'destreza' },
-    { name: 'Vigor', key: 'vigor' },
-    { name: 'Carisma', key: 'carisma' },
-    { name: 'Aparência', key: 'aparencia' },
-    { name: 'Autocontrole', key: 'autocontrole' },
-    { name: 'Inteligência', key: 'inteligencia' },
-    { name: 'Raciocínio', key: 'raciocinio' },
-    { name: 'Determinação', key: 'determinacao' }
+    { name: 'FORÇA', key: 'forca' },
+    { name: 'DESTREZA', key: 'destreza' },
+    { name: 'VIGOR', key: 'vigor' },
+    { name: 'CARISMA', key: 'carisma' },
+    { name: 'APARÊNCIA', key: 'aparencia' },
+    { name: 'AUTOCONTROLE', key: 'autocontrole' },
+    { name: 'INTELIGÊNCIA', key: 'inteligencia' },
+    { name: 'RACIOCÍNIO', key: 'raciocinio' },
+    { name: 'DETERMINAÇÃO', key: 'determinacao' }
 ];
 
 /**

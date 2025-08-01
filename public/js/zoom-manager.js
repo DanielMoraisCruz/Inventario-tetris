@@ -223,11 +223,108 @@ class ZoomManager {
         
         // Inverter a transformação para obter coordenadas no espaço original do container
         // A transformação é: translate(panX, panY) scale(zoom)
-        // Então, para inverter: (val / zoom) - pan / zoom
-        const containerX = (mouseXRelativeToContainer / this.currentZoom) - (this.panOffset.x / this.currentZoom);
-        const containerY = (mouseYRelativeToContainer / this.currentZoom) - (this.panOffset.y / this.currentZoom);
+        // Para inverter: (val - pan) / zoom
+        const containerX = (mouseXRelativeToContainer - this.panOffset.x) / this.currentZoom;
+        const containerY = (mouseYRelativeToContainer - this.panOffset.y) / this.currentZoom;
         
         return { x: containerX, y: containerY };
+    }
+
+    /**
+     * Posiciona automaticamente a tela para mostrar todos os itens/campos visíveis
+     */
+    centerOnItems() {
+        if (!this.container) return;
+
+        // Aguardar um pouco para garantir que os campos estejam posicionados
+        setTimeout(() => {
+            const fields = document.querySelectorAll('.field');
+            const inventoryGrid = document.querySelector('.inventory-grid');
+            
+            if (fields.length === 0 && !inventoryGrid) {
+                console.log('🔍 ZoomManager: Nenhum campo ou inventário encontrado para centralizar');
+                return;
+            }
+
+            let minX = Infinity, minY = Infinity;
+            let maxX = -Infinity, maxY = -Infinity;
+            let hasVisibleElements = false;
+
+            // Calcular limites dos campos
+            fields.forEach(field => {
+                const rect = field.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0 && field.style.display !== 'none') {
+                    const fieldLeft = parseFloat(field.style.left) || 0;
+                    const fieldTop = parseFloat(field.style.top) || 0;
+                    const fieldWidth = parseFloat(field.style.width) || rect.width;
+                    const fieldHeight = parseFloat(field.style.height) || rect.height;
+
+                    minX = Math.min(minX, fieldLeft);
+                    minY = Math.min(minY, fieldTop);
+                    maxX = Math.max(maxX, fieldLeft + fieldWidth);
+                    maxY = Math.max(maxY, fieldTop + fieldHeight);
+                    hasVisibleElements = true;
+                }
+            });
+
+            // Calcular limites do inventário se existir
+            if (inventoryGrid) {
+                const rect = inventoryGrid.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    const inventoryLeft = rect.left;
+                    const inventoryTop = rect.top;
+                    const inventoryWidth = rect.width;
+                    const inventoryHeight = rect.height;
+
+                    minX = Math.min(minX, inventoryLeft);
+                    minY = Math.min(minY, inventoryTop);
+                    maxX = Math.max(maxX, inventoryLeft + inventoryWidth);
+                    maxY = Math.max(maxY, inventoryTop + inventoryHeight);
+                    hasVisibleElements = true;
+                }
+            }
+
+            if (!hasVisibleElements) {
+                console.log('🔍 ZoomManager: Nenhum elemento visível encontrado');
+                return;
+            }
+
+            // Calcular dimensões do viewport
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+
+            // Calcular dimensões da área dos itens
+            const itemsWidth = maxX - minX;
+            const itemsHeight = maxY - minY;
+
+            // Calcular zoom ideal para caber tudo na tela com margem
+            const margin = 50; // margem em pixels
+            const zoomX = (viewportWidth - margin * 2) / itemsWidth;
+            const zoomY = (viewportHeight - margin * 2) / itemsHeight;
+            const idealZoom = Math.min(zoomX, zoomY, this.maxZoom);
+
+            // Aplicar zoom
+            this.setZoom(idealZoom);
+
+            // Calcular posição central dos itens
+            const centerX = minX + itemsWidth / 2;
+            const centerY = minY + itemsHeight / 2;
+
+            // Calcular offset para centralizar
+            const containerRect = this.container.getBoundingClientRect();
+            const containerCenterX = containerRect.width / 2;
+            const containerCenterY = containerRect.height / 2;
+
+            // Aplicar pan para centralizar
+            this.panOffset.x = containerCenterX - (centerX * idealZoom);
+            this.panOffset.y = containerCenterY - (centerY * idealZoom);
+
+            // Atualizar transformação
+            this.updateTransform();
+            this.saveZoom();
+
+            console.log('🎯 ZoomManager: Tela centralizada nos itens - Zoom:', Math.round(idealZoom * 100) + '%');
+        }, 200); // Aguardar 200ms para garantir que todos os elementos estejam posicionados
     }
 }
 

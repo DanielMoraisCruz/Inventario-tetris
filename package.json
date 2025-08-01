@@ -11,7 +11,9 @@
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "lint": "echo 'Linting not configured yet'",
-    "format": "echo 'Formatting not configured yet'"
+    "format": "echo 'Formatting not configured yet'",
+    "build": "echo 'Build process not configured yet'",
+    "analyze": "echo 'Performance analysis not configured yet'"
   },
   "keywords": [],
   "author": "",
@@ -19,9 +21,11 @@
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "compression": "^1.7.4",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
-    "helmet": "^8.1.0"
+    "helmet": "^8.1.0",
+    "interactjs": "^1.10.27"
   },
   "devDependencies": {
     "cross-env": "^10.0.0",

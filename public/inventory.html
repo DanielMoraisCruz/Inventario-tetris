@@ -65,8 +65,8 @@
     <!-- Aba lateral DIREITA para telas fechadas -->
     <div class="sidebar-right" id="sidebar-right">
         <div class="sidebar-right-header">
-            <span>Telas Fechadas</span>
             <button class="sidebar-right-toggle" id="sidebar-right-toggle">−</button>
+            <span>Telas Fechadas</span>
         </div>
         <div class="sidebar-right-content" id="sidebar-right-content">
             <!-- Telas fechadas serão adicionadas aqui dinamicamente -->
@@ -76,22 +76,24 @@
 
     <div class="ficha-container">
         <!-- Campo de Atributos -->
-        <div class="field field-attributes" data-field="attributes">
+        <div class="field field-attributes" data-field="attributes" data-x="0" data-y="0">
             <div class="field-header">
-                <div class="field-title">Atributos</div>
+                <div class="field-title">ATRIBUTOS</div>
                 <div class="field-controls">
                     <button class="field-control-btn" title="Minimizar">−</button>
                     <button class="field-control-btn" title="Fechar">×</button>
                 </div>
             </div>
             <div class="field-content">
-                <div id="attr-list" class="attr-list"></div>
+                <div id="attr-list" class="attr-list">
+                    <!-- Atributos serão gerados dinamicamente aqui -->
+                </div>
             </div>
             <div class="field-resizer"></div>
         </div>
 
         <!-- Campo de Inventário -->
-        <div class="field field-inventory" data-field="inventory">
+        <div class="field field-inventory" data-field="inventory" data-x="0" data-y="0">
             <div class="field-header">
                 <div class="field-title">Inventário</div>
                 <div class="field-controls">
@@ -113,7 +115,7 @@
         </div>
 
         <!-- Campo do Corpo -->
-        <div class="field field-body" data-field="body">
+        <div class="field field-body" data-field="body" data-x="0" data-y="0">
             <div class="field-header">
                 <div class="field-title">Corpo</div>
                 <div class="field-controls">
@@ -184,7 +186,7 @@
         </div>
 
         <!-- Campo de Perícias -->
-        <div class="field field-skills" data-field="skills">
+        <div class="field field-skills" data-field="skills" data-x="0" data-y="0">
             <div class="field-header">
                 <div class="field-title">Perícias</div>
                 <div class="field-controls">
@@ -200,7 +202,7 @@
         </div>
 
         <!-- Campo de Magias -->
-        <div class="field field-spells" data-field="spells">
+        <div class="field field-spells" data-field="spells" data-x="0" data-y="0">
             <div class="field-header">
                 <div class="field-title">Magias Conhecidas</div>
                 <div class="field-controls">
